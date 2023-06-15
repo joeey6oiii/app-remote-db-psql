@@ -1,12 +1,13 @@
 package clientModules.response.receivers;
 
 import clientModules.connection.DataTransferConnectionModule;
-import clientModules.request.sender.CommandsRequestSender;
+import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.ClientCommandsHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.ClientCommandsRequest;
 import response.responses.ClientCommandsResponse;
+import response.responses.Response;
 
 import java.io.IOException;
 
@@ -15,22 +16,30 @@ import java.io.IOException;
  */
 
 public class CommandsReceiver {
+    private final DataTransferConnectionModule dataTransferConnectionModule;
+
+    public CommandsReceiver(DataTransferConnectionModule dataTransferConnectionModule) {
+        this.dataTransferConnectionModule = dataTransferConnectionModule;
+    }
 
     /**
      * A method that gets simplified commands response and calls the
      * {@link ClientCommandsHandler#handleResponse(ClientCommandsResponse)})} method.
      *
-     * @param dataTransferConnectionModule client core
      * @throws ServerUnavailableException if the server was unavailable during sending and receiving operations
      * @throws IOException if failed during I/O operations
      * @throws ResponseTimeoutException if client could not get response from the server during the given time
      */
 
-    public boolean initCommands(DataTransferConnectionModule dataTransferConnectionModule) throws ServerUnavailableException, IOException, ResponseTimeoutException {
+    public boolean initCommands() throws ServerUnavailableException, ResponseTimeoutException, IOException {
         ClientCommandsRequest commandsRequest = new ClientCommandsRequest();
-        ClientCommandsResponse commandsResponse = new CommandsRequestSender().sendRequest(dataTransferConnectionModule, commandsRequest);
+        Response response = new RequestSender().sendRequest(dataTransferConnectionModule, commandsRequest);
 
-        new ClientCommandsHandler().handleResponse(commandsResponse);
+        if(response instanceof ClientCommandsResponse commandsResponse){
+            new ClientCommandsHandler().handleResponse(commandsResponse);
+        } else {
+            return false;
+        }
 
         return true;
     }

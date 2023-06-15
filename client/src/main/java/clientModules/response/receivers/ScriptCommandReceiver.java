@@ -1,8 +1,9 @@
 package clientModules.response.receivers;
 
 import clientModules.Client;
+import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
-import clientModules.request.sender.CommandExecutionRequestSender;
+import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.ExecutionResultHandler;
 import commands.CommandDescription;
 import commandsModule.handler.CommandHandler;
@@ -11,7 +12,9 @@ import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import org.apache.commons.io.IOUtils;
 import requests.CommandExecutionRequest;
+import response.responses.AuthorizationResponse;
 import response.responses.CommandExecutionResponse;
+import response.responses.Response;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -54,10 +57,23 @@ public class ScriptCommandReceiver implements CommandReceiver {
         CommandManager commandManager = new CommandManager();
         try (InputStream inputStream = new FileInputStream(script)) {
             try {
-                CommandExecutionRequestSender requestSender = new CommandExecutionRequestSender();
+                RequestSender requestSender = new RequestSender();
                 CommandExecutionRequest commandRequest = new CommandExecutionRequest(Client.getLogin(), Client.getPassword(), scriptCommand, args);
-                CommandExecutionResponse executionResponse = requestSender.sendRequest(dataTransferConnectionModule, commandRequest);
-                new ExecutionResultHandler().handleResponse(executionResponse);
+
+                Response response = requestSender.sendRequest(dataTransferConnectionModule, commandRequest);
+
+                if(response instanceof CommandExecutionResponse executionResponse) {
+                    new ExecutionResultHandler().handleResponse(executionResponse);
+                } else if(response instanceof AuthorizationResponse authorizationResponse && !authorizationResponse.isSuccess()) {
+                    new AuthenticationManager(dataTransferConnectionModule).authenticateFromInput();
+                    CommandHandler.getMissedCommands().put(scriptCommand, args);
+                    return;
+                } else {
+                    System.out.println("Received invalid response from server");
+                    CommandHandler.getMissedCommands().put(scriptCommand, args);
+                    return;
+                }
+
             } catch (StreamCorruptedException | ServerUnavailableException | ResponseTimeoutException e) {
                 CommandHandler.getMissedCommands().put(scriptCommand, args);
                 return;

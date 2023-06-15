@@ -20,9 +20,11 @@ public class ClientCommandsHandler implements ResponseHandler<ClientCommandsResp
      */
 
     @Override
-    public void handleResponse(ClientCommandsResponse response) {
+    public boolean handleResponse(ClientCommandsResponse response) {
         List<CommandDescription> commands = response.getCommands();
         ClientCommandsKeeper.setCommands(commands);
+
+        return commands != null && ClientCommandsKeeper.getCommands().size() > 0;
     }
 
 }

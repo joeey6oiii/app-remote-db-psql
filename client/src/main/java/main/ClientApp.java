@@ -1,5 +1,6 @@
 package main;
 
+import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.connection.UdpConnectionModuleFactory;
 import clientModules.response.receivers.CommandsReceiver;
@@ -36,18 +37,20 @@ public class ClientApp {
 
         UdpConnectionModuleFactory factory = new UdpConnectionModuleFactory();
         try {
-            DataTransferConnectionModule module = factory.createConfigureBlocking
+            DataTransferConnectionModule connectionModule = factory.createConfigureBlocking
                     (new InetSocketAddress(InetAddress.getLocalHost(), PORT), false);
 
-            module.connect();
+            connectionModule.connect();
             System.out.println("Server connection established");
 
             long timeout = 5;
             boolean initializedCommands = false;
+            CommandsReceiver commandsReceiver = new CommandsReceiver(connectionModule);
+
             while (!initializedCommands) {
                 System.out.println("Trying to initialize commands...");
                 try {
-                    initializedCommands = new CommandsReceiver().initCommands(module);
+                    initializedCommands = commandsReceiver.initCommands();
                 } catch (ServerUnavailableException | ResponseTimeoutException | IOException | NullPointerException e) {
                     TimeUnit.SECONDS.sleep(timeout);
                 }
@@ -56,7 +59,25 @@ public class ClientApp {
 
             List<CommandDescription> commands = ClientCommandsKeeper.getCommands();
             Scanner consoleInputReader = new Scanner(System.in);
-            CommandHandler handler = new CommandHandler(commands, consoleInputReader, module);
+            CommandHandler handler = new CommandHandler(commands, consoleInputReader, connectionModule);
+
+            AuthenticationManager authenticationManager = new AuthenticationManager(connectionModule);
+
+            while (true) {
+                try {
+                    int authenticated = authenticationManager.authenticateFromInput();
+
+                    if (authenticated == 2) {
+                        System.out.println("Shutdown...");
+                        System.exit(0);
+                    } else if (authenticated == 1) {
+                        break;
+                    }
+
+                } catch (ServerUnavailableException | ResponseTimeoutException | IOException | NullPointerException e) {
+                    System.out.println("Server is currently unavailable. Please try again later");
+                }
+            }
 
             System.out.println("Console input allowed");
             handler.startHandlingInput();

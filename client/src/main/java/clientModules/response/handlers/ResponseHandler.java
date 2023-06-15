@@ -14,6 +14,6 @@ public interface ResponseHandler<T extends Response> {
      * @param response the received response
      */
 
-    void handleResponse(T response);
+    boolean handleResponse(T response);
 
 }

@@ -15,8 +15,15 @@ public class ExecutionResultHandler implements ResponseHandler<CommandExecutionR
      */
 
     @Override
-    public void handleResponse(CommandExecutionResponse response) {
-        System.out.println(response.getResult());
+    public boolean handleResponse(CommandExecutionResponse response) {
+        if (response != null) {
+            System.out.println(response.getResult());
+        } else {
+            System.out.println("Received invalid response from server");
+            return false;
+        }
+
+        return true;
     }
 
 }
