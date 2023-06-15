@@ -6,10 +6,9 @@ import main.Server;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
-import java.security.CodeSource;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,6 +51,17 @@ public class FileService {
         return runningFromJar;
     }
 
+    /**
+     * Reads the specified resource file as an InputStream.
+     *
+     * @param resourceName name of the resource file
+     * @return InputStream of the resource file
+     */
+
+    public static InputStream getResourceAsStream(String resourceName) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        return classLoader.getResourceAsStream(resourceName);
+    }
 
     /**
      * Reads the specified file using {@link YAMLReader}.
@@ -63,7 +73,7 @@ public class FileService {
      * @throws IOException if failed during I/O operations
      */
 
-    public <T> List<T> readFile(File file, Class<T> type) throws IOException {
+    public <T> List<T> readObjectsFromFile(File file, Class<T> type) throws IOException {
         return new YAMLReader().read(file, type);
     }
 
@@ -80,6 +90,17 @@ public class FileService {
             this.createFile(file);
         }
         new YAMLWriter().writeYAML(obj, file);
+    }
+
+    public String[] readLines(InputStream inputStream) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line).append(System.lineSeparator());
+            }
+            return stringBuilder.toString().split(System.lineSeparator());
+        }
     }
 
     /**
