@@ -2,7 +2,7 @@ package serverModules.response.sender;
 
 import response.responses.ClientCommandsResponse;
 import response.responses.Response;
-import serverModules.callerBack.CallerBack;
+import serverModules.request.data.RequestOrigin;
 import serverModules.connection.ConnectionModule;
 
 /**
@@ -12,16 +12,16 @@ import serverModules.connection.ConnectionModule;
 public class ClientCommandsResponseSender implements ResponseAble<ClientCommandsResponse> {
 
     /**
-     * A method that calls {@link ResponseSender#sendResponse(ConnectionModule, CallerBack, Response)} method.
+     * A method that calls {@link ResponseSender#sendResponse(ConnectionModule, RequestOrigin, Response)} method.
      *
      * @param connectionModule server core
-     * @param callerBack client
+     * @param requestOrigin client
      * @param commandsResponse answer to the client
      */
 
     @Override
-    public void sendResponse(ConnectionModule connectionModule, CallerBack callerBack, ClientCommandsResponse commandsResponse) {
-        new ResponseSender().sendResponse(connectionModule, callerBack, commandsResponse);
+    public void sendResponse(ConnectionModule connectionModule, RequestOrigin requestOrigin, ClientCommandsResponse commandsResponse) {
+        new ResponseSender().sendResponse(connectionModule, requestOrigin, commandsResponse);
     }
 
 }

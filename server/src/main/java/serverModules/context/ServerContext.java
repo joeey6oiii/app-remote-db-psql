@@ -1,7 +1,7 @@
 package serverModules.context;
 
 import requests.Request;
-import serverModules.callerBack.CallerBack;
+import serverModules.request.data.RequestOrigin;
 import serverModules.connection.ConnectionModule;
 
 /**
@@ -10,20 +10,20 @@ import serverModules.connection.ConnectionModule;
 
 public class ServerContext {
     private final ConnectionModule connectionModule;
-    private final CallerBack callerBack;
+    private final RequestOrigin requestOrigin;
     private final Request request;
 
     /**
      * A constructor for a server context.
      *
      * @param connectionModule server core
-     * @param callerBack client
+     * @param requestOrigin client
      * @param request client request
      */
 
-    public ServerContext(ConnectionModule connectionModule, CallerBack callerBack, Request request) {
+    public ServerContext(ConnectionModule connectionModule, RequestOrigin requestOrigin, Request request) {
         this.connectionModule = connectionModule;
-        this.callerBack = callerBack;
+        this.requestOrigin = requestOrigin;
         this.request = request;
     }
 
@@ -39,8 +39,8 @@ public class ServerContext {
      * A method that returns the current client.
      */
 
-    public CallerBack getCallerBack() {
-        return callerBack;
+    public RequestOrigin getCallerBack() {
+        return requestOrigin;
     }
 
     /**

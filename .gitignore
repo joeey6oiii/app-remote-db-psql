@@ -1,3 +1,5 @@
 /.idea
 /target
+/server/target
+/client/target
 /bin/

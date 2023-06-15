@@ -2,7 +2,7 @@ package serverModules.connection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import serverModules.callerBack.CallerBack;
+import serverModules.request.data.RequestOrigin;
 import serverModules.request.data.RequestData;
 import utility.UdpDataTransferUtilities;
 
@@ -15,7 +15,7 @@ import java.net.*;
 
 public class UdpConnectionModule implements ConnectionModule {
     private static final Logger logger = LogManager.getLogger("logger.ConnectionModule");
-    private final int PACKET_SIZE = UdpDataTransferUtilities.PACKET_SIZE.getPacketSizeValue();
+    private final int PACKET_SIZE = UdpDataTransferUtilities.INSTANCE.getPacketSizeValue();
     private final DatagramSocket socket;
 
     /**
@@ -44,7 +44,7 @@ public class UdpConnectionModule implements ConnectionModule {
             socket.receive(packet);
             logger.debug("Received data");
 
-            return new RequestData(packet.getData(), new CallerBack(packet.getAddress(), packet.getPort()));
+            return new RequestData(packet.getData(), new RequestOrigin(packet.getAddress(), packet.getPort()));
         } catch (IOException e) {
             logger.error("Something went wrong during receiving data", e);
         }

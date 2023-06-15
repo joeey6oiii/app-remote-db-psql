@@ -1,5 +1,6 @@
 package clientModules.response.receivers;
 
+import clientModules.Client;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.CommandExecutionRequestSender;
 import clientModules.response.handlers.ExecutionResultHandler;
@@ -54,7 +55,7 @@ public class ScriptCommandReceiver implements CommandReceiver {
         try (InputStream inputStream = new FileInputStream(script)) {
             try {
                 CommandExecutionRequestSender requestSender = new CommandExecutionRequestSender();
-                CommandExecutionRequest commandRequest = new CommandExecutionRequest(scriptCommand, args);
+                CommandExecutionRequest commandRequest = new CommandExecutionRequest(Client.getLogin(), Client.getPassword(), scriptCommand, args);
                 CommandExecutionResponse executionResponse = requestSender.sendRequest(dataTransferConnectionModule, commandRequest);
                 new ExecutionResultHandler().handleResponse(executionResponse);
             } catch (StreamCorruptedException | ServerUnavailableException | ResponseTimeoutException e) {

@@ -1,14 +1,12 @@
 package serverModules.request.data;
 
-import serverModules.callerBack.CallerBack;
-
 /**
  * A class that contains the information about the received request.
  */
 
 public class RequestData {
     private byte[] data;
-    private CallerBack callerBack;
+    private RequestOrigin requestOrigin;
     private final boolean nullStatus;
 
     /**
@@ -23,12 +21,12 @@ public class RequestData {
      * A constructor for a client request received.
      *
      * @param data received data
-     * @param callerBack the client
+     * @param requestOrigin the client
      */
 
-    public RequestData(byte[] data, CallerBack callerBack) {
+    public RequestData(byte[] data, RequestOrigin requestOrigin) {
         this.data = data;
-        this.callerBack = callerBack;
+        this.requestOrigin = requestOrigin;
         nullStatus = false;
     }
 
@@ -54,18 +52,18 @@ public class RequestData {
      * A method that returns the client.
      */
 
-    public CallerBack getCallerBack() {
-        return callerBack;
+    public RequestOrigin getCallerBack() {
+        return requestOrigin;
     }
 
     /**
      * A method that sets the specified client.
      *
-     * @param callerBack client to set
+     * @param requestOrigin client to set
      */
 
-    public void setCallerBack(CallerBack callerBack) {
-        this.callerBack = callerBack;
+    public void setCallerBack(RequestOrigin requestOrigin) {
+        this.requestOrigin = requestOrigin;
     }
 
     /**

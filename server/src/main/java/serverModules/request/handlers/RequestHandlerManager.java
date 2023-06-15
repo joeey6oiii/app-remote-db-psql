@@ -20,6 +20,8 @@ public class RequestHandlerManager {
     {
         handlers = new LinkedHashMap<>();
 
+        handlers.put(AuthorizationRequest.class, new AuthorizationHandler());
+        handlers.put(RegistrationRequest.class, new RegistrationHandler());
         handlers.put(ClientCommandsRequest.class, new ClientCommandsHandler());
         handlers.put(CommandExecutionRequest.class, new ClientCommandHandler());
         handlers.put(SingleArgumentCommandExecutionRequest.class, new ArgumentCommandHandler<>());

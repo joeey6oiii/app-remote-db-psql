@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  * Program entry point class. Contains <code>main()</code> method.
  */
 
-public class Client {
+public class ClientApp {
 
     private final static int PORT = 64999;
 
