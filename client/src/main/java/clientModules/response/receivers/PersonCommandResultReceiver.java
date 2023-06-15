@@ -1,8 +1,9 @@
 package clientModules.response.receivers;
 
 import clientModules.Client;
+import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
-import clientModules.request.sender.SingleArgumentCommandExecutionRequestSender;
+import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.ExecutionResultHandler;
 import commands.CommandDescription;
 import commandsModule.handler.CommandHandler;
@@ -11,7 +12,9 @@ import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import objectBuilder.PersonBuilder;
 import requests.SingleArgumentCommandExecutionRequest;
+import response.responses.AuthorizationResponse;
 import response.responses.CommandExecutionResponse;
+import response.responses.Response;
 
 import java.io.IOException;
 import java.io.StreamCorruptedException;
@@ -36,13 +39,22 @@ public class PersonCommandResultReceiver implements CommandReceiver {
         Person builtPerson = new PersonBuilder().buildObject();
 
         SingleArgumentCommandExecutionRequest<Person> commandRequest = new SingleArgumentCommandExecutionRequest<>(Client.getLogin(), Client.getPassword(), command, args, builtPerson);
-        CommandExecutionResponse executionResponse;
+        Response response;
         try {
-            executionResponse = new SingleArgumentCommandExecutionRequestSender().sendRequest(dataTransferConnectionModule, commandRequest);
+            response = new RequestSender().sendRequest(dataTransferConnectionModule, commandRequest);
 
-            new ExecutionResultHandler().handleResponse(executionResponse);
+            if(response instanceof CommandExecutionResponse executionResponse) {
+                new ExecutionResultHandler().handleResponse(executionResponse);
 
-            CommandHandler.getMissedCommands().remove(command, args);
+                CommandHandler.getMissedCommands().remove(command, args);
+            } else if(response instanceof AuthorizationResponse authorizationResponse && !authorizationResponse.isSuccess()) {
+                new AuthenticationManager(dataTransferConnectionModule).authenticateFromInput();
+                CommandHandler.getMissedCommands().put(command, args);
+            } else {
+                System.out.println("Received invalid response from server");
+                CommandHandler.getMissedCommands().put(command, args);
+            }
+
         } catch (StreamCorruptedException | ServerUnavailableException | ResponseTimeoutException e) {
             CommandHandler.getMissedCommands().put(command, args);
         } catch (IOException e) {

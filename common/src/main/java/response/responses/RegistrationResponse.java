@@ -2,19 +2,19 @@ package response.responses;
 
 public class RegistrationResponse implements Response {
     private final boolean success;
-    private final String response;
+    private final String result;
 
-    public RegistrationResponse(boolean success, String response) {
+    public RegistrationResponse(boolean success, String result) {
         this.success = success;
-        this.response = response;
+        this.result = result;
     }
 
     public boolean isSuccess() {
         return this.success;
     }
 
-    public String getResponse() {
-        return this.response;
+    public String getResult() {
+        return this.result;
     }
 
 }
