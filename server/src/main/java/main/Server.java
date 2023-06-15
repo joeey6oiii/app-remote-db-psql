@@ -6,6 +6,7 @@ import defaultClasses.Person;
 import fileService.FileService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import passwordService.PasswordUtils;
 import requests.Request;
 import serverModules.connection.ConnectionModule;
 import serverModules.connection.ConnectionModuleFactory;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -58,7 +60,7 @@ public class Server {
                 if (file.length() == 0) {
                     logger.info("Upload data not found: File is empty");
                 } else {
-                    list = fileService.readFile(file, type);
+                    list = fileService.readObjectsFromFile(file, type);
                 }
             } else {
                 logger.fatal("\"Person.yaml\" file not found");
