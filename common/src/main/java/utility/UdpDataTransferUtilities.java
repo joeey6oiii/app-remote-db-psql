@@ -4,19 +4,9 @@ package utility;
  * An enum with UDP data transfer utilities.
  */
 public enum UdpDataTransferUtilities {
-    PACKET_SIZE(1500);
+    INSTANCE;
 
-    private final int packetSizeValue;
-
-    /**
-     * Private constructor for the PACKET_SIZE UDP data transfer utility.
-     *
-     * @param sizeValue the size of a packet
-     */
-
-    UdpDataTransferUtilities(int sizeValue) {
-        this.packetSizeValue = sizeValue;
-    }
+    private final int packetSizeValue = 1500;
 
     /**
      * @return the size value of a packet

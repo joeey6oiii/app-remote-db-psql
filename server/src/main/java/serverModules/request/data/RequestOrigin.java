@@ -1,12 +1,12 @@
-package serverModules.callerBack;
+package serverModules.request.data;
 
 import java.net.InetAddress;
 
 /**
- * A class that represents a client.
+ * A class that contains the address and port of the machine from which the request was sent.
  */
 
-public class CallerBack {
+public class RequestOrigin {
     private final InetAddress address;
     private final int port;
 
@@ -17,7 +17,7 @@ public class CallerBack {
      * @param port port of the client
      */
 
-    public CallerBack(InetAddress address, int port) {
+    public RequestOrigin(InetAddress address, int port) {
         this.address = address;
         this.port = port;
     }

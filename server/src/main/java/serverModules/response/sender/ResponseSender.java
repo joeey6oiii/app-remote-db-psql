@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 import response.data.FragmentHeader;
 import response.responses.Response;
 import serializer.ObjectSerializer;
-import serverModules.callerBack.CallerBack;
+import serverModules.request.data.RequestOrigin;
 import serverModules.connection.ConnectionModule;
 import utility.UdpDataTransferUtilities;
 
@@ -24,20 +24,20 @@ public class ResponseSender implements ResponseAble<Response> {
      * of the header placed serialized header, and after placed the chunk (part of the data)
      *
      * @param connectionModule server core
-     * @param callerBack client
+     * @param requestOrigin client
      * @param response answer to the client
      */
 
     @Override
-    public void sendResponse(ConnectionModule connectionModule, CallerBack callerBack, Response response) throws IllegalArgumentException {
+    public void sendResponse(ConnectionModule connectionModule, RequestOrigin requestOrigin, Response response) throws IllegalArgumentException {
         if (response != null) {
             ObjectSerializer serializer = new ObjectSerializer();
 
-            final InetAddress clientAddress = callerBack.getAddress();
-            final int clientPort = callerBack.getPort();
+            final InetAddress clientAddress = requestOrigin.getAddress();
+            final int clientPort = requestOrigin.getPort();
             try {
                 byte[] data = serializer.serialize(response);
-                int maxPacketSize = UdpDataTransferUtilities.PACKET_SIZE.getPacketSizeValue();
+                int maxPacketSize = UdpDataTransferUtilities.INSTANCE.getPacketSizeValue();
                 int packetIndex = 0;
                 int offset = 0;
 

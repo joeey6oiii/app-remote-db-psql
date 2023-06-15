@@ -9,6 +9,8 @@ import java.io.Serializable;
  */
 
 public class CommandExecutionRequest implements Request, Serializable {
+    private final String login;
+    private final char[] passwd;
     private final CommandDescription command;
     private final String[] args;
 
@@ -19,9 +21,21 @@ public class CommandExecutionRequest implements Request, Serializable {
      * @param args arguments of the command
      */
 
-    public CommandExecutionRequest(CommandDescription command, String[] args) {
+    public CommandExecutionRequest(String login, char[] passwd, CommandDescription command, String[] args) {
+        this.login = login;
+        this.passwd = passwd;
         this.command = command;
         this.args = args;
+    }
+
+    @Override
+    public String getLogin() {
+        return login;
+    }
+
+    @Override
+    public char[] getPassword() {
+        return passwd;
     }
 
     /**
@@ -39,4 +53,5 @@ public class CommandExecutionRequest implements Request, Serializable {
     public String[] getArgs() {
         return this.args;
     }
+
 }

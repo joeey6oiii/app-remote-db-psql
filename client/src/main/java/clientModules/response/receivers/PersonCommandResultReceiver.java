@@ -1,5 +1,6 @@
 package clientModules.response.receivers;
 
+import clientModules.Client;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.SingleArgumentCommandExecutionRequestSender;
 import clientModules.response.handlers.ExecutionResultHandler;
@@ -34,7 +35,7 @@ public class PersonCommandResultReceiver implements CommandReceiver {
     public void receiveCommand(CommandDescription command, String[] args, DataTransferConnectionModule dataTransferConnectionModule) {
         Person builtPerson = new PersonBuilder().buildObject();
 
-        SingleArgumentCommandExecutionRequest<Person> commandRequest = new SingleArgumentCommandExecutionRequest<>(command, args, builtPerson);
+        SingleArgumentCommandExecutionRequest<Person> commandRequest = new SingleArgumentCommandExecutionRequest<>(Client.getLogin(), Client.getPassword(), command, args, builtPerson);
         CommandExecutionResponse executionResponse;
         try {
             executionResponse = new SingleArgumentCommandExecutionRequestSender().sendRequest(dataTransferConnectionModule, commandRequest);

@@ -1,5 +1,6 @@
 package clientModules.response.receivers;
 
+import clientModules.Client;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.CommandExecutionRequestSender;
 import clientModules.response.handlers.ExecutionResultHandler;
@@ -30,7 +31,7 @@ public class ExecutionResultReceiver implements CommandReceiver {
 
     @Override
     public void receiveCommand(CommandDescription command, String[] args, DataTransferConnectionModule dataTransferConnectionModule) {
-        CommandExecutionRequest commandRequest = new CommandExecutionRequest(command, args);
+        CommandExecutionRequest commandRequest = new CommandExecutionRequest(Client.getLogin(), Client.getPassword(), command, args);
         CommandExecutionResponse executionResponse;
         try {
             executionResponse = new CommandExecutionRequestSender().sendRequest(dataTransferConnectionModule, commandRequest);

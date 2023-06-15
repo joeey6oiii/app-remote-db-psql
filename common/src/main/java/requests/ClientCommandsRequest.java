@@ -8,4 +8,16 @@ import java.io.Serializable;
  */
 
 public class ClientCommandsRequest implements Request, Serializable {
+
+    @Override
+    public String getLogin() {
+        return "no login for commands request";
+    }
+
+    @Override
+    public char[] getPassword() {
+        return new char[]{'n', 'o', ' ', 'p', 'a', 's', 's', 'w', 'o', 'r', 'd', ' ', 'f', 'o', 'r',
+                ' ', 'c', 'o', 'm', 'm', 'a', 'n', 'd', 's', ' ', 'r', 'e', 'q', 'u', 'e', 's', 't'};
+    }
+
 }

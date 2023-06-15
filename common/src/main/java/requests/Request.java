@@ -5,4 +5,9 @@ package requests;
  */
 
 public interface Request {
+
+    String getLogin();
+
+    char[] getPassword();
+
 }

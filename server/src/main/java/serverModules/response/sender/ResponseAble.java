@@ -1,6 +1,6 @@
 package serverModules.response.sender;
 
-import serverModules.callerBack.CallerBack;
+import serverModules.request.data.RequestOrigin;
 import serverModules.connection.ConnectionModule;
 
 /**
@@ -15,10 +15,10 @@ public interface ResponseAble<T> {
      * A method that sends response of a T type to the client.
      *
      * @param connectionModule server core
-     * @param callerBack client
+     * @param requestOrigin client
      * @param response answer to the client
      */
 
-    void sendResponse(ConnectionModule connectionModule, CallerBack callerBack, T response);
+    void sendResponse(ConnectionModule connectionModule, RequestOrigin requestOrigin, T response);
 
 }

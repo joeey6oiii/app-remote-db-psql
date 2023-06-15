@@ -17,8 +17,8 @@ public class SingleArgumentCommandExecutionRequest<T> extends CommandExecutionRe
      * @param arg uncommon argument of the command
      */
 
-    public SingleArgumentCommandExecutionRequest(CommandDescription command, String[] args, T arg) {
-        super(command, args);
+    public SingleArgumentCommandExecutionRequest(String login, char[] passwd, CommandDescription command, String[] args, T arg) {
+        super(login, passwd, command, args);
         this.arg = arg;
     }
 
@@ -29,4 +29,5 @@ public class SingleArgumentCommandExecutionRequest<T> extends CommandExecutionRe
     public T getArg() {
         return this.arg;
     }
+
 }

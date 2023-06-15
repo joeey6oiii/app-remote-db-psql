@@ -3,7 +3,7 @@ package serverModules.request.handlers;
 import commands.CommandDescription;
 import commandsModule.ClientCommandsKeeper;
 import response.responses.ClientCommandsResponse;
-import serverModules.callerBack.CallerBack;
+import serverModules.request.data.RequestOrigin;
 import serverModules.connection.ConnectionModule;
 import serverModules.context.ServerContext;
 import serverModules.response.sender.ClientCommandsResponseSender;
@@ -25,7 +25,7 @@ public class ClientCommandsHandler implements RequestHandler {
     @Override
     public void handleRequest(ServerContext context) {
         ConnectionModule connectionModule = context.getConnectionModule();
-        CallerBack client = context.getCallerBack();
+        RequestOrigin client = context.getCallerBack();
         List<CommandDescription> commands = ClientCommandsKeeper.getCommands();
         ClientCommandsResponse commandsResponse = new ClientCommandsResponse(commands);
 
