@@ -1,22 +1,25 @@
 package requests;
 
-public class RegistrationRequest implements Request {
-    private final String login;
-    private final char[] passwd;
+import response.data.AuthenticationData;
+import utility.Token;
 
-    public RegistrationRequest(String login, char[] passwd) {
-        this.login = login;
-        this.passwd = passwd;
+import java.io.Serializable;
+
+public class RegistrationRequest implements Request, Serializable {
+    private final AuthenticationData authenticationData;
+    private final Token token = new Token("default_token_val");
+
+    public RegistrationRequest(AuthenticationData authenticationData) {
+        this.authenticationData = authenticationData;
+    }
+
+    public AuthenticationData getAuthenticationData() {
+        return this.authenticationData;
     }
 
     @Override
-    public String getLogin() {
-        return login;
-    }
-
-    @Override
-    public char[] getPassword() {
-        return passwd;
+    public Token getToken() {
+        return this.token;
     }
 
 }

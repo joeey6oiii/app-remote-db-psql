@@ -1,6 +1,7 @@
 package requests;
 
 import commands.CommandDescription;
+import utility.Token;
 
 /**
  * A class that represents the client command with an uncommon argument execution request.
@@ -17,8 +18,8 @@ public class SingleArgumentCommandExecutionRequest<T> extends CommandExecutionRe
      * @param arg uncommon argument of the command
      */
 
-    public SingleArgumentCommandExecutionRequest(String login, char[] passwd, CommandDescription command, String[] args, T arg) {
-        super(login, passwd, command, args);
+    public SingleArgumentCommandExecutionRequest(Token token, CommandDescription command, String[] args, T arg) {
+        super(token, command, args);
         this.arg = arg;
     }
 

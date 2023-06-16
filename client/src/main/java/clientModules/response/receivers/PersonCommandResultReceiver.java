@@ -1,11 +1,11 @@
 package clientModules.response.receivers;
 
-import clientModules.Client;
 import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.ExecutionResultHandler;
 import clientModules.response.handlers.ServerErrorResultHandler;
+import clientModules.response.handlers.authenticationHandlers.User;
 import commands.CommandDescription;
 import commandsModule.handler.CommandHandler;
 import defaultClasses.Person;
@@ -40,7 +40,7 @@ public class PersonCommandResultReceiver implements CommandReceiver {
     public void receiveCommand(CommandDescription command, String[] args, DataTransferConnectionModule dataTransferConnectionModule) {
         Person builtPerson = new PersonBuilder().buildObject();
 
-        SingleArgumentCommandExecutionRequest<Person> commandRequest = new SingleArgumentCommandExecutionRequest<>(Client.getLogin(), Client.getPassword(), command, args, builtPerson);
+        SingleArgumentCommandExecutionRequest<Person> commandRequest = new SingleArgumentCommandExecutionRequest<>(User.getToken(), command, args, builtPerson);
         Response response;
         try {
             response = new RequestSender().sendRequest(dataTransferConnectionModule, commandRequest);

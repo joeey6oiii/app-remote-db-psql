@@ -1,4 +1,4 @@
-package serverModules.users;
+package userModules.users;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ public class UserRegistry {
     }
 
     public void addUser(User user) {
-        users.put(user.getLogin(), user);
+        users.put(user.getAuthenticationData().getLogin(), user);
     }
 
     public User getUserByLogin(String login) {

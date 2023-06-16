@@ -1,4 +1,4 @@
-package passwordService;
+package userModules.passwordService;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import utils.ByteArrayUtils;

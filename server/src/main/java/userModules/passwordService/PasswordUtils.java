@@ -1,4 +1,4 @@
-package passwordService;
+package userModules.passwordService;
 
 import fileService.FileService;
 import org.apache.logging.log4j.LogManager;

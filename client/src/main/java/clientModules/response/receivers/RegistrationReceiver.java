@@ -2,11 +2,12 @@ package clientModules.response.receivers;
 
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;
-import clientModules.response.handlers.RegistrationHandler;
+import clientModules.response.handlers.authenticationHandlers.RegistrationHandler;
 import clientModules.response.handlers.ServerErrorResultHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.RegistrationRequest;
+import response.data.AuthenticationData;
 import response.responses.ErrorResponse;
 import response.responses.RegistrationResponse;
 import response.responses.Response;
@@ -21,7 +22,7 @@ public class RegistrationReceiver {
     }
 
     public boolean register(String login, char[] password) throws ServerUnavailableException, ResponseTimeoutException, IOException {
-        RegistrationRequest registrationRequest = new RegistrationRequest(login, password);
+        RegistrationRequest registrationRequest = new RegistrationRequest(new AuthenticationData(login, password));
         Response response = new RequestSender().sendRequest(dataTransferConnectionModule, registrationRequest);
 
         if (response instanceof ErrorResponse errResponse) {

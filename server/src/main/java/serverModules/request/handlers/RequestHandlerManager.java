@@ -6,6 +6,8 @@ import org.apache.logging.log4j.Logger;
 import requests.*;
 import response.responses.ErrorResponse;
 import serverModules.context.ServerContext;
+import serverModules.request.handlers.authenticationHandlers.AuthorizationHandler;
+import serverModules.request.handlers.authenticationHandlers.RegistrationHandler;
 import serverModules.response.sender.ResponseSender;
 
 import java.util.LinkedHashMap;
