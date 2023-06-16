@@ -1,6 +1,7 @@
 package requests;
 
 import commands.CommandDescription;
+import utility.Token;
 
 import java.io.Serializable;
 
@@ -9,8 +10,7 @@ import java.io.Serializable;
  */
 
 public class CommandExecutionRequest implements Request, Serializable {
-    private final String login;
-    private final char[] passwd;
+    private final Token token;
     private final CommandDescription command;
     private final String[] args;
 
@@ -21,21 +21,15 @@ public class CommandExecutionRequest implements Request, Serializable {
      * @param args arguments of the command
      */
 
-    public CommandExecutionRequest(String login, char[] passwd, CommandDescription command, String[] args) {
-        this.login = login;
-        this.passwd = passwd;
+    public CommandExecutionRequest(Token token, CommandDescription command, String[] args) {
+        this.token = token;
         this.command = command;
         this.args = args;
     }
 
     @Override
-    public String getLogin() {
-        return login;
-    }
-
-    @Override
-    public char[] getPassword() {
-        return passwd;
+    public Token getToken() {
+        return this.token;
     }
 
     /**

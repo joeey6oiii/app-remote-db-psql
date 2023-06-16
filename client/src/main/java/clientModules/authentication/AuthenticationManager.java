@@ -1,6 +1,5 @@
 package clientModules.authentication;
 
-import clientModules.Client;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.response.receivers.AuthorizationReceiver;
 import clientModules.response.receivers.RegistrationReceiver;
@@ -54,9 +53,6 @@ public class AuthenticationManager {
 
         boolean isRegistered = new RegistrationReceiver(dataTransferConnectionModule).register(login, password.toCharArray());
 
-        Client.setLogin(isRegistered ? login : null);
-        Client.setPassword(isRegistered ? password.toCharArray() : null);
-
         return isRegistered ? 1 : 0;
     }
 
@@ -72,9 +68,6 @@ public class AuthenticationManager {
         }
 
         boolean isLogged = new AuthorizationReceiver(dataTransferConnectionModule).authorize(login, password.toCharArray());
-
-        Client.setLogin(isLogged ? login : null);
-        Client.setPassword(isLogged ? password.toCharArray() : null);
 
         return isLogged ? 1 : 0;
     }

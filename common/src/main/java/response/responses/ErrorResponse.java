@@ -1,6 +1,8 @@
 package response.responses;
 
-public class ErrorResponse implements Response {
+import java.io.Serializable;
+
+public class ErrorResponse implements Response, Serializable {
     private final String result;
 
     public ErrorResponse(String result) {

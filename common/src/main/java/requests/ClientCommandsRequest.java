@@ -1,5 +1,6 @@
 package requests;
 
+import utility.Token;
 
 import java.io.Serializable;
 
@@ -8,16 +9,11 @@ import java.io.Serializable;
  */
 
 public class ClientCommandsRequest implements Request, Serializable {
+    private final Token token = new Token("default_token_val");
 
     @Override
-    public String getLogin() {
-        return "no login for commands request";
-    }
-
-    @Override
-    public char[] getPassword() {
-        return new char[]{'n', 'o', ' ', 'p', 'a', 's', 's', 'w', 'o', 'r', 'd', ' ', 'f', 'o', 'r',
-                ' ', 'c', 'o', 'm', 'm', 'a', 'n', 'd', 's', ' ', 'r', 'e', 'q', 'u', 'e', 's', 't'};
+    public Token getToken() {
+        return this.token;
     }
 
 }

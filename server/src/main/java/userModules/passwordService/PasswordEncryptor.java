@@ -1,4 +1,4 @@
-package passwordService;
+package userModules.passwordService;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;

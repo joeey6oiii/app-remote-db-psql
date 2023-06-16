@@ -1,4 +1,4 @@
-package passwordService;
+package userModules.passwordService;
 
 public class EncryptedPassword {
     private final byte[] hashedPassword;

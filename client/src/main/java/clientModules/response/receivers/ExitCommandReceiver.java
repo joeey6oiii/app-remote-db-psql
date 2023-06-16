@@ -1,12 +1,11 @@
 package clientModules.response.receivers;
 
-import clientModules.Client;
 import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;
-import clientModules.response.handlers.ExecutionResultHandler;
 import clientModules.response.handlers.ExitCommandHandler;
 import clientModules.response.handlers.ServerErrorResultHandler;
+import clientModules.response.handlers.authenticationHandlers.User;
 import commands.CommandDescription;
 import commandsModule.handler.CommandHandler;
 import exceptions.ResponseTimeoutException;
@@ -51,7 +50,7 @@ public class ExitCommandReceiver implements CommandReceiver {
             System.out.print("$ ");
         }
 
-        CommandExecutionRequest commandRequest = new CommandExecutionRequest(Client.getLogin(), Client.getPassword(), command, args);
+        CommandExecutionRequest commandRequest = new CommandExecutionRequest(User.getToken(), command, args);
         Response response;
         try {
             response = new RequestSender().sendRequest(dataTransferConnectionModule, commandRequest);

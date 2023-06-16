@@ -1,11 +1,11 @@
 package clientModules.response.receivers;
 
-import clientModules.Client;
 import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.ExecutionResultHandler;
 import clientModules.response.handlers.ServerErrorResultHandler;
+import clientModules.response.handlers.authenticationHandlers.User;
 import commands.CommandDescription;
 import commandsModule.handler.CommandHandler;
 import commandsModule.handler.CommandManager;
@@ -66,7 +66,7 @@ public class ScriptCommandReceiver implements CommandReceiver {
             boolean isSuccess = false;
             try {
                 RequestSender requestSender = new RequestSender();
-                CommandExecutionRequest commandRequest = new CommandExecutionRequest(Client.getLogin(), Client.getPassword(), scriptCommand, args);
+                CommandExecutionRequest commandRequest = new CommandExecutionRequest(User.getToken(), scriptCommand, args);
 
                 Response response = requestSender.sendRequest(dataTransferConnectionModule, commandRequest);
 

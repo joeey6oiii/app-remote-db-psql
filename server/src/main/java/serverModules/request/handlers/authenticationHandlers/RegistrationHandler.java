@@ -1,6 +1,7 @@
-package serverModules.request.handlers;
+package serverModules.request.handlers.authenticationHandlers;
 
 import serverModules.context.ServerContext;
+import serverModules.request.handlers.RequestHandler;
 
 public class RegistrationHandler implements RequestHandler {
 

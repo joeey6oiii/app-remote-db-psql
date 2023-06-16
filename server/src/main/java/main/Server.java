@@ -6,7 +6,6 @@ import defaultClasses.Person;
 import fileService.FileService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import passwordService.PasswordUtils;
 import requests.Request;
 import serverModules.connection.ConnectionModule;
 import serverModules.connection.ConnectionModuleFactory;
@@ -20,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

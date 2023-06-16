@@ -2,11 +2,12 @@ package clientModules.response.receivers;
 
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;
-import clientModules.response.handlers.AuthorizationHandler;
+import clientModules.response.handlers.authenticationHandlers.AuthorizationHandler;
 import clientModules.response.handlers.ServerErrorResultHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.AuthorizationRequest;
+import response.data.AuthenticationData;
 import response.responses.AuthorizationResponse;
 import response.responses.ErrorResponse;
 import response.responses.Response;
@@ -21,7 +22,7 @@ public class AuthorizationReceiver {
     }
 
     public boolean authorize(String login, char[] password) throws ServerUnavailableException, ResponseTimeoutException, IOException {
-        AuthorizationRequest authorizationRequest = new AuthorizationRequest(login, password);
+        AuthorizationRequest authorizationRequest = new AuthorizationRequest(new AuthenticationData(login, password));
         Response response = new RequestSender().sendRequest(dataTransferConnectionModule, authorizationRequest);
 
         if (response instanceof ErrorResponse errResponse) {

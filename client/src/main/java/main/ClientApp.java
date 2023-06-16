@@ -62,18 +62,16 @@ public class ClientApp {
             CommandHandler handler = new CommandHandler(commands, consoleInputReader, connectionModule);
 
             AuthenticationManager authenticationManager = new AuthenticationManager(connectionModule);
+            int authenticated = 0;
 
-            while (true) {
+            while (authenticated != 1) {
                 try {
-                    int authenticated = authenticationManager.authenticateFromInput();
+                    authenticated = authenticationManager.authenticateFromInput();
 
                     if (authenticated == 2) {
                         System.out.println("Shutdown...");
                         System.exit(0);
-                    } else if (authenticated == 1) {
-                        break;
                     }
-
                 } catch (ServerUnavailableException | ResponseTimeoutException | IOException | NullPointerException e) {
                     System.out.println("Server is currently unavailable. Please try again later");
                 }
