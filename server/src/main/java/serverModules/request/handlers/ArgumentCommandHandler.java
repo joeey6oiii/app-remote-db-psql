@@ -32,6 +32,6 @@ public class ArgumentCommandHandler<T> implements RequestHandler {
         SingleArgumentCommand<T> command = (SingleArgumentCommand<T>) commandHandler.getCommandByDescription(executionRequest.getDescriptionCommand());
         command.setSingleArgument(executionRequest.getArg());
 
-        commandHandler.execute(context.getConnectionModule(), context.getCallerBack(), executionRequest);
+        commandHandler.execute(context.getConnectionModule(), context.getRequestOrigin(), executionRequest);
     }
 }

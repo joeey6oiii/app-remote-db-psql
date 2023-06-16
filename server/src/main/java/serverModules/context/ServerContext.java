@@ -39,7 +39,7 @@ public class ServerContext {
      * A method that returns the current client.
      */
 
-    public RequestOrigin getCallerBack() {
+    public RequestOrigin getRequestOrigin() {
         return requestOrigin;
     }
 

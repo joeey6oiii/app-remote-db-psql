@@ -6,6 +6,7 @@ import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.ExecutionResultHandler;
 import clientModules.response.handlers.ExitCommandHandler;
+import clientModules.response.handlers.ServerErrorResultHandler;
 import commands.CommandDescription;
 import commandsModule.handler.CommandHandler;
 import exceptions.ResponseTimeoutException;
@@ -13,6 +14,7 @@ import exceptions.ServerUnavailableException;
 import requests.CommandExecutionRequest;
 import response.responses.AuthorizationResponse;
 import response.responses.CommandExecutionResponse;
+import response.responses.ErrorResponse;
 import response.responses.Response;
 
 import java.io.IOException;
@@ -53,16 +55,21 @@ public class ExitCommandReceiver implements CommandReceiver {
         Response response;
         try {
             response = new RequestSender().sendRequest(dataTransferConnectionModule, commandRequest);
+            boolean isSuccess = false;
 
-            if(response instanceof CommandExecutionResponse executionResponse) {
-                new ExitCommandHandler().handleResponse(executionResponse);
-
-                CommandHandler.getMissedCommands().remove(command, args);
-            } else if(response instanceof AuthorizationResponse authorizationResponse && !authorizationResponse.isSuccess()) {
+            if (response instanceof ErrorResponse errResponse) {
+                new ServerErrorResultHandler().handleResponse(errResponse);
+            } else if (response instanceof CommandExecutionResponse executionResponse) {
+                isSuccess = new ExitCommandHandler().handleResponse(executionResponse);
+            } else if (response instanceof AuthorizationResponse authorizationResponse && !authorizationResponse.isSuccess()) {
                 new AuthenticationManager(dataTransferConnectionModule).authenticateFromInput();
-                CommandHandler.getMissedCommands().put(command, args);
             } else {
                 System.out.println("Received invalid response from server");
+            }
+
+            if (isSuccess) {
+                CommandHandler.getMissedCommands().remove(command, args);
+            } else {
                 CommandHandler.getMissedCommands().put(command, args);
             }
 
@@ -72,6 +79,7 @@ public class ExitCommandReceiver implements CommandReceiver {
             System.out.println("Something went wrong during I/O operations");
         } catch (NullPointerException e) {
             System.out.println("Empty response received");
+            CommandHandler.getMissedCommands().put(command, args);
         }
     }
 
