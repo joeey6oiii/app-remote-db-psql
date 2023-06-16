@@ -25,7 +25,7 @@ public class ClientCommandsHandler implements RequestHandler {
     @Override
     public void handleRequest(ServerContext context) {
         ConnectionModule connectionModule = context.getConnectionModule();
-        RequestOrigin client = context.getCallerBack();
+        RequestOrigin client = context.getRequestOrigin();
         List<CommandDescription> commands = ClientCommandsKeeper.getCommands();
         ClientCommandsResponse commandsResponse = new ClientCommandsResponse(commands);
 

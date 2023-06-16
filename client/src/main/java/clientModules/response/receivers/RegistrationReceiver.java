@@ -3,9 +3,11 @@ package clientModules.response.receivers;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.RegistrationHandler;
+import clientModules.response.handlers.ServerErrorResultHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.RegistrationRequest;
+import response.responses.ErrorResponse;
 import response.responses.RegistrationResponse;
 import response.responses.Response;
 
@@ -22,7 +24,9 @@ public class RegistrationReceiver {
         RegistrationRequest registrationRequest = new RegistrationRequest(login, password);
         Response response = new RequestSender().sendRequest(dataTransferConnectionModule, registrationRequest);
 
-        if (!(response instanceof RegistrationResponse registrationResponse)) {
+        if (response instanceof ErrorResponse errResponse) {
+            new ServerErrorResultHandler().handleResponse(errResponse);
+        } else if (!(response instanceof RegistrationResponse registrationResponse)) {
             System.out.println("Received invalid response from server");
         } else {
             return new RegistrationHandler().handleResponse(registrationResponse);

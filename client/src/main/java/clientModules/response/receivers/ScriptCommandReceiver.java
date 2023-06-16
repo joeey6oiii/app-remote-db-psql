@@ -5,6 +5,7 @@ import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.ExecutionResultHandler;
+import clientModules.response.handlers.ServerErrorResultHandler;
 import commands.CommandDescription;
 import commandsModule.handler.CommandHandler;
 import commandsModule.handler.CommandManager;
@@ -14,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import requests.CommandExecutionRequest;
 import response.responses.AuthorizationResponse;
 import response.responses.CommandExecutionResponse;
+import response.responses.ErrorResponse;
 import response.responses.Response;
 
 import java.io.*;
@@ -48,6 +50,11 @@ public class ScriptCommandReceiver implements CommandReceiver {
             return;
         }
 
+        if (args.length < 2) {
+            System.out.println("Not enough arguments. Returning to the console input");
+            return;
+        }
+
         File script = new File(args[1]);
         if (!script.exists()) {
             System.out.println("File not found. Returning to the console input");
@@ -56,33 +63,34 @@ public class ScriptCommandReceiver implements CommandReceiver {
 
         CommandManager commandManager = new CommandManager();
         try (InputStream inputStream = new FileInputStream(script)) {
+            boolean isSuccess = false;
             try {
                 RequestSender requestSender = new RequestSender();
                 CommandExecutionRequest commandRequest = new CommandExecutionRequest(Client.getLogin(), Client.getPassword(), scriptCommand, args);
 
                 Response response = requestSender.sendRequest(dataTransferConnectionModule, commandRequest);
 
-                if(response instanceof CommandExecutionResponse executionResponse) {
-                    new ExecutionResultHandler().handleResponse(executionResponse);
-                } else if(response instanceof AuthorizationResponse authorizationResponse && !authorizationResponse.isSuccess()) {
+                if (response instanceof ErrorResponse errResponse) {
+                    new ServerErrorResultHandler().handleResponse(errResponse);
+                } else if (response instanceof CommandExecutionResponse executionResponse) {
+                    isSuccess = new ExecutionResultHandler().handleResponse(executionResponse);
+                } else if (response instanceof AuthorizationResponse authorizationResponse && !authorizationResponse.isSuccess()) {
                     new AuthenticationManager(dataTransferConnectionModule).authenticateFromInput();
-                    CommandHandler.getMissedCommands().put(scriptCommand, args);
-                    return;
                 } else {
                     System.out.println("Received invalid response from server");
-                    CommandHandler.getMissedCommands().put(scriptCommand, args);
-                    return;
                 }
 
-            } catch (StreamCorruptedException | ServerUnavailableException | ResponseTimeoutException e) {
-                CommandHandler.getMissedCommands().put(scriptCommand, args);
-                return;
+            } catch (StreamCorruptedException | ServerUnavailableException | ResponseTimeoutException ignored) {
             } catch (NullPointerException e) {
                 System.out.println("Empty response received");
-                return;
             }
 
-            CommandHandler.getMissedCommands().remove(scriptCommand, args);
+            if (isSuccess) {
+                CommandHandler.getMissedCommands().remove(scriptCommand, args);
+            } else {
+                CommandHandler.getMissedCommands().put(scriptCommand, args);
+                return;
+            }
 
             String contents = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             String[] lines = contents.split("\n");

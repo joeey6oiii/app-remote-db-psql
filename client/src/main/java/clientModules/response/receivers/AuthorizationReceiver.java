@@ -3,10 +3,12 @@ package clientModules.response.receivers;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.AuthorizationHandler;
+import clientModules.response.handlers.ServerErrorResultHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.AuthorizationRequest;
 import response.responses.AuthorizationResponse;
+import response.responses.ErrorResponse;
 import response.responses.Response;
 
 import java.io.IOException;
@@ -22,7 +24,9 @@ public class AuthorizationReceiver {
         AuthorizationRequest authorizationRequest = new AuthorizationRequest(login, password);
         Response response = new RequestSender().sendRequest(dataTransferConnectionModule, authorizationRequest);
 
-        if (!(response instanceof AuthorizationResponse authorizationResponse)) {
+        if (response instanceof ErrorResponse errResponse) {
+            new ServerErrorResultHandler().handleResponse(errResponse);
+        } else if (!(response instanceof AuthorizationResponse authorizationResponse)) {
             System.out.println("Received invalid response from server");
         } else {
             return new AuthorizationHandler().handleResponse(authorizationResponse);

@@ -4,7 +4,9 @@ import exceptions.IllegalManagerArgumentException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import requests.*;
+import response.responses.ErrorResponse;
 import serverModules.context.ServerContext;
+import serverModules.response.sender.ResponseSender;
 
 import java.util.LinkedHashMap;
 import java.util.Optional;
@@ -40,6 +42,8 @@ public class RequestHandlerManager {
                     new IllegalManagerArgumentException("RequestHandlerManager contains illegal argument")).handleRequest(context);
         } catch (IllegalManagerArgumentException e) {
             logger.error("Failed to manage request", e);
+            ErrorResponse errResponse = new ErrorResponse("Failed to manage request");
+            new ResponseSender().sendResponse(context.getConnectionModule(), context.getRequestOrigin(), errResponse);
         }
     }
 

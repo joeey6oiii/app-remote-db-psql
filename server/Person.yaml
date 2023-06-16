@@ -694,3 +694,25 @@
     x: 32435.0
     "y": 654
     name: null
+- id: 53
+  name: "lab7checlclient"
+  coordinates:
+    x: 2345
+    "y": 6543
+  creationDate: "2023-06-16T06:36:51.934+00:00"
+  height: 5
+  birthday: "2006-04-09T19:44:32.000+00:00"
+  passportID: "space cadet"
+  hairColor: "GRAY"
+  location: null
+- id: 54
+  name: "update_by_id"
+  coordinates:
+    x: -2134
+    "y": 21334
+  creationDate: "2023-06-16T06:43:49.865+00:00"
+  height: 5
+  birthday: "2008-08-08T04:08:07.000+00:00"
+  passportID: "8888888infinity"
+  hairColor: "GREEN"
+  location: null

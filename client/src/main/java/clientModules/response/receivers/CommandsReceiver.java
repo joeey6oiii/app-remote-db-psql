@@ -3,10 +3,12 @@ package clientModules.response.receivers;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.ClientCommandsHandler;
+import clientModules.response.handlers.ServerErrorResultHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.ClientCommandsRequest;
 import response.responses.ClientCommandsResponse;
+import response.responses.ErrorResponse;
 import response.responses.Response;
 
 import java.io.IOException;
@@ -35,7 +37,9 @@ public class CommandsReceiver {
         ClientCommandsRequest commandsRequest = new ClientCommandsRequest();
         Response response = new RequestSender().sendRequest(dataTransferConnectionModule, commandsRequest);
 
-        if(response instanceof ClientCommandsResponse commandsResponse){
+        if (response instanceof ErrorResponse errResponse) {
+            new ServerErrorResultHandler().handleResponse(errResponse);
+        } else if (response instanceof ClientCommandsResponse commandsResponse){
             new ClientCommandsHandler().handleResponse(commandsResponse);
         } else {
             return false;
