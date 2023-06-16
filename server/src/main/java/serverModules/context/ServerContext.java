@@ -1,7 +1,7 @@
 package serverModules.context;
 
 import requests.Request;
-import serverModules.request.data.RequestOrigin;
+import userModules.users.User;
 import serverModules.connection.ConnectionModule;
 
 /**
@@ -10,20 +10,20 @@ import serverModules.connection.ConnectionModule;
 
 public class ServerContext {
     private final ConnectionModule connectionModule;
-    private final RequestOrigin requestOrigin;
+    private final User user;
     private final Request request;
 
     /**
      * A constructor for a server context.
      *
      * @param connectionModule server core
-     * @param requestOrigin client
+     * @param user client
      * @param request client request
      */
 
-    public ServerContext(ConnectionModule connectionModule, RequestOrigin requestOrigin, Request request) {
+    public ServerContext(ConnectionModule connectionModule, User user, Request request) {
         this.connectionModule = connectionModule;
-        this.requestOrigin = requestOrigin;
+        this.user = user;
         this.request = request;
     }
 
@@ -39,8 +39,8 @@ public class ServerContext {
      * A method that returns the current client.
      */
 
-    public RequestOrigin getRequestOrigin() {
-        return requestOrigin;
+    public User getRequestOrigin() {
+        return user;
     }
 
     /**

@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import requests.CommandExecutionRequest;
 import response.responses.CommandExecutionResponse;
-import serverModules.request.data.RequestOrigin;
+import userModules.users.User;
 import serverModules.connection.ConnectionModule;
 import serverModules.response.sender.ExecutionResultResponseSender;
 
@@ -88,11 +88,11 @@ public class CommandHandler {
      * list, then sends the response to the client.
      *
      * @param connectionModule server core. Used to send data
-     * @param requestOrigin the client to whom to send response
+     * @param user the client to whom to send response
      * @param request the request, received from the client
      */
 
-    public void execute(ConnectionModule connectionModule, RequestOrigin requestOrigin, CommandExecutionRequest request) {
+    public void execute(ConnectionModule connectionModule, User user, CommandExecutionRequest request) {
         String response;
         try {
             CommandDescription simplifiedCommand = request.getDescriptionCommand();
@@ -122,7 +122,7 @@ public class CommandHandler {
             logger.fatal(response, e);
         }
 
-        new ExecutionResultResponseSender().sendResponse(connectionModule, requestOrigin, new CommandExecutionResponse(response));
+        new ExecutionResultResponseSender().sendResponse(connectionModule, user, new CommandExecutionResponse(response));
     }
 
 }

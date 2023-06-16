@@ -2,7 +2,7 @@ package serverModules.connection;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import serverModules.request.data.RequestOrigin;
+import userModules.users.User;
 import serverModules.request.data.RequestData;
 import utility.UdpDataTransferUtilities;
 
@@ -44,7 +44,7 @@ public class UdpConnectionModule implements ConnectionModule {
             socket.receive(packet);
             logger.debug("Received data");
 
-            return new RequestData(packet.getData(), new RequestOrigin(packet.getAddress(), packet.getPort()));
+            return new RequestData(packet.getData(), new User(packet.getAddress(), packet.getPort()));
         } catch (IOException e) {
             logger.error("Something went wrong during receiving data", e);
         }
