@@ -5,8 +5,8 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
-client/target/
-server/target/
+client/target
+server/target
 *.iws
 *.iml
 *.ipr

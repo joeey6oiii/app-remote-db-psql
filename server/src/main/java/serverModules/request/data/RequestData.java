@@ -1,12 +1,14 @@
 package serverModules.request.data;
 
+import userModules.users.User;
+
 /**
  * A class that contains the information about the received request.
  */
 
 public class RequestData {
     private byte[] data;
-    private RequestOrigin requestOrigin;
+    private User user;
     private final boolean nullStatus;
 
     /**
@@ -21,12 +23,12 @@ public class RequestData {
      * A constructor for a client request received.
      *
      * @param data received data
-     * @param requestOrigin the client
+     * @param user the client
      */
 
-    public RequestData(byte[] data, RequestOrigin requestOrigin) {
+    public RequestData(byte[] data, User user) {
         this.data = data;
-        this.requestOrigin = requestOrigin;
+        this.user = user;
         nullStatus = false;
     }
 
@@ -52,18 +54,18 @@ public class RequestData {
      * A method that returns the client.
      */
 
-    public RequestOrigin getCallerBack() {
-        return requestOrigin;
+    public User getCallerBack() {
+        return user;
     }
 
     /**
      * A method that sets the specified client.
      *
-     * @param requestOrigin client to set
+     * @param user client to set
      */
 
-    public void setCallerBack(RequestOrigin requestOrigin) {
-        this.requestOrigin = requestOrigin;
+    public void setCallerBack(User user) {
+        this.user = user;
     }
 
     /**

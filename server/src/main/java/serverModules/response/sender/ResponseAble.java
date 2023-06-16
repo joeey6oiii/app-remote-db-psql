@@ -1,6 +1,6 @@
 package serverModules.response.sender;
 
-import serverModules.request.data.RequestOrigin;
+import userModules.users.User;
 import serverModules.connection.ConnectionModule;
 
 /**
@@ -15,10 +15,10 @@ public interface ResponseAble<T> {
      * A method that sends response of a T type to the client.
      *
      * @param connectionModule server core
-     * @param requestOrigin client
+     * @param user client
      * @param response answer to the client
      */
 
-    void sendResponse(ConnectionModule connectionModule, RequestOrigin requestOrigin, T response);
+    void sendResponse(ConnectionModule connectionModule, User user, T response);
 
 }

@@ -4,7 +4,7 @@ import commandsModule.commands.SingleArgumentCommand;
 import commandsModule.handler.CommandHandler;
 import requests.CommandExecutionRequest;
 import requests.SingleArgumentCommandExecutionRequest;
-import serverModules.request.data.RequestOrigin;
+import userModules.users.User;
 import serverModules.connection.ConnectionModule;
 import serverModules.context.ServerContext;
 
@@ -18,7 +18,7 @@ public class ArgumentCommandHandler<T> implements RequestHandler {
 
     /**
      * A method that handles the client single argument command execution request and calls the
-     * {@link CommandHandler#execute(ConnectionModule, RequestOrigin, CommandExecutionRequest)} method.
+     * {@link CommandHandler#execute(ConnectionModule, User, CommandExecutionRequest)} method.
      *
      * @param context the specified server settings
      */

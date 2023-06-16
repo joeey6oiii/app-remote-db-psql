@@ -2,7 +2,7 @@ package serverModules.request.handlers;
 
 import commandsModule.handler.CommandHandler;
 import requests.CommandExecutionRequest;
-import serverModules.request.data.RequestOrigin;
+import userModules.users.User;
 import serverModules.connection.ConnectionModule;
 import serverModules.context.ServerContext;
 
@@ -14,7 +14,7 @@ public class ClientCommandHandler implements RequestHandler {
 
     /**
      * A method that handles the client command execution request and calls the
-     * {@link CommandHandler#execute(ConnectionModule, RequestOrigin, CommandExecutionRequest)} method.
+     * {@link CommandHandler#execute(ConnectionModule, User, CommandExecutionRequest)} method.
      *
      * @param context the specified server settings
      */
@@ -22,7 +22,7 @@ public class ClientCommandHandler implements RequestHandler {
     @Override
     public void handleRequest(ServerContext context) {
         ConnectionModule connectionModule = context.getConnectionModule();
-        RequestOrigin client = context.getRequestOrigin();
+        User client = context.getRequestOrigin();
         CommandExecutionRequest request = (CommandExecutionRequest) context.getRequest();
 
         new CommandHandler().execute(connectionModule, client, request);
