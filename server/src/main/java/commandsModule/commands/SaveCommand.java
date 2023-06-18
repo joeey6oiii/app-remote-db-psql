@@ -52,19 +52,8 @@ public class SaveCommand implements BaseCommand {
 
     @Override
     public void execute() throws IOException {
-        Database database = Database.getInstance();
-
-        File workPathAsFile = FileService.getWorkPathAsFile();
-        String workDir = "server";
-        if (FileService.isProgramRunningFromJar()) {
-            workDir = workPathAsFile.getParentFile().getPath();
-        }
-        File file = new File(workDir + "/Person.yaml");
-        FileService fileService = new FileService();
-        if (!file.exists()) {
-            fileService.createFile(file);
-        }
-        fileService.writeObjectToFile(file, database.getCollection());
+        // todo
         logger.info("Saved collection to a file");
     }
+
 }

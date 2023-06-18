@@ -15,7 +15,7 @@ import java.net.*;
 
 public class UdpConnectionModule implements ConnectionModule {
     private static final Logger logger = LogManager.getLogger("logger.ConnectionModule");
-    private final int PACKET_SIZE = UdpDataTransferUtilities.INSTANCE.getPacketSizeValue();
+    private final int PACKET_SIZE = UdpDataTransferUtilities.INSTANCE.getPacketSize();
     private final DatagramSocket socket;
 
     /**
