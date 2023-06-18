@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 
 public class UdpConnectionModule implements DataTransferConnectionModule {
-    private final int PACKET_SIZE = UdpDataTransferUtilities.INSTANCE.getPacketSizeValue();
+    private final int PACKET_SIZE = UdpDataTransferUtilities.INSTANCE.getPacketSize();
     private DatagramChannel datagramChannel;
     private final SocketAddress socketAddress;
 

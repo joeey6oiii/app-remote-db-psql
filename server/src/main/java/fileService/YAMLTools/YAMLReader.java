@@ -19,6 +19,7 @@ import java.util.List;
  * missing creator properties, null creator properties and null for primitives.
  */
 
+@Deprecated
 public class YAMLReader {
     private final ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory())
             .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL, true)

@@ -2,6 +2,7 @@ package main;
 
 import database.Database;
 import database.LoadService;
+import database.PersonDB;
 import defaultClasses.Person;
 import fileService.FileService;
 import org.apache.logging.log4j.LogManager;
@@ -18,7 +19,9 @@ import serverModules.request.reader.RequestReader;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -38,44 +41,6 @@ public class Server {
      */
 
     public static void main(String[] args) throws SocketException {
-
-        Database database = Database.getInstance();
-
-        File workPathAsFile = FileService.getWorkPathAsFile();
-        String workDir = "server";
-        if (FileService.isProgramRunningFromJar()) {
-            workDir = workPathAsFile.getParentFile().getPath();
-        }
-
-        File file = new File(workDir + "/Person.yaml");
-        FileService fileService = new FileService();
-        Class<Person> type = Person.class;
-
-        List<Person> list = new ArrayList<>();
-        try {
-            if (file.exists()) {
-                logger.info("Reading file...");
-                if (file.length() == 0) {
-                    logger.info("Upload data not found: File is empty");
-                } else {
-                    list = fileService.readObjectsFromFile(file, type);
-                }
-            } else {
-                logger.fatal("\"Person.yaml\" file not found");
-                fileService.createFile(file);
-                logger.info("Created new eponymous file");
-            }
-        } catch (IOException | NullPointerException e) {
-            logger.fatal("Failed to proceed file. Can not continue program execution", e);
-            System.exit(-99);
-        }
-
-        if (!list.isEmpty()) {
-            logger.info("Uploading data from file to database...");
-            new LoadService().loadToDatabase(list, database);
-        } else {
-            logger.info("Continuing execution with an empty database");
-        }
 
         ConnectionModuleFactory factory = new UdpConnectionModuleFactory();
         ConnectionModule module;

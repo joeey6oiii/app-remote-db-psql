@@ -37,6 +37,7 @@ public class FileService {
      * A method that returns current program working path as a file.
      */
 
+    @Deprecated
     public static File getWorkPathAsFile() {
         return workPathAsFile;
     }
@@ -47,6 +48,7 @@ public class FileService {
      * @return true if program is running from a jar file, otherwise false
      */
 
+    @Deprecated
     public static boolean isProgramRunningFromJar() {
         return runningFromJar;
     }
@@ -73,6 +75,7 @@ public class FileService {
      * @throws IOException if failed during I/O operations
      */
 
+    @Deprecated
     public <T> List<T> readObjectsFromFile(File file, Class<T> type) throws IOException {
         return new YAMLReader().read(file, type);
     }
@@ -85,12 +88,23 @@ public class FileService {
      * @throws IOException if failed during I/O operations
      */
 
+    @Deprecated
     public void writeObjectToFile(File file, Object obj) throws IOException {
         if (!file.exists()) {
             this.createFile(file);
         }
         new YAMLWriter().writeYAML(obj, file);
     }
+
+    /**
+     * The method reads the content of an InputStream and returns an array of strings,
+     * where each string represents a line of the input stream.
+     * The method assumes that the input stream uses UTF-8 encoding.
+     *
+     * @param inputStream The input stream from which to read the lines.
+     * @return An array of strings, where each string represents a line of the input stream.
+     * @throws IOException If an I/O error occurs while reading the input stream.
+     */
 
     public String[] readLines(InputStream inputStream) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
@@ -104,7 +118,7 @@ public class FileService {
     }
 
     /**
-     * Creates new file.
+     * Creates a new file.
      *
      * @param file file to create
      * @throws IOException if failed during I/O operations

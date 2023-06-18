@@ -14,6 +14,7 @@ import fileService.FileService;
  * @author Dmitrii Chebanenko
  */
 
+@Deprecated
 public class YAMLWriter {
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory()).findAndRegisterModules()
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);

@@ -7,4 +7,8 @@ public interface PasswordEncryptor {
 
     EncryptedPassword encryptPassword(char[] password) throws NoSuchAlgorithmException, NoSuchProviderException;
 
+    byte[] generateSalt();
+
+    String generatePepper();
+
 }

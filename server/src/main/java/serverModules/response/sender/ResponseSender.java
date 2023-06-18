@@ -37,7 +37,7 @@ public class ResponseSender implements ResponseAble<Response> {
             final int clientPort = user.getPort();
             try {
                 byte[] data = serializer.serialize(response);
-                int maxPacketSize = UdpDataTransferUtilities.INSTANCE.getPacketSizeValue();
+                int maxPacketSize = UdpDataTransferUtilities.INSTANCE.getPacketSize();
                 int packetIndex = 0;
                 int offset = 0;
 
