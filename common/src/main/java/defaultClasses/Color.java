@@ -25,7 +25,7 @@ public enum Color implements isBuildable, Serializable {
     WHITE("white");
 
     private final String colorName;
-    private final static Map<String, Color> colors = Arrays.stream(Color.values()).collect(Collectors.toMap(k->k.colorName, v->v));
+    private final static Map<String, Color> colors = Arrays.stream(Color.values()).collect(Collectors.toMap(k -> k.colorName, v -> v));
 
     /**
      * Private constructor for naming the constants.
@@ -50,7 +50,7 @@ public enum Color implements isBuildable, Serializable {
      * @return {@link Color} if a list contains the specified name of the color, otherwise null
      */
 
-    public static Color getColorByName(String colorName){
+    public static Color getColorFromName(String colorName){
         return colors.get(colorName);
     }
 

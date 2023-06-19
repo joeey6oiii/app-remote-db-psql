@@ -1,37 +1,18 @@
 package userModules.users;
 
-import java.util.Objects;
+public class AuthenticatedUser extends RegisteredUser {
+    private final RegisteredUser registeredUser;
+    // todo session
 
-public class AuthenticatedUser extends User {
-    private final AuthenticatedUserData authenticatedUserData;
-
-    public AuthenticatedUser(AuthenticatedUserData authenticatedUserData, User user) {
-        super(user.getAddress(), user.getPort());
-        this.authenticatedUserData = authenticatedUserData;
+    public AuthenticatedUser(RegisteredUser registeredUser) {
+        super(registeredUser.getRegisteredUserData(), registeredUser.getUser());
+        this.registeredUser = registeredUser;
     }
 
-    public AuthenticatedUserData getAuthenticatedUserData() {
-        return this.authenticatedUserData;
+    public RegisteredUser getRegisteredUser() {
+        return this.registeredUser;
     }
 
-    @Override
-    public String toString() {
-        return "AuthenticatedUser{" +
-                "authenticatedUserData=" + authenticatedUserData +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AuthenticatedUser that = (AuthenticatedUser) o;
-        return Objects.equals(authenticatedUserData, that.authenticatedUserData);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(authenticatedUserData);
-    }
+    // todo toStr equals hashCode
 
 }

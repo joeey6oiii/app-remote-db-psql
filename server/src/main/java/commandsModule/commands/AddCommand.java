@@ -1,7 +1,5 @@
 package commandsModule.commands;
 
-import database.Database;
-import database.IDService;
 import defaultClasses.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -70,8 +68,7 @@ public class AddCommand implements BaseCommand, SingleArgumentCommand<Person> {
 
     @Override
     public void execute() throws IOException {
-        Database.getInstance().add(IDService.recalculateId(argument));
-        this.response = "Element was added";
+        // todo
         logger.info("Executed AddCommand");
     }
 }

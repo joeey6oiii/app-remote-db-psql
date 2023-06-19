@@ -1,8 +1,7 @@
 package defaultClasses;
 
-
 /**
- * Interface that allows objects to be created
- * @author Dmitrii Chebanenko
+ * Interface that marks classes objects of which can be built with third party utils.
  */
+
 public interface isBuildable {}

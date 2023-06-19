@@ -1,7 +1,7 @@
 package commandsModule.commands;
 
 import comparators.HeightComparator;
-import database.Database;
+import postgreSQLDB.Database;
 import defaultClasses.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
