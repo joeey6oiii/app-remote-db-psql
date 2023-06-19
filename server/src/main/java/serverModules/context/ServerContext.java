@@ -1,6 +1,9 @@
 package serverModules.context;
 
 import requests.Request;
+import userModules.passwordService.EncryptedPassword;
+import userModules.users.RegisteredUser;
+import userModules.users.RegisteredUserData;
 import userModules.users.User;
 import serverModules.connection.ConnectionModule;
 

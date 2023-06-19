@@ -11,7 +11,6 @@ import java.util.Objects;
  */
 
 public class Person implements isBuildable, Comparable<Person>, Serializable {
-    private static Integer identifier = 0;
     private Integer id;
     private String name;
     private Coordinates coordinates;
@@ -27,7 +26,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      */
 
     public Person() {
-        this.id = ++identifier;
         this.creationDate = new Date();
     }
 
@@ -46,7 +44,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
     public Person(String name, Coordinates coordinates, int height,
                   Date birthday, String passportID,
                   Color hairColor, Location location) {
-        this.id = ++identifier;
         this.name = name;
         this.coordinates = coordinates;
         this.creationDate = new Date();

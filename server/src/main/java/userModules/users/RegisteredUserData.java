@@ -2,11 +2,11 @@ package userModules.users;
 
 import userModules.passwordService.EncryptedPassword;
 
-public class AuthenticatedUserData {
+public class RegisteredUserData {
     private final String login;
     private final EncryptedPassword encryptedPassword;
 
-    public AuthenticatedUserData(String login, EncryptedPassword encryptedPassword) {
+    public RegisteredUserData(String login, EncryptedPassword encryptedPassword) {
         this.login = login;
         this.encryptedPassword = encryptedPassword;
     }

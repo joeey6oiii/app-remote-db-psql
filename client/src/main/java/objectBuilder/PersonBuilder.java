@@ -85,7 +85,7 @@ public class PersonBuilder implements BuildAble {
         consoleInput = consoleInputReader.nextLine().trim();
         Color hairColor = null;
         if (!consoleInput.isEmpty()) {
-            hairColor = Color.getColorByName(consoleInput.toLowerCase());
+            hairColor = Color.getColorFromName(consoleInput.toLowerCase());
         }
         person.setHairColor(hairColor);
 
