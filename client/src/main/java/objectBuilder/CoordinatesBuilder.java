@@ -6,10 +6,7 @@ import java.util.Scanner;
 
 /**
  * A class that allows the user to create an object of class Coordinates.
- *
- * @author Dmitrii Chebanenko
  */
-
 public class CoordinatesBuilder implements BuildAble {
 
     /**
@@ -17,7 +14,6 @@ public class CoordinatesBuilder implements BuildAble {
      *
      * @return coordinates
      */
-
     public Coordinates buildObject() {
         Coordinates coordinates;
         try {
@@ -37,5 +33,4 @@ public class CoordinatesBuilder implements BuildAble {
 
         return coordinates;
     }
-
 }

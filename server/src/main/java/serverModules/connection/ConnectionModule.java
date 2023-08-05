@@ -7,7 +7,6 @@ import java.net.InetAddress;
 /**
  * An interface for all connection module-implementers.
  */
-
 public interface ConnectionModule {
 
     /**
@@ -15,7 +14,6 @@ public interface ConnectionModule {
      *
      * @return a class that contains the information about the received request
      */
-
     RequestData receiveData();
 
     /**
@@ -25,7 +23,5 @@ public interface ConnectionModule {
      * @param address address to send to
      * @param port port to send to
      */
-
     void sendData(byte[] data, InetAddress address, int port);
-
 }

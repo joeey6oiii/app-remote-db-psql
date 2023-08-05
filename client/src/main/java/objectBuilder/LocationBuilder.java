@@ -6,10 +6,7 @@ import java.util.Scanner;
 
 /**
  * A class that allows the user to create an object of class Location.
- *
- * @author Dmitrii Chebanenko
  */
-
 public class LocationBuilder implements BuildAble {
 
     /**
@@ -17,7 +14,6 @@ public class LocationBuilder implements BuildAble {
      *
      * @return Location
      */
-
     public Location buildObject() {
         Scanner consoleInputReader = new Scanner(System.in);
         Location location = new Location();
@@ -65,5 +61,4 @@ public class LocationBuilder implements BuildAble {
 
         return location;
      }
-
 }

@@ -14,9 +14,12 @@ import defaultClasses.Person;
  * @see PassportIDValidator
  * @see LocationValidator
  */
-
 public class PersonValidator implements ValidateAble<Person> {
 
+    /**
+     * @param person value to validate
+     * @return true if person is valid (all field values are valid), false otherwise
+     */
     @Override
     public boolean validate(Person person) {
         return person.getId() > 0 && person.getCreationDate() != null

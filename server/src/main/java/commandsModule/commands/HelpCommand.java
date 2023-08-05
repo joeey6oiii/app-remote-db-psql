@@ -1,5 +1,6 @@
 package commandsModule.commands;
 
+import commands.CommandType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 /**
  * A class that implements the "help" command.
  */
-
+@Command
 public class HelpCommand implements BaseCommand {
     private static final Logger logger = LogManager.getLogger("logger.HelpCommand");
     private String response;
@@ -21,7 +22,6 @@ public class HelpCommand implements BaseCommand {
      *
      * @param commands collection with the commands
      */
-
     public HelpCommand(Map<String, BaseCommand> commands) {
         this.commands = commands;
     }
@@ -29,7 +29,6 @@ public class HelpCommand implements BaseCommand {
     /**
      * A method that returns the name of the command.
      */
-
     @Override
     public String getName() {
         return "help";
@@ -38,16 +37,24 @@ public class HelpCommand implements BaseCommand {
     /**
      * A method that returns the response of the command.
      */
-
     @Override
     public String getResponse() {
         return this.response;
     }
 
     /**
+     * HelpCommand is a {@link CommandType#NO_ARGUMENT} command.
+     *
+     * @return the type of the command
+     */
+    @Override
+    public CommandType getType() {
+        return CommandType.NO_ARGUMENT;
+    }
+
+    /**
      * A method that returns the description of the command.
      */
-
     @Override
     public String describe() {
         return "Displays information about console application commands";
@@ -60,7 +67,6 @@ public class HelpCommand implements BaseCommand {
      *
      * @throws IOException when failed during I/O operations
      */
-
     @Override
     public void execute() throws IOException {
         int commandLength = commands.keySet().stream().mapToInt(String::length).max().orElse(0);
@@ -72,5 +78,4 @@ public class HelpCommand implements BaseCommand {
         this.response = builder.substring(0, builder.length() - 1);
         logger.info("Executed HelpCommand");
     }
-
 }

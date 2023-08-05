@@ -12,7 +12,6 @@ import java.io.IOException;
  *
  * @param <T> concrete response
  */
-
 public interface RequestAble<T extends Response, V> {
 
     /**
@@ -21,7 +20,5 @@ public interface RequestAble<T extends Response, V> {
      * @param module client core
      * @param request concrete request
      */
-
     T sendRequest(DataTransferConnectionModule module, V request) throws IOException, ServerUnavailableException, ResponseTimeoutException;
-
 }

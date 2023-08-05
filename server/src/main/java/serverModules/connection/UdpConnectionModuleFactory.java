@@ -9,7 +9,6 @@ import java.net.SocketException;
 /**
  * A class that represents a factory of {@link UdpConnectionModule} objects.
  */
-
 public class UdpConnectionModuleFactory implements ConnectionModuleFactory {
     private static final Logger logger = LogManager.getLogger("logger.DatagramConnectionModuleFactory");
 
@@ -19,7 +18,6 @@ public class UdpConnectionModuleFactory implements ConnectionModuleFactory {
      * @param PORT specified port of the server
      * @return server core
      */
-
     @Override
     public UdpConnectionModule createConnectionModule(int PORT) {
         try {

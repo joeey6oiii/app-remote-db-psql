@@ -3,7 +3,7 @@ package main;
 import defaultClasses.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import postgreSQLDB.collectionDB.CollectionDB;
+import databaseModule.psql.CollectionDB;
 import requests.Request;
 import serverModules.connection.ConnectionModule;
 import serverModules.connection.ConnectionModuleFactory;
@@ -21,11 +21,8 @@ import java.util.LinkedHashSet;
 /**
  * Program entry point class. Contains <code>main()</code> method.
  */
-
 public class Server {
-
     private static final Logger logger = LogManager.getLogger("logger.Server");
-
     private static final int PORT = 64999;
 
     /**
@@ -33,9 +30,7 @@ public class Server {
      *
      * @param args the command line arguments
      */
-
     public static void main(String[] args) throws IOException {
-
         try (CollectionDB<LinkedHashSet<Person>> collectionDB = new CollectionDB<>(new LinkedHashSet<>())) {
             logger.info("Connected to the database");
 
@@ -49,7 +44,6 @@ public class Server {
                 logger.error("An error occurred while creating server core. Can not run a new server");
                 throw e;
             }
-
             logger.info("Server started");
 
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -59,6 +53,7 @@ public class Server {
                     logger.error("An error occurred while closing the database connection", e);
                 }
             }));
+
             while (true) {
                 try {
                     RequestData requestData = module.receiveData();
@@ -82,5 +77,4 @@ public class Server {
             logger.error("An error occurred while connecting to the database", e);
         }
     }
-
 }

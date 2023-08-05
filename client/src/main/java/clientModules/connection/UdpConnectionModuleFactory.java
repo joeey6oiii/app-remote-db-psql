@@ -7,7 +7,6 @@ import java.nio.channels.DatagramChannel;
 /**
  * A class that represents a factory of {@link UdpConnectionModule} objects.
  */
-
 public class UdpConnectionModuleFactory implements DataTransferConnectionModuleFactory {
 
     /**
@@ -16,7 +15,6 @@ public class UdpConnectionModuleFactory implements DataTransferConnectionModuleF
      * @param address specified address of the server
      * @return client connection core
      */
-
     @Override
     public UdpConnectionModule create(SocketAddress address) {
         try {
@@ -36,7 +34,6 @@ public class UdpConnectionModuleFactory implements DataTransferConnectionModuleF
      * @param isBlocking blocking state of the datagram channel
      * @return client connection core
      */
-
     public UdpConnectionModule createConfigureBlocking(SocketAddress address, boolean isBlocking) {
         DatagramChannel datagramChannel;
         try {
@@ -57,7 +54,6 @@ public class UdpConnectionModuleFactory implements DataTransferConnectionModuleF
      * @param module client connection core
      * @param isBlocking blocking state of the datagram channel
      */
-
     public void configureBlocking(UdpConnectionModule module, boolean isBlocking) {
         try {
             if (module.getDatagramChannel() != null && module.getDatagramChannel().isOpen()) {
@@ -68,5 +64,4 @@ public class UdpConnectionModuleFactory implements DataTransferConnectionModuleF
             System.exit(-99);
         }
     }
-
 }

@@ -10,5 +10,4 @@ public interface PasswordEncryptor {
     byte[] generateSalt();
 
     String generatePepper();
-
 }

@@ -1,6 +1,6 @@
 package serverModules.request.handlers;
 
-import commandsModule.handler.CommandHandler;
+import commandsModule.commandsManagement.CommandHandler;
 import requests.CommandExecutionRequest;
 import userModules.users.User;
 import serverModules.connection.ConnectionModule;
@@ -9,7 +9,6 @@ import serverModules.context.ServerContext;
 /**
  * A class that works with the client command execution request.
  */
-
 public class ClientCommandHandler implements RequestHandler {
 
     /**
@@ -18,7 +17,6 @@ public class ClientCommandHandler implements RequestHandler {
      *
      * @param context the specified server settings
      */
-
     @Override
     public void handleRequest(ServerContext context) {
         ConnectionModule connectionModule = context.getConnectionModule();

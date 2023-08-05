@@ -1,10 +1,12 @@
 package commandsModule.commands;
 
-import commandsModule.handler.CommandHandler;
+import commands.CommandType;
+import commandsModule.commandsManagement.CommandHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,7 +14,7 @@ import java.util.stream.Collectors;
 /**
  * A class that implements the "history" command.
  */
-
+@Command
 public class HistoryCommand implements BaseCommand {
     private static final Logger logger = LogManager.getLogger("logger.HistoryCommand");
     private String response;
@@ -23,7 +25,6 @@ public class HistoryCommand implements BaseCommand {
      *
      * @param commands collection with the commands
      */
-
     public HistoryCommand(Map<String, BaseCommand> commands) {
         this.commands = commands;
     }
@@ -31,7 +32,6 @@ public class HistoryCommand implements BaseCommand {
     /**
      * A method that returns the name of the command.
      */
-
     @Override
     public String getName() {
         return "history";
@@ -40,16 +40,24 @@ public class HistoryCommand implements BaseCommand {
     /**
      * A method that returns the response of the command.
      */
-
     @Override
     public String getResponse() {
         return this.response;
     }
 
     /**
+     * HistoryCommand is a {@link CommandType#NO_ARGUMENT} command.
+     *
+     * @return the type of the command
+     */
+    @Override
+    public CommandType getType() {
+        return CommandType.NO_ARGUMENT;
+    }
+
+    /**
      * A method that returns the description of the command.
      */
-
     @Override
     public String describe() {
         return "Outputs last input 9 commands without arguments";
@@ -64,7 +72,6 @@ public class HistoryCommand implements BaseCommand {
      *
      * @throws IOException when failed during I/O operations
      */
-
     @Override
     public void execute() throws IOException {
         List<BaseCommand> list = CommandHandler.getHistory();

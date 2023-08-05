@@ -83,5 +83,4 @@ public class AuthenticationManager {
 
         return input;
     }
-
 }

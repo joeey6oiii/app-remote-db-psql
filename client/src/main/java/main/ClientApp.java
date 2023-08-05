@@ -5,8 +5,8 @@ import clientModules.connection.DataTransferConnectionModule;
 import clientModules.connection.UdpConnectionModuleFactory;
 import clientModules.response.receivers.CommandsReceiver;
 import commands.CommandDescription;
-import commandsModule.ClientCommandsKeeper;
-import commandsModule.handler.CommandHandler;
+import commandsModule.commands.CommandRegistry;
+import commandsModule.commandsManagement.CommandHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 
@@ -22,9 +22,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Program entry point class. Contains <code>main()</code> method.
  */
-
 public class ClientApp {
-
     private final static int PORT = 64999;
 
     /**
@@ -32,7 +30,6 @@ public class ClientApp {
      *
      * @param args the command line arguments
      */
-
     public static void main(String[] args) {
 
         UdpConnectionModuleFactory factory = new UdpConnectionModuleFactory();
@@ -57,7 +54,7 @@ public class ClientApp {
             }
             System.out.println("Commands initialized");
 
-            List<CommandDescription> commands = ClientCommandsKeeper.getCommands();
+            List<CommandDescription> commands = CommandRegistry.getCommands();
             Scanner consoleInputReader = new Scanner(System.in);
             CommandHandler handler = new CommandHandler(commands, consoleInputReader, connectionModule);
 
@@ -90,5 +87,4 @@ public class ClientApp {
             System.out.println("Unexpected error happened during client operations");
         }
     }
-
 }

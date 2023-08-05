@@ -14,5 +14,4 @@ public class AuthenticatedUser extends RegisteredUser {
     }
 
     // todo toStr equals hashCode
-
 }

@@ -1,4 +1,4 @@
-package commandsModule.handler;
+package commandsModule.commandsManagement;
 
 import commands.CommandDescription;
 import commandsModule.commands.*;
@@ -16,7 +16,6 @@ import java.util.*;
 /**
  * A class that contains and executes commands.
  */
-
 public class CommandHandler {
     private static final Logger logger = LogManager.getLogger("logger.CommandHandler");
     private final Map<String, BaseCommand> commands;
@@ -27,7 +26,6 @@ public class CommandHandler {
      * Creates a command collection and fills it with the available commands.
      * Creates a history list where executed commands will be stored.
      */
-
     public CommandHandler() {
         commands = new LinkedHashMap<>();
         history = getHistory();
@@ -54,7 +52,6 @@ public class CommandHandler {
      *
      * @return returns a list of commands
      */
-
     public Map<String, BaseCommand> getCommands() {
         return commands;
     }
@@ -64,7 +61,6 @@ public class CommandHandler {
      *
      * @return history of used commands
      */
-
     public static List<BaseCommand> getHistory() {
         if (history == null) {
             history = new ArrayList<>();
@@ -77,7 +73,6 @@ public class CommandHandler {
      *
      * @param description a command description, by which the relevant command will be selected
      */
-
     public BaseCommand getCommandByDescription(CommandDescription description)  {
         return commands.get(description.getCommandName().toLowerCase());
     }
@@ -91,7 +86,6 @@ public class CommandHandler {
      * @param user the client to whom to send response
      * @param request the request, received from the client
      */
-
     public void execute(ConnectionModule connectionModule, User user, CommandExecutionRequest request) {
         String response;
         try {
@@ -124,5 +118,4 @@ public class CommandHandler {
 
         new ExecutionResultResponseSender().sendResponse(connectionModule, user, new CommandExecutionResponse(response));
     }
-
 }

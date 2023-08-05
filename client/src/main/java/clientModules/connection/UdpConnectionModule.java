@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * A class that represents the data transfer datagram connection module.
  */
-
 public class UdpConnectionModule implements DataTransferConnectionModule {
     private final int PACKET_SIZE = UdpDataTransferUtilities.INSTANCE.getPacketSize();
     private DatagramChannel datagramChannel;
@@ -32,7 +31,6 @@ public class UdpConnectionModule implements DataTransferConnectionModule {
      * @param datagramChannel the specified datagram channel
      * @param socketAddress the specified server address
      */
-
     protected UdpConnectionModule(DatagramChannel datagramChannel, SocketAddress socketAddress) {
         this.datagramChannel = datagramChannel;
         this.socketAddress = socketAddress;
@@ -41,7 +39,6 @@ public class UdpConnectionModule implements DataTransferConnectionModule {
     /**
      * A method that returns the datagram channel.
      */
-
     protected DatagramChannel getDatagramChannel() {
         return this.datagramChannel;
     }
@@ -51,7 +48,6 @@ public class UdpConnectionModule implements DataTransferConnectionModule {
      *
      * @throws IOException if failed during I/O operations
      */
-
     @Override
     public void connect() throws IOException {
         if (!datagramChannel.isConnected() && datagramChannel.isOpen()) {
@@ -64,7 +60,6 @@ public class UdpConnectionModule implements DataTransferConnectionModule {
      *
      * @throws IOException if failed during I/O operations
      */
-
     @Override
     public void disconnect() throws IOException {
         if (datagramChannel.isConnected() && datagramChannel.isOpen()) {
@@ -84,7 +79,6 @@ public class UdpConnectionModule implements DataTransferConnectionModule {
      * @throws IOException if failed during I/O operations
      * @throws ServerUnavailableException if the server was unavailable during sending and receiving operations
      */
-
     @Override
     public void sendData(byte[] data) throws IOException, ServerUnavailableException {
         ByteBuffer buffer = ByteBuffer.allocate(PACKET_SIZE);
@@ -105,7 +99,6 @@ public class UdpConnectionModule implements DataTransferConnectionModule {
      * @throws ServerUnavailableException if the server was unavailable during sending and receiving operations
      * @throws ResponseTimeoutException if client could not get response from the server during the given time
      */
-
     @Override
     public byte[] receiveData() throws IOException, ServerUnavailableException, ResponseTimeoutException {
         ByteBuffer buffer = ByteBuffer.allocate(PACKET_SIZE);
@@ -190,5 +183,4 @@ public class UdpConnectionModule implements DataTransferConnectionModule {
 
         return data;
     }
-
 }

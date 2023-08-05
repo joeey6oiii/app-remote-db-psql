@@ -1,7 +1,7 @@
 package serverModules.request.handlers;
 
-import commandsModule.commands.SingleArgumentCommand;
-import commandsModule.handler.CommandHandler;
+import commandsModule.commands.ObjectArgumentCommand;
+import commandsModule.commandsManagement.CommandHandler;
 import requests.CommandExecutionRequest;
 import requests.SingleArgumentCommandExecutionRequest;
 import userModules.users.User;
@@ -13,7 +13,6 @@ import serverModules.context.ServerContext;
  *
  * @param <T> the specified argument
  */
-
 public class ArgumentCommandHandler<T> implements RequestHandler {
 
     /**
@@ -22,15 +21,14 @@ public class ArgumentCommandHandler<T> implements RequestHandler {
      *
      * @param context the specified server settings
      */
-
     @Override
     public void handleRequest(ServerContext context) {
         CommandHandler commandHandler = new CommandHandler();
 
         SingleArgumentCommandExecutionRequest<T> executionRequest = (SingleArgumentCommandExecutionRequest<T>) context.getRequest();
 
-        SingleArgumentCommand<T> command = (SingleArgumentCommand<T>) commandHandler.getCommandByDescription(executionRequest.getDescriptionCommand());
-        command.setSingleArgument(executionRequest.getArg());
+        ObjectArgumentCommand<T> command = (ObjectArgumentCommand<T>) commandHandler.getCommandByDescription(executionRequest.getDescriptionCommand());
+        command.setObjArgument(executionRequest.getArg());
 
         commandHandler.execute(context.getConnectionModule(), context.getRequestOrigin(), executionRequest);
     }

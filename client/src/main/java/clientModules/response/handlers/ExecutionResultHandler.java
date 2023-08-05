@@ -5,7 +5,6 @@ import response.responses.CommandExecutionResponse;
 /**
  * A class that works with the command execution result response.
  */
-
 public class ExecutionResultHandler implements ResponseHandler<CommandExecutionResponse> {
 
     /**
@@ -13,7 +12,6 @@ public class ExecutionResultHandler implements ResponseHandler<CommandExecutionR
      *
      * @param response the received response
      */
-
     @Override
     public boolean handleResponse(CommandExecutionResponse response) {
         if (response != null) {
@@ -25,5 +23,4 @@ public class ExecutionResultHandler implements ResponseHandler<CommandExecutionR
 
         return true;
     }
-
 }

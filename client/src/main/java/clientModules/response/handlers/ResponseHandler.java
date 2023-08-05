@@ -5,7 +5,6 @@ import response.responses.Response;
 /**
  * An interface for all response handler-implementers.
  */
-
 public interface ResponseHandler<T extends Response> {
 
     /**
@@ -13,7 +12,5 @@ public interface ResponseHandler<T extends Response> {
      *
      * @param response the received response
      */
-
     boolean handleResponse(T response);
-
 }

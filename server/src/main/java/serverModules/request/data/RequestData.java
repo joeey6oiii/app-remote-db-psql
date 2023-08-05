@@ -5,7 +5,6 @@ import userModules.users.User;
 /**
  * A class that contains the information about the received request.
  */
-
 public class RequestData {
     private byte[] data;
     private User user;
@@ -14,7 +13,6 @@ public class RequestData {
     /**
      * A default constructor when the empty request received.
      */
-
     public RequestData() {
         nullStatus = true;
     }
@@ -25,7 +23,6 @@ public class RequestData {
      * @param data received data
      * @param user the client
      */
-
     public RequestData(byte[] data, User user) {
         this.data = data;
         this.user = user;
@@ -35,7 +32,6 @@ public class RequestData {
     /**
      * A method that returns the data byte array.
      */
-
     public byte[] getByteArray() {
         return data;
     }
@@ -45,7 +41,6 @@ public class RequestData {
      *
      * @param data data to set
      */
-
     public void setByteArray(byte[] data) {
         this.data = data;
     }
@@ -53,7 +48,6 @@ public class RequestData {
     /**
      * A method that returns the client.
      */
-
     public User getCallerBack() {
         return user;
     }
@@ -63,7 +57,6 @@ public class RequestData {
      *
      * @param user client to set
      */
-
     public void setCallerBack(User user) {
         this.user = user;
     }
@@ -73,7 +66,6 @@ public class RequestData {
      *
      * @return true if the request is empty, otherwise false
      */
-
     public boolean hasNullStatus() {
         return this.nullStatus;
     }

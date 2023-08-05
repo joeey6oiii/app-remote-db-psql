@@ -1,6 +1,7 @@
 package commandsModule.commands;
 
-import postgreSQLDB.Database;
+import commands.CommandType;
+import databaseModule.PersonCollectionHandler;
 import defaultClasses.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,7 +11,7 @@ import java.io.IOException;
 /**
  * A class that implements the "average_of_height" command.
  */
-
+@Command
 public class AverageOfHeightCommand implements BaseCommand {
     private static final Logger logger = LogManager.getLogger("logger.AverageOfHeightCommand");
     private String response;
@@ -18,7 +19,6 @@ public class AverageOfHeightCommand implements BaseCommand {
     /**
      * A method that returns the name of the command.
      */
-
     @Override
     public String getName() {
         return "average_of_height";
@@ -27,16 +27,24 @@ public class AverageOfHeightCommand implements BaseCommand {
     /**
      * A method that returns the response of the command.
      */
-
     @Override
     public String getResponse() {
         return this.response;
     }
 
     /**
+     * AverageOfHeightCommand is a {@link CommandType#NO_ARGUMENT} command.
+     *
+     * @return the type of the command
+     */
+    @Override
+    public CommandType getType() {
+        return CommandType.NO_ARGUMENT;
+    }
+
+    /**
      * A method that returns the description of the command.
      */
-
     @Override
     public String describe() {
         return "Outputs the average value of the \"height\" field of all elements in the database";
@@ -48,18 +56,16 @@ public class AverageOfHeightCommand implements BaseCommand {
      *
      * @throws IOException when failed during I/O operations
      */
-
     @Override
     public void execute() throws IOException {
-        Database database = Database.getInstance();
-        if (database.getCollection().isEmpty()) {
+        PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
+        if (personCollectionHandler.getCollection().isEmpty()) {
             this.response = "Collection is empty, can not execute average_of_height";
         } else {
-            double averageHeight = database.getCollection()
+            double averageHeight = personCollectionHandler.getCollection()
                     .stream().mapToInt(Person::getHeight).average().orElse(0);
             this.response = "The average \"height\" value is " + averageHeight;
         }
         logger.info("Executed AverageOfHeightCommand");
     }
-
 }

@@ -5,7 +5,6 @@ import java.net.SocketAddress;
 /**
  * A class that represents a factory of {@link ConnectionModule} objects.
  */
-
 public interface ConnectionModuleFactory {
 
     /**
@@ -14,7 +13,5 @@ public interface ConnectionModuleFactory {
      * @param address specified address of the server
      * @return client connection core
      */
-
     ConnectionModule create(SocketAddress address);
-
 }

@@ -5,7 +5,6 @@ import java.io.IOException;
 /**
  * An interface for all connection module-implementers.
  */
-
 public interface ConnectionModule {
 
     /**
@@ -13,7 +12,6 @@ public interface ConnectionModule {
      *
      * @throws IOException if failed during I/O operations
      */
-
     void connect() throws IOException;
 
     /**
@@ -21,6 +19,5 @@ public interface ConnectionModule {
      *
      * @throws IOException if failed during I/O operations
      */
-
     void disconnect() throws IOException;
 }

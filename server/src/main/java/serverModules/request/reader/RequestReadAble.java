@@ -7,7 +7,6 @@ import java.io.IOException;
  *
  * @param <T> concrete request
  */
-
 public interface RequestReadAble<T> {
 
     /**
@@ -18,7 +17,5 @@ public interface RequestReadAble<T> {
      * @throws ClassNotFoundException when could not create request object after deserialization
      * @return T type of the request
      */
-
     T readRequest(byte[] data) throws IOException, ClassNotFoundException;
-
 }

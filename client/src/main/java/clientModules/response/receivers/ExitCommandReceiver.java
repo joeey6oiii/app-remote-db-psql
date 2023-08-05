@@ -7,7 +7,7 @@ import clientModules.response.handlers.ExitCommandHandler;
 import clientModules.response.handlers.ServerErrorResultHandler;
 import clientModules.response.handlers.authenticationHandlers.User;
 import commands.CommandDescription;
-import commandsModule.handler.CommandHandler;
+import commandsModule.commandsManagement.CommandHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.CommandExecutionRequest;
@@ -23,7 +23,6 @@ import java.util.Scanner;
 /**
  * A class that represents the exit command receiver.
  */
-
 public class ExitCommandReceiver implements CommandReceiver {
 
     /**
@@ -34,7 +33,6 @@ public class ExitCommandReceiver implements CommandReceiver {
      * @param args simplified command arguments
      * @param dataTransferConnectionModule client core
      */
-
     @Override
     public void receiveCommand(CommandDescription command, String[] args, DataTransferConnectionModule dataTransferConnectionModule) {
         System.out.print("Are you sure you want to exit? [Y/N]\n$ ");
@@ -81,5 +79,4 @@ public class ExitCommandReceiver implements CommandReceiver {
             CommandHandler.getMissedCommands().put(command, args);
         }
     }
-
 }

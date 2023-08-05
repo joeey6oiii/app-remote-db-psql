@@ -5,7 +5,6 @@ import response.responses.CommandExecutionResponse;
 /**
  * A class that works with the "exit" command execution result response.
  */
-
 public class ExitCommandHandler implements ResponseHandler<CommandExecutionResponse> {
 
     /**
@@ -13,12 +12,10 @@ public class ExitCommandHandler implements ResponseHandler<CommandExecutionRespo
      *
      * @param response the received response
      */
-
     @Override
     public boolean handleResponse(CommandExecutionResponse response) {
         System.out.println("Shutdown...");
         System.exit(0);
         return true;
     }
-
 }

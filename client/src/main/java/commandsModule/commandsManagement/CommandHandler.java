@@ -1,4 +1,4 @@
-package commandsModule.handler;
+package commandsModule.commandsManagement;
 
 import clientModules.connection.DataTransferConnectionModule;
 import commands.CommandDescription;
@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 /**
  * A class that handles the simplified commands.
  */
-
 public class CommandHandler {
     private static Map<String, CommandDescription> commands;
     private static Map<CommandDescription, String[]> missedCommands;
@@ -25,7 +24,6 @@ public class CommandHandler {
      * @param scanner tool to scan input from the console
      * @param module client core
      */
-
     public CommandHandler(Map<String, CommandDescription> commands, Scanner scanner, DataTransferConnectionModule module) {
         CommandHandler.commands = commands;
         missedCommands = new LinkedHashMap<>();
@@ -41,7 +39,6 @@ public class CommandHandler {
      * @param scanner tool to scan input from the console
      * @param module client core
      */
-
     public CommandHandler(List<CommandDescription> commands, Scanner scanner, DataTransferConnectionModule module) {
         CommandHandler.commands = commands.stream().collect(Collectors.toMap(CommandDescription::getCommandName, Function.identity()));
         missedCommands = new LinkedHashMap<>();
@@ -55,7 +52,6 @@ public class CommandHandler {
      *
      * @param name simplified command name
      */
-
     public static CommandDescription getCommandByName(String name) {
         if (commands != null) {
             return commands.get(name);
@@ -67,7 +63,6 @@ public class CommandHandler {
      * A method that returns missed commands' collection.
      * Missed commands are commands that were not executed on server due to some problems (Ex: Server was unavailable)
      */
-
     public static Map<CommandDescription, String[]> getMissedCommands() {
         if (missedCommands != null) {
             return missedCommands;
@@ -81,7 +76,6 @@ public class CommandHandler {
      * Uses {@link CommandManager#manageCommand(CommandDescription, String[], DataTransferConnectionModule)} to
      * continue operations connected to sending and receiving.
      */
-
     public void startHandlingInput() {
         String consoleInput;
         while (true) {
@@ -120,5 +114,4 @@ public class CommandHandler {
             }
         }
     }
-
 }

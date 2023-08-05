@@ -1,7 +1,7 @@
 package serverModules.request.reader;
 
 import requests.Request;
-import serializer.ObjectSerializer;
+import serializer.ByteArrayObjectSerializer;
 
 import java.io.IOException;
 
@@ -22,7 +22,7 @@ public class RequestReader implements RequestReadAble<Request> {
 
     @Override
     public Request readRequest(byte[] data) throws IOException, ClassNotFoundException {
-        ObjectSerializer serializer = new ObjectSerializer();
+        ByteArrayObjectSerializer serializer = new ByteArrayObjectSerializer();
 
         return (Request) serializer.deserialize(data);
     }

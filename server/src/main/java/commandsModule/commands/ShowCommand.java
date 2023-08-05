@@ -1,6 +1,7 @@
 package commandsModule.commands;
 
-import postgreSQLDB.Database;
+import commands.CommandType;
+import databaseModule.PersonCollectionHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 /**
  * A class that implements the "show" command.
  */
-
+@Command
 public class ShowCommand implements BaseCommand {
     private static final Logger logger = LogManager.getLogger("logger.ShowCommand");
     private String response;
@@ -18,7 +19,6 @@ public class ShowCommand implements BaseCommand {
     /**
      * A method that returns the name of the command.
      */
-
     @Override
     public String getName() {
         return "show";
@@ -27,16 +27,24 @@ public class ShowCommand implements BaseCommand {
     /**
      * A method that returns the response of the command.
      */
-
     @Override
     public String getResponse() {
         return this.response;
     }
 
     /**
+     * ShowCommand is a {@link CommandType#NO_ARGUMENT} command.
+     *
+     * @return the type of the command
+     */
+    @Override
+    public CommandType getType() {
+        return CommandType.NO_ARGUMENT;
+    }
+
+    /**
      * A method that returns the description of the command.
      */
-
     @Override
     public String describe() {
         return "Prints to standard output all elements of the collection in string representation";
@@ -47,15 +55,14 @@ public class ShowCommand implements BaseCommand {
      *
      * @throws IOException when failed during I/O operations
      */
-
     @Override
     public void execute() throws IOException {
-        Database database = Database.getInstance();
-        if (database.getCollection().isEmpty()) {
+        PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
+        if (personCollectionHandler.getCollection().isEmpty()) {
             this.response = "Collection is empty, there is nothing to show";
         } else {
             StringBuilder builder;
-            builder = new StringBuilder(database.getCollection()
+            builder = new StringBuilder(personCollectionHandler.getCollection()
                     .stream()
                     .map(Object::toString)
                     .collect(Collectors.joining("\n")));
@@ -63,5 +70,4 @@ public class ShowCommand implements BaseCommand {
         }
         logger.info("Executed ShowCommand");
     }
-
 }

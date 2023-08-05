@@ -12,9 +12,7 @@ public enum UdpDataTransferUtilities {
     /**
      * @return the size value of a packet
      */
-
     public int getPacketSize() {
         return PACKET_SIZE;
     }
-
 }

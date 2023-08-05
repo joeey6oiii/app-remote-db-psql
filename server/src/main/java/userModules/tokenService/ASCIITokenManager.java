@@ -18,5 +18,4 @@ public class ASCIITokenManager implements TokenManager {
 
         return token.toString();
     }
-
 }

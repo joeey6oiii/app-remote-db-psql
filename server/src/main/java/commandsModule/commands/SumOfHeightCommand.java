@@ -1,6 +1,7 @@
 package commandsModule.commands;
 
-import postgreSQLDB.Database;
+import commands.CommandType;
+import databaseModule.PersonCollectionHandler;
 import defaultClasses.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,7 +11,7 @@ import java.io.IOException;
 /**
  * A class that implements the "sum_of_height" command.
  */
-
+@Command
 public class SumOfHeightCommand implements BaseCommand {
     private static final Logger logger = LogManager.getLogger("logger.SumOfHeightCommand");
     private String response;
@@ -18,7 +19,6 @@ public class SumOfHeightCommand implements BaseCommand {
     /**
      * A method that returns the name of the command.
      */
-
     @Override
     public String getName() {
         return "sum_of_height";
@@ -27,16 +27,24 @@ public class SumOfHeightCommand implements BaseCommand {
     /**
      * A method that returns the response of the command.
      */
-
     @Override
     public String getResponse() {
         return this.response;
     }
 
     /**
+     * SumOfHeightCommand is a {@link CommandType#NO_ARGUMENT} command.
+     *
+     * @return the type of the command
+     */
+    @Override
+    public CommandType getType() {
+        return CommandType.NO_ARGUMENT;
+    }
+
+    /**
      * A method that returns the description of the command.
      */
-
     @Override
     public String describe() {
         return "Outputs the sum of the \"height\" values of all elements in the database";
@@ -48,14 +56,13 @@ public class SumOfHeightCommand implements BaseCommand {
      *
      * @throws IOException when failed during I/O operations
      */
-
     @Override
     public void execute() throws IOException {
-        Database database = Database.getInstance();
-        if (database.getCollection().isEmpty()) {
+        PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
+        if (personCollectionHandler.getCollection().isEmpty()) {
             this.response = "Collection is empty, can not execute sum_of_height";
         } else {
-            int sum = database.getCollection().stream().mapToInt(Person::getHeight).sum();
+            int sum = personCollectionHandler.getCollection().stream().mapToInt(Person::getHeight).sum();
             this.response = "Sum of \"height\" values is " + sum;
         }
         logger.info("Executed SumOfHeightCommand");

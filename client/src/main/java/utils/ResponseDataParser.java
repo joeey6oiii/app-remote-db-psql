@@ -5,7 +5,6 @@ import utility.UdpDataTransferUtilities;
 /**
  * A class that represents response data parser.
  */
-
 public class ResponseDataParser {
 
     /**
@@ -15,7 +14,6 @@ public class ResponseDataParser {
      * @param data byte array with header
      * @return <code>byte[]</code> extracted response data
      */
-
     public byte[] extractResponseData(byte[] data) {
         int headerSize = data[0];
         int responseDataSize = data.length - headerSize - 1;

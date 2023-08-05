@@ -1,29 +1,32 @@
 package commandsModule.commands;
 
+import commands.CommandType;
+
 import java.io.IOException;
 
 /**
  * An interface for all command-implementers without arguments.
  */
-
 public interface BaseCommand {
 
     /**
-     * A method that returns the name of the command.
+     * @return the name of the command
      */
-
     String getName();
 
     /**
-     * A method that returns the response of the command.
+     * @return the response of the command
      */
-
     String getResponse();
 
     /**
-     * A method that returns the description of the command.
+     * @return the type of command
      */
+    CommandType getType();
 
+    /**
+     * @return the description of the command
+     */
     String describe();
 
     /**
@@ -31,7 +34,5 @@ public interface BaseCommand {
      *
      * @throws IOException when failed during I/O operations
      */
-
     void execute() throws IOException;
-
 }

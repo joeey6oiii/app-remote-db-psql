@@ -12,7 +12,6 @@ import java.net.*;
 /**
  * A class that represents the datagram connection module.
  */
-
 public class UdpConnectionModule implements ConnectionModule {
     private static final Logger logger = LogManager.getLogger("logger.ConnectionModule");
     private final int PACKET_SIZE = UdpDataTransferUtilities.INSTANCE.getPacketSize();
@@ -24,7 +23,6 @@ public class UdpConnectionModule implements ConnectionModule {
      * @param port the specified server port
      * @throws SocketException if error happened during socket operations
      */
-
     protected UdpConnectionModule(int port) throws SocketException {
         this.socket = new DatagramSocket(port);
     }
@@ -35,7 +33,6 @@ public class UdpConnectionModule implements ConnectionModule {
      * @return a class that contains the information about the received request.
      * Returns empty {@link RequestData} if empty request received.
      */
-
     @Override
     public RequestData receiveData() {
         byte[] bytes = new byte[PACKET_SIZE];
@@ -59,7 +56,6 @@ public class UdpConnectionModule implements ConnectionModule {
      * @param address address to send to
      * @param port port to send to
      */
-
     @Override
     public void sendData(byte[] data, InetAddress address, int port) {
         try {
@@ -75,5 +71,4 @@ public class UdpConnectionModule implements ConnectionModule {
         }
         logger.debug("Data sent");
     }
-
 }

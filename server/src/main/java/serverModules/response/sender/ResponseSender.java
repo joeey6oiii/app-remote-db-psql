@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import response.data.FragmentHeader;
 import response.responses.Response;
-import serializer.ObjectSerializer;
+import serializer.ByteArrayObjectSerializer;
 import userModules.users.User;
 import serverModules.connection.ConnectionModule;
 import utility.UdpDataTransferUtilities;
@@ -31,7 +31,7 @@ public class ResponseSender implements ResponseAble<Response> {
     @Override
     public void sendResponse(ConnectionModule connectionModule, User user, Response response) throws IllegalArgumentException {
         if (response != null) {
-            ObjectSerializer serializer = new ObjectSerializer();
+            ByteArrayObjectSerializer serializer = new ByteArrayObjectSerializer();
 
             final InetAddress clientAddress = user.getAddress();
             final int clientPort = user.getPort();

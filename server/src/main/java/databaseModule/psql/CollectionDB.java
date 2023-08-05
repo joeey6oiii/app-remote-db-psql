@@ -1,4 +1,4 @@
-package postgreSQLDB.collectionDB;
+package databaseModule.psql;
 
 import defaultClasses.Person;
 
@@ -31,6 +31,14 @@ public class CollectionDB<T extends Collection<Person>> implements Closeable {
         } catch (SQLException e) {
             throw new SQLException("Error connecting to the database", e);
         }
+    }
+
+    public Connection getConnection() {
+        return this.connection;
+    }
+
+    public T getCollection() {
+        return this.collection;
     }
 
     @Override
