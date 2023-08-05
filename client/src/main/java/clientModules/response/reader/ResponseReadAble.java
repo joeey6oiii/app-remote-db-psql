@@ -9,7 +9,6 @@ import java.io.IOException;
  *
  * @param <T> concrete response
  */
-
 public interface ResponseReadAble<T> {
 
     /**
@@ -21,7 +20,5 @@ public interface ResponseReadAble<T> {
      * @throws ServerUnavailableException if server is unavailable
      * @return T type of the response
      */
-
     T readResponse(byte[] data) throws IOException, ClassNotFoundException, ServerUnavailableException;
-
 }

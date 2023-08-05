@@ -5,7 +5,6 @@ import java.util.HashMap;
 /**
  * A class that represents response assembler.
  */
-
 public class ResponseAssembler {
 
     /**
@@ -15,7 +14,6 @@ public class ResponseAssembler {
      * @return byte array which can be converted to a response
      * @throws IllegalArgumentException if one of the response parts is missing
      */
-
     public byte[] combineResponseParts(HashMap<Integer, byte[]> responseParts) throws IllegalArgumentException {
         int totalSize = 0;
         for (byte[] part : responseParts.values()) {
@@ -44,5 +42,4 @@ public class ResponseAssembler {
 
         return combinedResponse;
     }
-
 }

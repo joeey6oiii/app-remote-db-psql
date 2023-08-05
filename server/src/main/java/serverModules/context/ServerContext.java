@@ -10,7 +10,6 @@ import serverModules.connection.ConnectionModule;
 /**
  * A class that represents server settings. Contains server core, client and client request.
  */
-
 public class ServerContext {
     private final ConnectionModule connectionModule;
     private final User user;
@@ -23,7 +22,6 @@ public class ServerContext {
      * @param user client
      * @param request client request
      */
-
     public ServerContext(ConnectionModule connectionModule, User user, Request request) {
         this.connectionModule = connectionModule;
         this.user = user;
@@ -33,7 +31,6 @@ public class ServerContext {
     /**
      * A method that returns the current server core.
      */
-
     public ConnectionModule getConnectionModule() {
         return connectionModule;
     }
@@ -41,7 +38,6 @@ public class ServerContext {
     /**
      * A method that returns the current client.
      */
-
     public User getRequestOrigin() {
         return user;
     }
@@ -49,11 +45,9 @@ public class ServerContext {
     /**
      * A method that returns the current client request.
      */
-
     public Request getRequest() {
         return request;
     }
-
 }
 
 

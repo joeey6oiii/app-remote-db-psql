@@ -16,5 +16,4 @@ public class EncryptedPassword {
     public byte[] getSalt() {
         return salt;
     }
-
 }

@@ -5,7 +5,6 @@ import java.net.SocketAddress;
 /**
  * A class that represents a factory of {@link DataTransferConnectionModule} objects.
  */
-
 public interface DataTransferConnectionModuleFactory extends ConnectionModuleFactory {
 
     /**
@@ -14,7 +13,5 @@ public interface DataTransferConnectionModuleFactory extends ConnectionModuleFac
      * @param address specified address of the server
      * @return client connection core
      */
-
     DataTransferConnectionModule create(SocketAddress address);
-
 }

@@ -35,5 +35,4 @@ public class RegistrationReceiver {
 
         return false;
     }
-
 }

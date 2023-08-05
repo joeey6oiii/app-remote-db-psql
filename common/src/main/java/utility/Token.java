@@ -12,5 +12,4 @@ public class Token implements Serializable {
     public String getToken() {
         return this.token;
     }
-
 }

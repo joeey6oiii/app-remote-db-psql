@@ -6,7 +6,6 @@ import commands.CommandDescription;
 /**
  * An interface for all command receiver-implementers.
  */
-
 public interface CommandReceiver {
 
     /**
@@ -16,7 +15,5 @@ public interface CommandReceiver {
      * @param args simplified command arguments
      * @param module client core
      */
-
     void receiveCommand(CommandDescription command, String[] args, DataTransferConnectionModule module);
-
 }

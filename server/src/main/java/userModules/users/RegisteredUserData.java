@@ -18,5 +18,4 @@ public class RegisteredUserData {
     public EncryptedPassword getEncryptedPassword() {
         return this.encryptedPassword;
     }
-
 }

@@ -27,5 +27,4 @@ public class RegistrationHandler implements ResponseHandler<RegistrationResponse
 
         return isSuccess;
     }
-
 }

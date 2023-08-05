@@ -5,7 +5,6 @@ import java.net.SocketException;
 /**
  * A class that represents a factory of {@link ConnectionModule} objects.
  */
-
 public interface ConnectionModuleFactory {
 
     /**
@@ -15,7 +14,5 @@ public interface ConnectionModuleFactory {
      * @return server core
      * @throws SocketException if any failures happen during server core creation
      */
-
     ConnectionModule createConnectionModule(int PORT) throws SocketException;
-
 }

@@ -8,7 +8,6 @@ import java.io.IOException;
 /**
  * An interface for all connection module-implementers with the ability to transfer data.
  */
-
 public interface DataTransferConnectionModule extends ConnectionModule {
 
     /**
@@ -19,7 +18,6 @@ public interface DataTransferConnectionModule extends ConnectionModule {
      * @throws ServerUnavailableException if the server was unavailable during sending and receiving operations
      * @throws ResponseTimeoutException if client could not get response from the server during the given time
      */
-
     byte[] receiveData() throws IOException, ServerUnavailableException, ResponseTimeoutException;
 
     /**
@@ -29,7 +27,5 @@ public interface DataTransferConnectionModule extends ConnectionModule {
      * @throws IOException if failed during I/O operations
      * @throws ServerUnavailableException if the server was unavailable during sending and receiving operations
      */
-
     void sendData(byte[] data) throws IOException, ServerUnavailableException;
-
 }

@@ -5,7 +5,6 @@ package validators;
  *
  * @param <T> validation value type
  */
-
 @FunctionalInterface
 public interface ValidateAble<T> {
 
@@ -17,6 +16,5 @@ public interface ValidateAble<T> {
      * @param value value to validate
      * @return true if all validation conditions are met, false otherwise
      */
-
     boolean validate(T value);
 }

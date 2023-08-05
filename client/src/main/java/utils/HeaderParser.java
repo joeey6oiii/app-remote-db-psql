@@ -1,14 +1,13 @@
 package utils;
 
 import response.data.FragmentHeader;
-import serializer.ObjectSerializer;
+import serializer.ByteArrayObjectSerializer;
 
 import java.io.IOException;
 
 /**
  * A class that has helpful method to parse header in the bytes array.
  */
-
 public class HeaderParser {
 
     /**
@@ -19,13 +18,12 @@ public class HeaderParser {
      * @throws IOException if there was some problem during I/O operations
      * @throws ClassNotFoundException if the class to deserialize was not found
      */
-
     public FragmentHeader parseHeader(byte[] data) throws IOException, ClassNotFoundException {
         int headerSize = data[0];
         byte[] headerData = new byte[headerSize];
         System.arraycopy(data, 1, headerData, 0, headerSize);
 
-        Object obj = new ObjectSerializer().deserialize(headerData);
+        Object obj = new ByteArrayObjectSerializer().deserialize(headerData);
 
         if (obj instanceof FragmentHeader fragmentHeader) {
             return fragmentHeader;
@@ -33,5 +31,4 @@ public class HeaderParser {
             throw new IOException("Unexpected error: Received object of non-FragmentHeader type");
         }
     }
-
 }

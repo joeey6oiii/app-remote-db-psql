@@ -8,7 +8,6 @@ import serverModules.connection.ConnectionModule;
  *
  * @param <T> concrete response
  */
-
 public interface ResponseAble<T> {
 
     /**
@@ -18,7 +17,5 @@ public interface ResponseAble<T> {
      * @param user client
      * @param response answer to the client
      */
-
     void sendResponse(ConnectionModule connectionModule, User user, T response);
-
 }

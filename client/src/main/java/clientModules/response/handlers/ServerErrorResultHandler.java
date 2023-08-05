@@ -15,5 +15,4 @@ public class ServerErrorResultHandler implements ResponseHandler<ErrorResponse> 
 
         return true;
     }
-
 }

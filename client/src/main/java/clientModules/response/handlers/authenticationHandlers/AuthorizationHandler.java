@@ -27,5 +27,4 @@ public class AuthorizationHandler implements ResponseHandler<AuthorizationRespon
 
         return isSuccess;
     }
-
 }

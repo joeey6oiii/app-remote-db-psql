@@ -1,13 +1,14 @@
 package userModules.passwordService;
 
-import fileService.FileService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import utils.ByteArrayUtils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.util.Arrays;
@@ -42,15 +43,24 @@ public class MD2PasswordEncryptor implements PasswordEncryptor {
         String pepper = "One Piece";
 
         try {
-            InputStream inputStream = FileService.getResourceAsStream(PEPPER_FILE);
-            pepper = Arrays.toString(new FileService().readLines(inputStream));
+            InputStream inputStream = getClass().getResourceAsStream(PEPPER_FILE);
 
-        } catch (IOException e) {
+            assert inputStream != null;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                StringBuilder stringBuilder = new StringBuilder();
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    stringBuilder.append(line).append(System.lineSeparator());
+                }
+
+                pepper = Arrays.toString(stringBuilder.toString().split(System.lineSeparator()));
+            }
+        } catch (IOException | NullPointerException e) {
             logger.error("Failed to read pepper file: {}", e.getMessage());
             logger.info("Using default pepper");
         }
 
         return pepper;
     }
-
 }

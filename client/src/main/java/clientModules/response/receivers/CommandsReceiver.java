@@ -16,7 +16,6 @@ import java.io.IOException;
 /**
  * A class that represents the commands' receiver.
  */
-
 public class CommandsReceiver {
     private final DataTransferConnectionModule dataTransferConnectionModule;
 
@@ -32,7 +31,6 @@ public class CommandsReceiver {
      * @throws IOException if failed during I/O operations
      * @throws ResponseTimeoutException if client could not get response from the server during the given time
      */
-
     public boolean initCommands() throws ServerUnavailableException, ResponseTimeoutException, IOException {
         ClientCommandsRequest commandsRequest = new ClientCommandsRequest();
         Response response = new RequestSender().sendRequest(dataTransferConnectionModule, commandsRequest);
@@ -47,5 +45,4 @@ public class CommandsReceiver {
 
         return true;
     }
-
 }

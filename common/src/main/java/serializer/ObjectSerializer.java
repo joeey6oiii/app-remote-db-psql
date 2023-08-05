@@ -1,49 +1,29 @@
 package serializer;
 
-import java.io.*;
+import java.io.IOException;
 
 /**
- * A class that provides serialization and deserialization methods.
+ * An interface for all ByteArrayObjectSerializer-implementers.
+ *
+ * @param <T> the value to return after serialization
+ * @param <V> the value to return after deserialization
  */
-
-public class ObjectSerializer implements SerializeObjectAble<byte[], Object> {
-
-    /**
-     * A method to serialize an object to a byte array.
-     *
-     * @param object object to serialize
-     * @throws IOException if failed during I/O operations
-     */
-
-    @Override
-    public byte[] serialize(Object object) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos;
-        oos = new ObjectOutputStream(baos);
-        oos.writeObject(object);
-        oos.flush();
-        byte[] data = baos.toByteArray();
-        oos.close();
-        baos.close();
-        return data;
-    }
+public interface ObjectSerializer<T, V> {
 
     /**
-     * A method to deserialize a byte array to an object.
+     * A method to serialize V to a T.
      *
-     * @param data data to deserialize
+     * @param v object to serialize
      * @throws IOException if failed during I/O operations
-     * @throws ClassNotFoundException when could not create object after deserialization
      */
+    T serialize(V v) throws IOException;
 
-    @Override
-    public Object deserialize(byte[] data) throws IOException, ClassNotFoundException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        ObjectInputStream ois = new ObjectInputStream(bais);
-        Object object = ois.readObject();
-        ois.close();
-        bais.close();
-        return object;
-    }
-
+    /**
+     * A method to deserialize T to a V.
+     *
+     * @param t data to deserialize
+     * @throws IOException if failed during I/O operations
+     * @throws ClassNotFoundException when could not create V after deserialization
+     */
+    V deserialize(T t) throws IOException, ClassNotFoundException;
 }

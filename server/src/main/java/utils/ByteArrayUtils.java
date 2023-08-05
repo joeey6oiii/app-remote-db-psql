@@ -1,7 +1,6 @@
 package utils;
 
 public class ByteArrayUtils {
-
     public static byte[] charArrayToByteArray(char[] chars) {
         byte[] bytes = new byte[chars.length];
         for (int i = 0; i < chars.length; i++) {
@@ -25,5 +24,4 @@ public class ByteArrayUtils {
 
         return result;
     }
-
 }

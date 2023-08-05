@@ -12,5 +12,4 @@ public class User {
     public static Token getToken() {
         return token;
     }
-
 }

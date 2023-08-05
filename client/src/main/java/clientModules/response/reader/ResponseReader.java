@@ -2,14 +2,13 @@ package clientModules.response.reader;
 
 import exceptions.ServerUnavailableException;
 import response.responses.Response;
-import serializer.ObjectSerializer;
+import serializer.ByteArrayObjectSerializer;
 
 import java.io.IOException;
 
 /**
  * A class that represents the base response reader.
  */
-
 public class ResponseReader implements ResponseReadAble<Response> {
 
     /**
@@ -21,10 +20,9 @@ public class ResponseReader implements ResponseReadAble<Response> {
      * @throws ServerUnavailableException if the server was unavailable during sending and receiving operations
      * @return response
      */
-
     @Override
     public Response readResponse(byte[] data) throws IOException, ClassNotFoundException, ServerUnavailableException {
-        ObjectSerializer serializer = new ObjectSerializer();
+        ByteArrayObjectSerializer serializer = new ByteArrayObjectSerializer();
         Response response = (Response) serializer.deserialize(data);
 
         if (response == null) {
@@ -33,5 +31,4 @@ public class ResponseReader implements ResponseReadAble<Response> {
 
         return response;
     }
-
 }

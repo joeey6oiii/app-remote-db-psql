@@ -7,7 +7,7 @@ import clientModules.response.handlers.ExecutionResultHandler;
 import clientModules.response.handlers.ServerErrorResultHandler;
 import clientModules.response.handlers.authenticationHandlers.User;
 import commands.CommandDescription;
-import commandsModule.handler.CommandHandler;
+import commandsModule.commandsManagement.CommandHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.CommandExecutionRequest;
@@ -22,7 +22,6 @@ import java.io.StreamCorruptedException;
 /**
  * A class that represents the command execution result receiver.
  */
-
 public class ExecutionResultReceiver implements CommandReceiver {
 
     /**
@@ -33,7 +32,6 @@ public class ExecutionResultReceiver implements CommandReceiver {
      * @param args simplified command arguments
      * @param dataTransferConnectionModule client core
      */
-
     @Override
     public void receiveCommand(CommandDescription command, String[] args, DataTransferConnectionModule dataTransferConnectionModule) {
         CommandExecutionRequest commandRequest = new CommandExecutionRequest(User.getToken(), command, args);
@@ -67,5 +65,4 @@ public class ExecutionResultReceiver implements CommandReceiver {
             CommandHandler.getMissedCommands().put(command, args);
         }
     }
-
 }

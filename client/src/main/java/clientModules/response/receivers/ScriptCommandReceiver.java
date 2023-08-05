@@ -7,8 +7,8 @@ import clientModules.response.handlers.ExecutionResultHandler;
 import clientModules.response.handlers.ServerErrorResultHandler;
 import clientModules.response.handlers.authenticationHandlers.User;
 import commands.CommandDescription;
-import commandsModule.handler.CommandHandler;
-import commandsModule.handler.CommandManager;
+import commandsModule.commandsManagement.CommandHandler;
+import commandsModule.commandsManagement.CommandManager;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import org.apache.commons.io.IOUtils;
@@ -25,7 +25,6 @@ import java.util.LinkedList;
 /**
  * A class that represents the script command receiver.
  */
-
 public class ScriptCommandReceiver implements CommandReceiver {
     private static final LinkedList<String> historyOfDangerScript = new LinkedList<>();
 
@@ -40,7 +39,6 @@ public class ScriptCommandReceiver implements CommandReceiver {
      * @param args simplified command arguments
      * @param dataTransferConnectionModule client core
      */
-
     @Override
     public void receiveCommand(CommandDescription scriptCommand, String[] args, DataTransferConnectionModule dataTransferConnectionModule) {
         if (historyOfDangerScript.contains(args[0])) {
@@ -116,5 +114,4 @@ public class ScriptCommandReceiver implements CommandReceiver {
 
         historyOfDangerScript.clear();
     }
-
 }

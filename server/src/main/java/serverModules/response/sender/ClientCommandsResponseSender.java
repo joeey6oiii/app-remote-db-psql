@@ -8,7 +8,6 @@ import serverModules.connection.ConnectionModule;
 /**
  * A class that represents the client commands response sender.
  */
-
 public class ClientCommandsResponseSender implements ResponseAble<ClientCommandsResponse> {
 
     /**
@@ -18,10 +17,8 @@ public class ClientCommandsResponseSender implements ResponseAble<ClientCommands
      * @param user client
      * @param commandsResponse answer to the client
      */
-
     @Override
     public void sendResponse(ConnectionModule connectionModule, User user, ClientCommandsResponse commandsResponse) {
         new ResponseSender().sendResponse(connectionModule, user, commandsResponse);
     }
-
 }

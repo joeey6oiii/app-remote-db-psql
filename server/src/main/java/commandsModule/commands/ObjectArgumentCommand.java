@@ -5,19 +5,15 @@ package commandsModule.commands;
  *
  * @param <T> uncommon argument of the command
  */
-
-public interface SingleArgumentCommand<T> extends BaseCommand {
+public interface ObjectArgumentCommand<T> extends BaseCommand {
 
     /**
      * A method that returns the T argument of the command.
      */
-
-    T getSingleArgument();
+    T getObjArgument();
 
     /**
      * A method that sets the T argument to the command.
      */
-
-    void setSingleArgument(T argument);
-
+    void setObjArgument(T argument);
 }

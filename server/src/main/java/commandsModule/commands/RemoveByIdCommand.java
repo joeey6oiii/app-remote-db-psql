@@ -1,6 +1,7 @@
 package commandsModule.commands;
 
-import postgreSQLDB.Database;
+import commands.CommandType;
+import databaseModule.PersonCollectionHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,7 +10,7 @@ import java.io.IOException;
 /**
  * Class that implements the "remove_by_id" command.
  */
-
+@Command
 public class RemoveByIdCommand implements ParameterizedCommand {
     private static final Logger logger = LogManager.getLogger("logger.RemoveByIdCommand");
     private String response;
@@ -18,7 +19,6 @@ public class RemoveByIdCommand implements ParameterizedCommand {
     /**
      * A method that returns the name of the command.
      */
-
     @Override
     public String getName() {
         return "remove_by_id";
@@ -27,7 +27,6 @@ public class RemoveByIdCommand implements ParameterizedCommand {
     /**
      * A method that returns the response of the command.
      */
-
     @Override
     public String getResponse() {
         return this.response;
@@ -36,7 +35,6 @@ public class RemoveByIdCommand implements ParameterizedCommand {
     /**
      * A method that returns arguments of the command.
      */
-
     @Override
     public String[] getArguments() {
         return this.args;
@@ -47,16 +45,24 @@ public class RemoveByIdCommand implements ParameterizedCommand {
      *
      * @param args arguments of the command
      */
-
     @Override
     public void setArguments(String[] args) {
         this.args = args;
     }
 
     /**
+     * RemoveByIdCommand is a {@link CommandType#NO_ARGUMENT} command.
+     *
+     * @return the type of the command
+     */
+    @Override
+    public CommandType getType() {
+        return CommandType.NO_ARGUMENT;
+    }
+
+    /**
      * A method that returns the description of the command.
      */
-
     @Override
     public String describe() {
         return "Removes an element from the database by id";
@@ -67,15 +73,14 @@ public class RemoveByIdCommand implements ParameterizedCommand {
      *
      * @throws IOException when failed during I/O operations
      */
-
     @Override
     public void execute() throws IOException {
-        Database database = Database.getInstance();
+        PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
         int id = Integer.parseInt(args[1]);
-        if (database.getCollection().isEmpty()) {
+        if (personCollectionHandler.getCollection().isEmpty()) {
             this.response = "Collection is empty, there is nothing to remove";
         } else {
-            if (database.remove(id)) {
+            if (personCollectionHandler.removeElement(id)) {
                 this.response = "Removed element with id " + id;
             } else {
                 this.response = "No element matches id " + id;

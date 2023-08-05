@@ -4,13 +4,13 @@ import clientModules.connection.DataTransferConnectionModule;
 import clientModules.response.reader.ResponseReader;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
+import serializer.ByteArrayObjectSerializer;
 import utils.HeaderParser;
 import utils.ResponseAssembler;
 import utils.ResponseDataParser;
 import requests.Request;
 import response.data.FragmentHeader;
 import response.responses.Response;
-import serializer.ObjectSerializer;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -18,7 +18,6 @@ import java.util.HashMap;
 /**
  * A class that represents the base request sender.
  */
-
 public class RequestSender implements RequestAble<Response, Request> {
 
     /**
@@ -29,12 +28,11 @@ public class RequestSender implements RequestAble<Response, Request> {
      * @param request request
      * @return base response
      */
-
     @Override
     public Response sendRequest(DataTransferConnectionModule dataTransferConnectionModule, Request request) throws IOException, ServerUnavailableException, ResponseTimeoutException {
         Response response = null;
         HashMap<Integer, byte[]> chunks = new HashMap<>();
-        ObjectSerializer serializer = new ObjectSerializer();
+        ByteArrayObjectSerializer serializer = new ByteArrayObjectSerializer();
 
         HeaderParser headerParser = new HeaderParser();
         ResponseDataParser responseDataParser = new ResponseDataParser();
@@ -62,5 +60,4 @@ public class RequestSender implements RequestAble<Response, Request> {
 
         return response;
     }
-
 }

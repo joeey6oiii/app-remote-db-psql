@@ -13,7 +13,6 @@ import java.util.Scanner;
 /**
  * A class that implements a generating ability.
  */
-
 public class PersonBuilder implements BuildAble {
 
     /**
@@ -21,7 +20,6 @@ public class PersonBuilder implements BuildAble {
      *
      * @return Person object
      */
-
     public Person buildObject() {
         Scanner consoleInputReader = new Scanner(System.in);
         Person person = new Person();
@@ -99,5 +97,4 @@ public class PersonBuilder implements BuildAble {
 
         return person;
     }
-
 }

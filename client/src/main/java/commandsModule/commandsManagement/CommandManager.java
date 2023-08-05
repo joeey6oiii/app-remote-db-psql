@@ -1,4 +1,4 @@
-package commandsModule.handler;
+package commandsModule.commandsManagement;
 
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.response.receivers.*;
@@ -12,17 +12,16 @@ import java.util.Optional;
 /**
  * A class that manages simplified commands.
  */
-
 public class CommandManager {
     private final HashMap<CommandType, CommandReceiver> map;
 
     {
         this.map = new HashMap<>();
 
-        map.put(CommandType.ARGUMENTLESS, new ExecutionResultReceiver());
-        map.put(CommandType.PERSON_SINGLE_ARGUMENT, new PersonCommandResultReceiver());
-        map.put(CommandType.EXIT, new ExitCommandReceiver());
-        map.put(CommandType.EXECUTE_SCRIPT, new ScriptCommandReceiver());
+        map.put(CommandType.NO_ARGUMENT, new ExecutionResultReceiver());
+        map.put(CommandType.SINGLE_OBJECT_ARGUMENT, new PersonCommandResultReceiver());
+        map.put(CommandType.EXIT_SECTION, new ExitCommandReceiver());
+        map.put(CommandType.SCRIPT_EXECUTION, new ScriptCommandReceiver());
     }
 
     /**
@@ -33,7 +32,6 @@ public class CommandManager {
      * @param args simplified command arguments
      * @param dataTransferConnectionModule client core
      */
-
     public void manageCommand(CommandDescription command, String[] args, DataTransferConnectionModule dataTransferConnectionModule) {
         try {
             Optional.ofNullable(map.get(command.getType())).orElseThrow(() ->
@@ -42,5 +40,4 @@ public class CommandManager {
             System.out.println("Failed to manage response");
         }
     }
-
 }

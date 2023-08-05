@@ -16,7 +16,6 @@ import java.util.Optional;
 /**
  * A class that manages the received requests.
  */
-
 public class RequestHandlerManager {
     private static final Logger logger = LogManager.getLogger("logger.RequestHandlerManager");
     private final LinkedHashMap<Class<? extends Request>, RequestHandler> handlers;
@@ -37,7 +36,6 @@ public class RequestHandlerManager {
      *
      * @param context the specified server settings
      */
-
     public void manageRequest(ServerContext context) {
         try {
             Optional.ofNullable(handlers.get(context.getRequest().getClass())).orElseThrow(() ->
@@ -48,5 +46,4 @@ public class RequestHandlerManager {
             new ResponseSender().sendResponse(context.getConnectionModule(), context.getRequestOrigin(), errResponse);
         }
     }
-
 }

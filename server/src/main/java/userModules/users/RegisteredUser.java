@@ -39,5 +39,4 @@ public class RegisteredUser extends User {
     public int hashCode() {
         return Objects.hash(registeredUserData);
     }
-
 }

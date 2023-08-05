@@ -5,7 +5,6 @@ import serverModules.context.ServerContext;
 /**
  * An interface for all request handler-implementers.
  */
-
 public interface RequestHandler {
 
     /**
@@ -13,6 +12,5 @@ public interface RequestHandler {
      *
      * @param context the specified server settings
      */
-
     void handleRequest(ServerContext context);
 }
