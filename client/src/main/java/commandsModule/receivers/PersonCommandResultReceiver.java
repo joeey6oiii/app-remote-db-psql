@@ -1,4 +1,4 @@
-package clientModules.response.receivers;
+package commandsModule.receivers;
 
 import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
@@ -12,7 +12,7 @@ import defaultClasses.Person;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import objectBuilder.PersonBuilder;
-import requests.SingleArgumentCommandExecutionRequest;
+import requests.ObjectArgumentCommandExecutionRequest;
 import response.responses.AuthorizationResponse;
 import response.responses.CommandExecutionResponse;
 import response.responses.ErrorResponse;
@@ -38,7 +38,7 @@ public class PersonCommandResultReceiver implements CommandReceiver {
     public void receiveCommand(CommandDescription command, String[] args, DataTransferConnectionModule dataTransferConnectionModule) {
         Person builtPerson = new PersonBuilder().buildObject();
 
-        SingleArgumentCommandExecutionRequest<Person> commandRequest = new SingleArgumentCommandExecutionRequest<>(User.getToken(), command, args, builtPerson);
+        ObjectArgumentCommandExecutionRequest<Person> commandRequest = new ObjectArgumentCommandExecutionRequest<>(User.getToken(), command, args, builtPerson);
         Response response;
         try {
             response = new RequestSender().sendRequest(dataTransferConnectionModule, commandRequest);

@@ -7,11 +7,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * A class whose constant is used in another class.
- * <p>
- * Contains getter and other methods.
+ * A class with some useful constants and methods.
  */
-
 public enum Color implements isBuildable, Serializable {
     RED("red"),
     ORANGE("orange"),
@@ -24,23 +21,21 @@ public enum Color implements isBuildable, Serializable {
     PURPLE("purple"),
     WHITE("white");
 
-    private final String colorName;
-    private final static Map<String, Color> colors = Arrays.stream(Color.values()).collect(Collectors.toMap(k -> k.colorName, v -> v));
+    private final String label;
+    private final static Map<String, Color> colors = Arrays.stream(Color.values()).collect(Collectors.toMap(k -> k.label, v -> v));
 
     /**
      * Private constructor for naming the constants.
      *
-     * @param colorName the name of the color
+     * @param label the name of the color
      */
-
-    Color(String colorName){
-        this.colorName = colorName;
+    Color(String label){
+        this.label = label;
     }
 
     /**
      * @return list of the available colors
      */
-
     public static ArrayList<Color> listValues(){
         return new ArrayList<>(Arrays.asList(Color.values()));
     }
@@ -49,9 +44,11 @@ public enum Color implements isBuildable, Serializable {
      * @param colorName the name of the color
      * @return {@link Color} if a list contains the specified name of the color, otherwise null
      */
-
-    public static Color getColorFromName(String colorName){
+    public static Color getColorFromLabel(String colorName){
         return colors.get(colorName);
     }
 
+    public String getLabel() {
+        return label;
+    }
 }

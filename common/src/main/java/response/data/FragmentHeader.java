@@ -3,9 +3,8 @@ package response.data;
 import java.io.Serializable;
 
 /**
- * A class that represents a header in the bytes array.
+ * A class that represents a header in the byte array.
  */
-
 public class FragmentHeader implements Serializable {
     private final int packetIndex;
 
@@ -14,7 +13,6 @@ public class FragmentHeader implements Serializable {
      *
      * @param packetIndex index of the current packet
      */
-
     public FragmentHeader(int packetIndex) {
         this.packetIndex = packetIndex;
     }
@@ -22,10 +20,7 @@ public class FragmentHeader implements Serializable {
     /**
      * @return index of the current packet
      */
-
     public int getPacketIndex() {
         return packetIndex;
     }
-
 }
-

@@ -61,7 +61,7 @@ public class InfoCommand implements BaseCommand {
         StringBuilder builder = new StringBuilder();
         builder.append("Type: ").append(personCollectionHandler.getCollection().getClass()).append("\nLength: ")
                 .append(personCollectionHandler.getCollection().size()).append("\nInitialization Time: ")
-                .append(personCollectionHandler.getInitializationTime());
+                .append(personCollectionHandler.getInitializationDate());
         this.response = new String(builder);
         logger.info("Executed InfoCommand");
     }

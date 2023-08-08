@@ -8,7 +8,6 @@ import java.util.Objects;
  * <p>
  * Fields have no restrictions.
  */
-
 public class Coordinates implements isBuildable, Serializable {
     private long x;
     private int y;
@@ -16,7 +15,6 @@ public class Coordinates implements isBuildable, Serializable {
     /**
      * Creates new Coordinates.
      */
-
     public Coordinates() {}
 
     /**
@@ -25,7 +23,6 @@ public class Coordinates implements isBuildable, Serializable {
      * @param x x coordinate for coordinates
      * @param y y coordinate for coordinates
      */
-
     public Coordinates(long x, int y) {
         this.x = x;
         this.y = y;
@@ -34,7 +31,6 @@ public class Coordinates implements isBuildable, Serializable {
     /**
      * @return the value of the field X
      */
-
     public long getX() {
         return x;
     }
@@ -44,7 +40,6 @@ public class Coordinates implements isBuildable, Serializable {
      *
      * @param x the new value of the field X
      */
-
     public void setX(long x) {
         this.x = x;
     }
@@ -52,7 +47,6 @@ public class Coordinates implements isBuildable, Serializable {
     /**
      * @return the value of the field Y
      */
-
     public int getY() {
         return y;
     }
@@ -62,7 +56,6 @@ public class Coordinates implements isBuildable, Serializable {
      *
      * @param y the new value of the field Y
      */
-
     public void setY(int y) {
         this.y = y;
     }

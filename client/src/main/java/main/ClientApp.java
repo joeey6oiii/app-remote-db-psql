@@ -3,7 +3,7 @@ package main;
 import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.connection.UdpConnectionModuleFactory;
-import clientModules.response.receivers.CommandsReceiver;
+import commandsModule.receivers.CommandsReceiver;
 import commands.CommandDescription;
 import commandsModule.commands.CommandRegistry;
 import commandsModule.commandsManagement.CommandHandler;
@@ -31,7 +31,6 @@ public class ClientApp {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-
         UdpConnectionModuleFactory factory = new UdpConnectionModuleFactory();
         try {
             DataTransferConnectionModule connectionModule = factory.createConfigureBlocking
@@ -39,6 +38,14 @@ public class ClientApp {
 
             connectionModule.connect();
             System.out.println("Server connection established");
+
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    connectionModule.disconnect();
+                } catch (IOException e) {
+                    System.out.println("An error occurred while disconnecting from the server\nForce shutdown...");
+                }
+            }));
 
             long timeout = 5;
             boolean initializedCommands = false;
@@ -76,7 +83,6 @@ public class ClientApp {
 
             System.out.println("Console input allowed");
             handler.startHandlingInput();
-
         } catch (UnknownHostException e) {
             System.out.println("Could not find host");
         } catch (IOException e) {

@@ -26,5 +26,4 @@ public class AuthorizationResponse implements Response, Serializable {
     public String getResult() {
         return this.result;
     }
-
 }

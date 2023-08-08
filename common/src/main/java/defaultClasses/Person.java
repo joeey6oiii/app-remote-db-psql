@@ -9,12 +9,11 @@ import java.util.Objects;
  * <p>
  * Some fields have restrictions.
  */
-
 public class Person implements isBuildable, Comparable<Person>, Serializable {
     private Integer id;
     private String name;
     private Coordinates coordinates;
-    private final Date creationDate;
+    private Date creationDate;
     private int height;
     private Date birthday;
     private String passportID;
@@ -22,45 +21,11 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
     private Location location;
 
     /**
-     * Creates a new Person with initial id and creationDate values.
-     */
-
-    public Person() {
-        this.creationDate = new Date();
-    }
-
-    /**
-     * Creates a new Person with the specified parameters. Parameters id and creationDate are generated automatically.
-     *
-     * @param name the field name of the person (field can not be null, string can not be empty)
-     * @param coordinates the field coordinates of the person (field can not be null)
-     * @param height the field height of the person (value must be greater than zero)
-     * @param birthday the field birthday of the person (field can not be null)
-     * @param passportID the field passportID of the person (field can not be null, value must be equal to or greater than five)
-     * @param hairColor the field hairColor of the person
-     * @param location the field location of the person
-     */
-
-    public Person(String name, Coordinates coordinates, int height,
-                  Date birthday, String passportID,
-                  Color hairColor, Location location) {
-        this.name = name;
-        this.coordinates = coordinates;
-        this.creationDate = new Date();
-        this.height = height;
-        this.birthday = birthday;
-        this.passportID = passportID;
-        this.hairColor = hairColor;
-        this.location = location;
-    }
-
-    /**
      * Restrictions: field can not be null, value of the field must be greater than zero, value of the field must be unique,
      * value of the field must be generated automatically.
      *
      * @return the id of the person on which the method is called
      */
-
     public Integer getId() {
         return id;
     }
@@ -73,7 +38,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      *
      * @param id the new value of the field id
      */
-
     public void setId(Integer id) { this.id = id; }
 
     /**
@@ -81,7 +45,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      *
      * @return the name of the person on which the method is called
      */
-
     public String getName() {
         return name;
     }
@@ -93,7 +56,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      *
      * @param name the new value of the field name
      */
-
     public void setName(String name) {
         this.name = name;
     }
@@ -103,9 +65,19 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      *
      * @return the coordinates of the person on which the method is called
      */
-
     public Coordinates getCoordinates() {
         return coordinates;
+    }
+
+    /**
+     * @return the creationDate of the person on which the method is called
+     */
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     /**
@@ -115,7 +87,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      *
      * @param coordinates the new value of the field coordinates
      */
-
     public void setCoordinates(Coordinates coordinates) {
         this.coordinates = coordinates;
     }
@@ -125,7 +96,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      *
      * @return the height of the person on which the method is called
      */
-
     public int getHeight() {
         return height;
     }
@@ -137,7 +107,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      *
      * @param height the new value of the field height
      */
-
     public void setHeight(int height) {
         this.height = height;
     }
@@ -147,7 +116,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      *
      * @return the birthday of the person on which the method is called
      */
-
     public Date getBirthday() {
         return birthday;
     }
@@ -159,7 +127,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      *
      * @param birthday the new value of the field birthday
      */
-
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
@@ -169,8 +136,7 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      *
      * @return the passportID of the person on which the method is called
      */
-
-    public String getPassportID() {
+    public String getPassportId() {
         return passportID;
     }
 
@@ -181,7 +147,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      *
      * @param passportID the new value of the field passportID
      */
-
     public void setPassportID(String passportID) {
         this.passportID = passportID;
     }
@@ -189,7 +154,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
     /**
      * @return the hairColor of the person on which the method is called
      */
-
     public Color getHairColor() {
         return hairColor;
     }
@@ -199,7 +163,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      *
      * @param hairColor the new value of the field hairColor
      */
-
     public void setHairColor(Color hairColor) {
         this.hairColor = hairColor;
     }
@@ -207,7 +170,6 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
     /**
      * @return the location of the person on which the method is called
      */
-
     public Location getLocation() {
         return location;
     }
@@ -217,24 +179,14 @@ public class Person implements isBuildable, Comparable<Person>, Serializable {
      *
      * @param location the new value of the field location
      */
-
     public void setLocation(Location location) {
         this.location = location;
-    }
-
-    /**
-     * @return the creationDate of the person on which the method is called
-     */
-
-    public Date getCreationDate() {
-        return creationDate;
     }
 
     /**
      * @param anotherPerson the object to be compared.
      * @return difference between caller object id and compared object id
      */
-
     public int compareTo(Person anotherPerson){
         return this.id - anotherPerson.id;
     }

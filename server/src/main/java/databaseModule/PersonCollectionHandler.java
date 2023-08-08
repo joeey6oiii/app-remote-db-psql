@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 /**
  * A class that represents in-program database and contains collection of the {@link Person} objects.
  */
-public class PersonCollectionHandler {
+public class PersonCollectionHandler implements CollectionHandler<Person> {
     private static PersonCollectionHandler singleInstance;
     private HashSet<Person> collection;
     private final LocalDateTime initializationTime;
@@ -39,7 +39,7 @@ public class PersonCollectionHandler {
      *
      * @return The collection of {@link Person} objects.
      */
-    public HashSet<Person> getCollection() {
+    public synchronized HashSet<Person> getCollection() {
         return this.collection;
     }
 
@@ -48,7 +48,7 @@ public class PersonCollectionHandler {
      *
      * @return The initialization time as a {@link LocalDateTime} object.
      */
-    public LocalDateTime getInitializationTime() {
+    public LocalDateTime getInitializationDate() {
         return this.initializationTime;
     }
 
@@ -56,7 +56,7 @@ public class PersonCollectionHandler {
      * Sorts the collection of {@link Person} objects using the {@link comparators.HeightComparator}.
      * The sorting order is based on the natural order defined in the {@link Person#compareTo(Person)} method.
      */
-    public void sortCollection() {
+    public synchronized void sortCollection() {
         collection = collection.stream().sorted(Person::compareTo).collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
@@ -64,7 +64,7 @@ public class PersonCollectionHandler {
      * Clears the collection of {@link Person} objects in the database.
      * After calling this method, the database will have no elements.
      */
-    public void clearCollection() {
+    public synchronized void clearCollection() {
         this.collection.clear();
     }
 
@@ -74,7 +74,7 @@ public class PersonCollectionHandler {
      *
      * @param person The {@link Person} object to be added.
      */
-    public void addElement(Person person) {
+    public synchronized void addElement(Person person) {
         this.collection.add(person);
         this.sortCollection();
     }
@@ -85,7 +85,7 @@ public class PersonCollectionHandler {
      * @param id The ID of the {@link Person} object to be removed.
      * @return {@code true} if the element was removed successfully, {@code false} if no matching ID was found.
      */
-    public boolean removeElement(int id) {
+    public synchronized boolean removeElement(int id) {
         return collection.removeIf(person -> person.getId().equals(id));
     }
 }

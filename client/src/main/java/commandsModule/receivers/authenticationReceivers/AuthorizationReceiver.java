@@ -1,4 +1,4 @@
-package clientModules.response.receivers.authenticationReceivers;
+package commandsModule.receivers.authenticationReceivers;
 
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;

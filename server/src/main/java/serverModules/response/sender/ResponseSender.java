@@ -14,7 +14,6 @@ import java.net.InetAddress;
 /**
  * A class that represents the base response sender.
  */
-
 public class ResponseSender implements ResponseAble<Response> {
     private static final Logger logger = LogManager.getLogger("logger.ResponseSender");
 
@@ -27,7 +26,6 @@ public class ResponseSender implements ResponseAble<Response> {
      * @param user client
      * @param response answer to the client
      */
-
     @Override
     public void sendResponse(ConnectionModule connectionModule, User user, Response response) throws IllegalArgumentException {
         if (response != null) {
@@ -83,5 +81,4 @@ public class ResponseSender implements ResponseAble<Response> {
             }
         }
     }
-
 }

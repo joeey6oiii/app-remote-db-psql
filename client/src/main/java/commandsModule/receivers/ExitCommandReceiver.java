@@ -1,9 +1,9 @@
-package clientModules.response.receivers;
+package commandsModule.receivers;
 
 import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;
-import clientModules.response.handlers.ExecutionResultHandler;
+import clientModules.response.handlers.ExitCommandHandler;
 import clientModules.response.handlers.ServerErrorResultHandler;
 import clientModules.response.handlers.authenticationHandlers.User;
 import commands.CommandDescription;
@@ -18,15 +18,16 @@ import response.responses.Response;
 
 import java.io.IOException;
 import java.io.StreamCorruptedException;
+import java.util.Scanner;
 
 /**
- * A class that represents the command execution result receiver.
+ * A class that represents the exit command receiver.
  */
-public class ExecutionResultReceiver implements CommandReceiver {
+public class ExitCommandReceiver implements CommandReceiver {
 
     /**
-     * A method that receives the simplified command, sends request to a server, gets response and
-     * calls the {@link ExecutionResultHandler#handleResponse(CommandExecutionResponse)} method.
+     * A method that receives the simplified "exit" command, sends request to a server,
+     * gets response and calls the {@link ExitCommandHandler#handleResponse(CommandExecutionResponse)})} method.
      *
      * @param command simplified command
      * @param args simplified command arguments
@@ -34,6 +35,19 @@ public class ExecutionResultReceiver implements CommandReceiver {
      */
     @Override
     public void receiveCommand(CommandDescription command, String[] args, DataTransferConnectionModule dataTransferConnectionModule) {
+        System.out.print("Are you sure you want to exit? [Y/N]\n$ ");
+        Scanner consoleInputReader = new Scanner(System.in);
+        String consoleInput;
+
+        while (!(consoleInput = consoleInputReader.nextLine()).equalsIgnoreCase("Y")) {
+            if (consoleInput.equalsIgnoreCase("N")) {
+                System.out.println("Returning to the console input");
+                CommandHandler.getMissedCommands().remove(command, args);
+                return;
+            }
+            System.out.print("$ ");
+        }
+
         CommandExecutionRequest commandRequest = new CommandExecutionRequest(User.getToken(), command, args);
         Response response;
         try {
@@ -43,7 +57,7 @@ public class ExecutionResultReceiver implements CommandReceiver {
             if (response instanceof ErrorResponse errResponse) {
                 new ServerErrorResultHandler().handleResponse(errResponse);
             } else if (response instanceof CommandExecutionResponse executionResponse) {
-                isSuccess = new ExecutionResultHandler().handleResponse(executionResponse);
+                isSuccess = new ExitCommandHandler().handleResponse(executionResponse);
             } else if (response instanceof AuthorizationResponse authorizationResponse && !authorizationResponse.isSuccess()) {
                 new AuthenticationManager(dataTransferConnectionModule).authenticateFromInput();
             } else {

@@ -1,9 +1,9 @@
 package commandsModule.commandsManagement;
 
 import clientModules.connection.DataTransferConnectionModule;
-import clientModules.response.receivers.*;
 import commands.CommandDescription;
 import commands.CommandType;
+import commandsModule.receivers.*;
 import exceptions.IllegalManagerArgumentException;
 
 import java.util.HashMap;

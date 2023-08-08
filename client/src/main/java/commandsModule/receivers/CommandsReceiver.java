@@ -1,4 +1,4 @@
-package clientModules.response.receivers;
+package commandsModule.receivers;
 
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;

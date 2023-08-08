@@ -8,26 +8,23 @@ import java.util.Objects;
  * <p>
  * Some fields have restrictions.
  */
-
 public class Location implements isBuildable, Serializable {
     private Float x;
     private Integer y;
     private String name;
 
     /**
-     * Creates a new Location.
+     * Creates new Location.
      */
-
     public Location() {}
 
     /**
-     * Creates a new location with the specified parameters.
+     * Creates new location with the specified parameters.
      *
      * @param x the field x of the location (not null)
      * @param y the field y of the location (not null)
      * @param name the field name of the location (not null or empty string)
      */
-
     public Location(Float x, Integer y, String name) {
         this.x = x;
         this.y = y;
@@ -39,7 +36,6 @@ public class Location implements isBuildable, Serializable {
      *
      * @return the value of the field X
      */
-
     public Float getX() {
         return x;
     }
@@ -51,7 +47,6 @@ public class Location implements isBuildable, Serializable {
      *
      * @param x the new value of the field X
      */
-
     public void setX(Float x) {
         this.x = x;
     }
@@ -61,7 +56,6 @@ public class Location implements isBuildable, Serializable {
      *
      * @return the value of the field Y
      */
-
     public Integer getY() {
         return y;
     }
@@ -72,7 +66,6 @@ public class Location implements isBuildable, Serializable {
      * Restrictions: field can not be null
      * @param y the new value of the field Y
      */
-
     public void setY(Integer y) {
         this.y = y;
     }
@@ -82,7 +75,6 @@ public class Location implements isBuildable, Serializable {
      *
      * @return the value of the field name
      */
-
     public String getName() {
         return name;
     }
@@ -93,7 +85,6 @@ public class Location implements isBuildable, Serializable {
      * Restrictions: string can not be empty
      * @param name the new value of the field name
      */
-
     public void setName(String name) {
         this.name = name;
     }

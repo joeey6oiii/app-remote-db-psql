@@ -1,6 +1,6 @@
 package serverModules.request.handlers;
 
-import serverModules.context.ServerContext;
+import serverModules.request.data.ClientRequestInfo;
 
 /**
  * An interface for all request handler-implementers.
@@ -10,7 +10,7 @@ public interface RequestHandler {
     /**
      * A method that handles the received request.
      *
-     * @param context the specified server settings
+     * @param info information about the request
      */
-    void handleRequest(ServerContext context);
+    void handleRequest(ClientRequestInfo info);
 }
