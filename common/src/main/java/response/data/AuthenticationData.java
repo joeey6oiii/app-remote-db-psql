@@ -18,5 +18,4 @@ public class AuthenticationData implements Serializable {
     public char[] getPassword() {
         return passwd;
     }
-
 }

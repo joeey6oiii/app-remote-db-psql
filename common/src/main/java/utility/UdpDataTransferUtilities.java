@@ -3,7 +3,6 @@ package utility;
 /**
  * An enum with UDP data transfer utilities.
  */
-
 public enum UdpDataTransferUtilities {
     INSTANCE;
 

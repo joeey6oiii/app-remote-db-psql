@@ -28,7 +28,7 @@ public class PersonValidator implements ValidateAble<Person> {
                 && new CoordinatesValidator().validate(person.getCoordinates())
                 && new HeightValidator().validate(person.getHeight())
                 && new BirthdayValidator().validate(person.getBirthday())
-                && new PassportIDValidator().validate(person.getPassportID())
+                && new PassportIDValidator().validate(person.getPassportId())
                 && new LocationValidator().validate(person.getLocation());
     }
 }

@@ -24,6 +24,8 @@ public class PersonBuilder implements BuildAble {
         Scanner consoleInputReader = new Scanner(System.in);
         Person person = new Person();
 
+        person.setCreationDate(new Date());
+
         System.out.print("Enter name\n$ ");
         String name = consoleInputReader.nextLine();
         while (!new NameValidator().validate(name)) {
@@ -83,7 +85,7 @@ public class PersonBuilder implements BuildAble {
         consoleInput = consoleInputReader.nextLine().trim();
         Color hairColor = null;
         if (!consoleInput.isEmpty()) {
-            hairColor = Color.getColorFromName(consoleInput.toLowerCase());
+            hairColor = Color.getColorFromLabel(consoleInput.toLowerCase());
         }
         person.setHairColor(hairColor);
 

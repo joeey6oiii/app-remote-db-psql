@@ -21,5 +21,4 @@ public class RegistrationRequest implements Request, Serializable {
     public Token getToken() {
         return this.token;
     }
-
 }

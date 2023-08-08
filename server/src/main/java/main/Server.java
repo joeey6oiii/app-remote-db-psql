@@ -1,14 +1,15 @@
 package main;
 
+import databaseModule.PersonCollectionHandler;
 import defaultClasses.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import databaseModule.psql.CollectionDB;
+import databaseModule.PersonCollectionLoader;
 import requests.Request;
 import serverModules.connection.ConnectionModule;
 import serverModules.connection.ConnectionModuleFactory;
 import serverModules.connection.UdpConnectionModuleFactory;
-import serverModules.context.ServerContext;
+import serverModules.request.data.ClientRequestInfo;
 import serverModules.request.data.RequestData;
 import serverModules.request.handlers.RequestHandlerManager;
 import serverModules.request.reader.RequestReader;
@@ -16,7 +17,7 @@ import serverModules.request.reader.RequestReader;
 import java.io.IOException;
 import java.net.SocketException;
 import java.sql.SQLException;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 
 /**
  * Program entry point class. Contains <code>main()</code> method.
@@ -31,13 +32,19 @@ public class Server {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-        try (CollectionDB<LinkedHashSet<Person>> collectionDB = new CollectionDB<>(new LinkedHashSet<>())) {
-            logger.info("Connected to the database");
+        PersonCollectionHandler collectionHandler = PersonCollectionHandler.getInstance();
 
-            logger.info("Initializing server...");
+        try {
+            try (PersonCollectionLoader<HashSet<Person>> collectionLoader = new PersonCollectionLoader<>(collectionHandler.getCollection())) {
+                collectionLoader.loadPersonsFromDB();
+            }
+            collectionHandler.sortCollection();
+            logger.info("Loaded person objects from the database to a collection");
+
             ConnectionModuleFactory factory = new UdpConnectionModuleFactory();
             ConnectionModule module;
 
+            logger.info("Initializing server...");
             try {
                 module = factory.createConnectionModule(PORT);
             } catch (SocketException e) {
@@ -46,13 +53,14 @@ public class Server {
             }
             logger.info("Server started");
 
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                try {
-                    collectionDB.close();
-                } catch (IOException e) {
-                    logger.error("An error occurred while closing the database connection", e);
-                }
-            }));
+//            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+//                try {
+//                    // something to close
+//                } catch (IOException e) {
+//                    logger.error("An error occurred while closing the database connection", e);
+//                    logger.info("Force shutdown...");
+//                }
+//            }));
 
             while (true) {
                 try {
@@ -63,8 +71,8 @@ public class Server {
                     }
 
                     Request request = new RequestReader().readRequest(requestData.getByteArray());
-                    ServerContext context = new ServerContext(module, requestData.getCallerBack(), request);
-                    new RequestHandlerManager().manageRequest(context);
+                    ClientRequestInfo info = new ClientRequestInfo(module, requestData.getCallerBack(), request);
+                    new RequestHandlerManager().manageRequest(info);
                 } catch (IOException e) {
                     logger.error("Something went wrong during I/O operations", e);
                 } catch (ClassNotFoundException e) {

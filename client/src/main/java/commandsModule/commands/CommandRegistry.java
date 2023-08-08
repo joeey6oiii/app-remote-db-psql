@@ -5,7 +5,7 @@ import commands.CommandDescription;
 import java.util.List;
 
 /**
- * A class where the {@link CommandDescription} objects are stored.
+ * A class where the {@link CommandDescription} objects known by a server are stored.
  */
 public class CommandRegistry {
     private static List<CommandDescription> commands;
