@@ -1,7 +1,8 @@
 package requests;
 
 import commands.CommandDescription;
-import utility.Token;
+import token.StringToken;
+import token.Token;
 
 /**
  * A class that represents the client command with an uncommon argument execution request.
@@ -16,7 +17,7 @@ public class ObjectArgumentCommandExecutionRequest<T> extends CommandExecutionRe
      * @param args arguments of the command.
      * @param arg object argument of the command.
      */
-    public ObjectArgumentCommandExecutionRequest(Token token, CommandDescription command, String[] args, T arg) {
+    public ObjectArgumentCommandExecutionRequest(Token<?> token, CommandDescription command, String[] args, T arg) {
         super(token, command, args);
         this.arg = arg;
     }

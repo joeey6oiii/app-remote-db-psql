@@ -48,7 +48,7 @@ public class RequestData {
     /**
      * A method that returns the client.
      */
-    public User getCallerBack() {
+    public User getUser() {
         return user;
     }
 
@@ -57,7 +57,7 @@ public class RequestData {
      *
      * @param user client to set
      */
-    public void setCallerBack(User user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

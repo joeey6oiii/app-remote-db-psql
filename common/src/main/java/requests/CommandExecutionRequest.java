@@ -1,7 +1,7 @@
 package requests;
 
 import commands.CommandDescription;
-import utility.Token;
+import token.Token;
 
 import java.io.Serializable;
 
@@ -9,7 +9,7 @@ import java.io.Serializable;
  * A class that represents the client command execution request.
  */
 public class CommandExecutionRequest implements Request, Serializable {
-    private final Token token;
+    private final Token<?> token;
     private final CommandDescription command;
     private final String[] args;
 
@@ -19,14 +19,14 @@ public class CommandExecutionRequest implements Request, Serializable {
      * @param command {@link CommandDescription} object by which the original command will be created
      * @param args arguments of the command
      */
-    public CommandExecutionRequest(Token token, CommandDescription command, String[] args) {
+    public CommandExecutionRequest(Token<?> token, CommandDescription command, String[] args) {
         this.token = token;
         this.command = command;
         this.args = args;
     }
 
     @Override
-    public Token getToken() {
+    public Token<?> getToken() {
         return this.token;
     }
 

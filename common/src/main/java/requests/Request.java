@@ -1,11 +1,11 @@
 package requests;
 
-import utility.Token;
+import token.Token;
 
 /**
  * An interface for all requests-implementers.
  */
 public interface Request {
 
-    Token getToken();
+    Token<?> getToken();
 }

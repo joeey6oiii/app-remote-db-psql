@@ -1,7 +1,7 @@
 package commandsModule.commands;
 
 import commands.CommandType;
-import defaultClasses.Person;
+import model.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

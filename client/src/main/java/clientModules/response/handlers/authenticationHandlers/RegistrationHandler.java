@@ -1,29 +1,31 @@
 package clientModules.response.handlers.authenticationHandlers;
 
+import clientModules.authentication.User;
 import clientModules.response.handlers.ResponseHandler;
-import utility.Token;
+import token.StringToken;
 import response.responses.RegistrationResponse;
+import token.Token;
 
 public class RegistrationHandler implements ResponseHandler<RegistrationResponse> {
 
     @Override
     public boolean handleResponse(RegistrationResponse registrationResponse) {
         if (registrationResponse == null) {
+            System.out.println("Received invalid response from server");
             return false;
         }
 
+        System.out.println(registrationResponse.getResult());
+
         boolean isSuccess = registrationResponse.isSuccess();
-
         if (isSuccess) {
-            Token userCurrentTemporaryToken = registrationResponse.getToken();
+            Token<?> token = registrationResponse.getToken();
 
-            if (userCurrentTemporaryToken == null) {
+            if (token == null) {
                 return false;
             }
-            User.setToken(userCurrentTemporaryToken);
+            User.getInstance().setToken(token);
         }
-
-        System.out.println(registrationResponse.getResult());
 
         return isSuccess;
     }

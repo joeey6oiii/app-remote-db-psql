@@ -3,7 +3,7 @@ package commandsModule.commandsManagement;
 import clientModules.connection.DataTransferConnectionModule;
 import commands.CommandDescription;
 import commands.CommandType;
-import commandsModule.receivers.*;
+import commandsModule.commandReceivers.*;
 import exceptions.IllegalManagerArgumentException;
 
 import java.util.HashMap;
