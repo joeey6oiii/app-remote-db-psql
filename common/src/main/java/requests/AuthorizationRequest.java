@@ -1,13 +1,13 @@
 package requests;
 
 import response.data.AuthenticationData;
-import utility.Token;
+import token.Token;
 
 import java.io.Serializable;
 
 public class AuthorizationRequest implements Request, Serializable {
     private final AuthenticationData authenticationData;
-    private final Token token = new Token("default_token_val");
+    private Token<?> token;
 
     public AuthorizationRequest(AuthenticationData authenticationData) {
         this.authenticationData = authenticationData;
@@ -18,7 +18,7 @@ public class AuthorizationRequest implements Request, Serializable {
     }
 
     @Override
-    public Token getToken() {
+    public Token<?> getToken() {
         return this.token;
     }
 }

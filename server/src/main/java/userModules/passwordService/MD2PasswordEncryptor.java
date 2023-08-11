@@ -18,9 +18,17 @@ import java.util.Arrays;
  */
 public class MD2PasswordEncryptor implements PasswordEncryptor {
     private static final Logger logger = LogManager.getLogger("logger.MD2PasswordEncryptor");
-    private static final SecureRandom random = new SecureRandom();
-    private final int SALT_LENGTH = 16;
-    private static final String PEPPER_FILE = "pepper.txt";
+    private final SecureRandom random;
+    private final int SALT_LENGTH;
+    private final String PEPPER_FILE;
+    private final byte[] pepper;
+
+    {
+        random = new SecureRandom();
+        SALT_LENGTH = 16;
+        PEPPER_FILE = "pepper.txt";
+        pepper = readPepperFromFile().getBytes(StandardCharsets.UTF_8);
+    }
 
     /**
      * Encrypts password using MD2 encryption algorithm.
@@ -36,7 +44,7 @@ public class MD2PasswordEncryptor implements PasswordEncryptor {
         byte[] salt = this.generateSalt();
 
         byte[] seasonedPasswd = ByteArrayUtils.concatByteArrays(salt,
-                ByteArrayUtils.charArrayToByteArray(password), this.generatePepper().getBytes(StandardCharsets.UTF_8));
+                ByteArrayUtils.charArrayToByteArray(password), this.generatePepper());
 
         MessageDigest md = MessageDigest.getInstance("MD2", "BC");
         byte[] hashedBytes = md.digest(seasonedPasswd);
@@ -55,32 +63,41 @@ public class MD2PasswordEncryptor implements PasswordEncryptor {
         return salt;
     }
 
+    @Override
+    public byte[] generatePepper() {
+        return this.pepper;
+    }
+
     /**
      * Reads the pepper file from the server resources.
      *
      * @return string with symbols from the file in the server resources or default string with symbols if an error
      * occurred while reading pepper file
      */
-    public String generatePepper() {
-        String pepper = "One Piece";
+    private String readPepperFromFile() {
+        String pepper = null;
 
         try {
             InputStream inputStream = getClass().getResourceAsStream(PEPPER_FILE);
 
-            assert inputStream != null;
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-                StringBuilder stringBuilder = new StringBuilder();
-                String line;
+            if (inputStream != null) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    String line;
 
-                while ((line = reader.readLine()) != null) {
-                    stringBuilder.append(line).append(System.lineSeparator());
+                    while ((line = reader.readLine()) != null) {
+                        stringBuilder.append(line).append(System.lineSeparator());
+                    }
+
+                    pepper = Arrays.toString(stringBuilder.toString().split(System.lineSeparator()));
                 }
-
-                pepper = Arrays.toString(stringBuilder.toString().split(System.lineSeparator()));
+            } else {
+                logger.error("Pepper file not found");
             }
-        } catch (IOException | NullPointerException e) {
+        } catch (IOException e) {
             logger.error("Failed to read pepper file: {}", e.getMessage());
-            logger.info("Using default pepper");
+        } catch (NullPointerException e) {
+            logger.error("Received null while accessing resources: {}", e.getMessage());
         }
 
         return pepper;

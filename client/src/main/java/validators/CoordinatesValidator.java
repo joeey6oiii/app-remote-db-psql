@@ -1,6 +1,6 @@
 package validators;
 
-import defaultClasses.Coordinates;
+import model.Coordinates;
 
 /**
  * A class that implements a validator for the coordinates field.

@@ -2,13 +2,14 @@ package main;
 
 import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
-import clientModules.connection.UdpConnectionModuleFactory;
-import commandsModule.receivers.CommandsReceiver;
+import clientModules.connection.DatagramConnectionModuleFactory;
+import commandsModule.commands.CommandsReceiver;
 import commands.CommandDescription;
 import commandsModule.commands.CommandRegistry;
 import commandsModule.commandsManagement.CommandHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
+import objectBuilder.CoordinatesObjectBuilder;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -31,7 +32,7 @@ public class ClientApp {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        UdpConnectionModuleFactory factory = new UdpConnectionModuleFactory();
+        DatagramConnectionModuleFactory factory = new DatagramConnectionModuleFactory();
         try {
             DataTransferConnectionModule connectionModule = factory.createConfigureBlocking
                     (new InetSocketAddress(InetAddress.getLocalHost(), PORT), false);

@@ -26,7 +26,7 @@ public interface PasswordEncryptor {
     byte[] generateSalt();
 
     /**
-     * @return string with generated symbols.
+     * @return byte array with generated symbols.
      */
-    String generatePepper();
+    byte[] generatePepper();
 }

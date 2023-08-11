@@ -1,6 +1,6 @@
 package comparators;
 
-import defaultClasses.Person;
+import model.Person;
 
 import java.util.Comparator;
 

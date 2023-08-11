@@ -1,8 +1,8 @@
 package commandsModule.commands;
 
 import commands.CommandType;
-import databaseModule.PersonCollectionHandler;
-import defaultClasses.Person;
+import databaseModule.handler.PersonCollectionHandler;
+import model.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

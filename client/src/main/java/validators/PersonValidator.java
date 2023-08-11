@@ -1,6 +1,6 @@
 package validators;
 
-import defaultClasses.Person;
+import model.Person;
 
 /**
  * A class that implements full validation of the {@link Person} object.

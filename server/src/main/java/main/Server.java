@@ -1,14 +1,14 @@
 package main;
 
-import databaseModule.PersonCollectionHandler;
-import defaultClasses.Person;
+import databaseModule.handler.PersonCollectionHandler;
+import model.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import databaseModule.PersonCollectionLoader;
+import databaseModule.loader.PersonCollectionLoader;
 import requests.Request;
 import serverModules.connection.ConnectionModule;
 import serverModules.connection.ConnectionModuleFactory;
-import serverModules.connection.UdpConnectionModuleFactory;
+import serverModules.connection.DatagramConnectionModuleFactory;
 import serverModules.request.data.ClientRequestInfo;
 import serverModules.request.data.RequestData;
 import serverModules.request.handlers.RequestHandlerManager;
@@ -36,12 +36,12 @@ public class Server {
 
         try {
             try (PersonCollectionLoader<HashSet<Person>> collectionLoader = new PersonCollectionLoader<>(collectionHandler.getCollection())) {
-                collectionLoader.loadPersonsFromDB();
+                collectionLoader.loadElementsFromDB();
             }
             collectionHandler.sortCollection();
             logger.info("Loaded person objects from the database to a collection");
 
-            ConnectionModuleFactory factory = new UdpConnectionModuleFactory();
+            ConnectionModuleFactory factory = new DatagramConnectionModuleFactory();
             ConnectionModule module;
 
             logger.info("Initializing server...");
@@ -71,7 +71,7 @@ public class Server {
                     }
 
                     Request request = new RequestReader().readRequest(requestData.getByteArray());
-                    ClientRequestInfo info = new ClientRequestInfo(module, requestData.getCallerBack(), request);
+                    ClientRequestInfo info = new ClientRequestInfo(module, requestData.getUser(), request);
                     new RequestHandlerManager().manageRequest(info);
                 } catch (IOException e) {
                     logger.error("Something went wrong during I/O operations", e);

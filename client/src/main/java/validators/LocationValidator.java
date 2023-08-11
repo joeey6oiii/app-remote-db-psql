@@ -1,6 +1,6 @@
 package validators;
 
-import defaultClasses.Location;
+import model.Location;
 
 import java.util.Objects;
 

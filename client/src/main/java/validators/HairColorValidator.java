@@ -1,6 +1,6 @@
 package validators;
 
-import defaultClasses.Color;
+import model.Color;
 
 /**
  * A class that implements a validator for the hairColor field

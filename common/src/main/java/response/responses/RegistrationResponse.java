@@ -1,15 +1,15 @@
 package response.responses;
 
-import utility.Token;
+import token.Token;
 
 import java.io.Serializable;
 
 public class RegistrationResponse implements Response, Serializable {
     private final boolean success;
-    private final Token token;
+    private final Token<?> token;
     private final String result;
 
-    public RegistrationResponse(boolean success,Token token, String result) {
+    public RegistrationResponse(boolean success, Token<?> token, String result) {
         this.success = success;
         this.token = token;
         this.result = result;
@@ -19,7 +19,7 @@ public class RegistrationResponse implements Response, Serializable {
         return this.success;
     }
 
-    public Token getToken() {
+    public Token<?> getToken() {
         return this.token;
     }
 

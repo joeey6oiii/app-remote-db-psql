@@ -1,8 +1,8 @@
 package clientModules.authentication;
 
 import clientModules.connection.DataTransferConnectionModule;
-import commandsModule.receivers.authenticationReceivers.AuthorizationReceiver;
-import commandsModule.receivers.authenticationReceivers.RegistrationReceiver;
+import commandsModule.commandReceivers.authenticationReceivers.AuthorizationReceiver;
+import commandsModule.commandReceivers.authenticationReceivers.RegistrationReceiver;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 
