@@ -6,6 +6,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
+import java.util.Optional;
 import java.util.Properties;
 
 public class CoordinatesRepositoryImpl implements CoordinatesRepository,
@@ -46,7 +47,7 @@ public class CoordinatesRepositoryImpl implements CoordinatesRepository,
     }
 
     @Override
-    public Coordinates read(int id) throws SQLException {
+    public Optional<Coordinates> read(int id) throws SQLException {
         String selectQuery = "SELECT * FROM coordinates WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
@@ -57,13 +58,13 @@ public class CoordinatesRepositoryImpl implements CoordinatesRepository,
                     Coordinates coordinates = new Coordinates();
                     coordinates.setX(resultSet.getLong("coordinates_x"));
                     coordinates.setY(resultSet.getInt("coordinates_y"));
-                    return coordinates;
+                    return Optional.of(coordinates);
                 }
             }
         } catch (SQLException e) {
             throw new SQLException("Error reading coordinates from the database", e);
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
@@ -114,7 +115,7 @@ public class CoordinatesRepositoryImpl implements CoordinatesRepository,
                 if (resultSet.next()) {
                     return resultSet.getInt("id");
                 } else {
-                    throw new SQLException("Location not found.");
+                    throw new SQLException("Coordinates not found.");
                 }
             }
         }

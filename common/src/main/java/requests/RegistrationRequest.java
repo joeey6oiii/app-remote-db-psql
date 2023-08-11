@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 public class RegistrationRequest implements Request, Serializable {
     private final AuthenticationData authenticationData;
-    private Token<?> stringToken;
+    private Token<?> token;
 
     public RegistrationRequest(AuthenticationData authenticationData) {
         this.authenticationData = authenticationData;
@@ -19,6 +19,6 @@ public class RegistrationRequest implements Request, Serializable {
 
     @Override
     public Token<?> getToken() {
-        return this.stringToken;
+        return this.token;
     }
 }

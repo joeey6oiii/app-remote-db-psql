@@ -6,6 +6,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
+import java.util.Optional;
 import java.util.Properties;
 
 public class LocationRepositoryImpl implements LocationRepository, IdentifiableRepository<Integer, Location>, Closeable {
@@ -46,7 +47,7 @@ public class LocationRepositoryImpl implements LocationRepository, IdentifiableR
     }
 
     @Override
-    public Location read(int id) throws SQLException {
+    public Optional<Location> read(int id) throws SQLException {
         String selectQuery = "SELECT * FROM location WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
@@ -58,13 +59,13 @@ public class LocationRepositoryImpl implements LocationRepository, IdentifiableR
                     location.setX(resultSet.getFloat("location_x"));
                     location.setY(resultSet.getInt("location_y"));
                     location.setName(resultSet.getString("location_name"));
-                    return location;
+                    return Optional.of(location);
                 }
             }
         } catch (SQLException e) {
             throw new SQLException("Error reading location from the database", e);
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

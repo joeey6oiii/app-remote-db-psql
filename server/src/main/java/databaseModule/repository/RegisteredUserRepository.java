@@ -1,10 +1,17 @@
 package databaseModule.repository;
 
+import userModules.users.RegisteredUser;
+
+import java.sql.SQLException;
+import java.util.Optional;
+
 public interface RegisteredUserRepository {
 
-    // 11.08.2023 2:40
-    // памагити...
+    void insert(RegisteredUser registeredUser) throws SQLException;
 
+    Optional<RegisteredUser> read(int id) throws SQLException;
 
-    // попозже напишу
+//    void remove(int id) throws SQLException;                                  // Both can be implemented later if needed
+
+//    void update(RegisteredUser registeredUser, int id) throws SQLException;
 }
