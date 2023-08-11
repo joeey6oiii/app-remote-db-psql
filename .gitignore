@@ -1,21 +1,4 @@
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-target/
-client/target/
-server/target/
+/.idea
+/target
+/bin/
 server/src/main/resources/db.cfg
-*.iws
-*.iml
-*.ipr
-*.class
-*.jar
-*.war
-*.ear
-*.logs
-.idea/
-
-### Mac OS ###
-.DS_Store

@@ -1,13 +1,14 @@
 package userModules.users;
 
 import commandsModule.commands.BaseCommand;
+import userModules.sessionService.Session;
 
 import java.util.List;
 
 public class AuthenticatedUser extends RegisteredUser {
     private final RegisteredUser registeredUser;
     private List<BaseCommand> commandHistory;
-    // todo session
+//    private final Session session;
 
     public AuthenticatedUser(RegisteredUser registeredUser) {
         super(registeredUser.getRegisteredUserData(), registeredUser.getUser());
