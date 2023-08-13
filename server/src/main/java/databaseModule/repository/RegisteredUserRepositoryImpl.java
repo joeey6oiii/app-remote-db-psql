@@ -1,17 +1,16 @@
 package databaseModule.repository;
 
-import userModules.passwordService.EncryptedPassword;
 import userModules.users.RegisteredUser;
 import userModules.users.User;
 import userModules.users.data.RegisteredUserData;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
-import java.util.Optional;
 import java.util.Properties;
 
-public class RegisteredUserRepositoryImpl implements RegisteredUserRepository {
+public class RegisteredUserRepositoryImpl implements RegisteredUserRepository, Closeable {
     private final Connection connection;
 
     public RegisteredUserRepositoryImpl() throws IOException, SQLException {
@@ -34,9 +33,10 @@ public class RegisteredUserRepositoryImpl implements RegisteredUserRepository {
     }
 
     @Override
-    public void insert(RegisteredUser registeredUser) throws SQLException {
+    public boolean insert(RegisteredUser registeredUser) throws SQLException {
         String insertQuery = "INSERT INTO registeredusers (login, hashedpassword, salt) VALUES (?, ?, ?)";
 
+        int affectedRows;
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
             RegisteredUserData userData = registeredUser.getRegisteredUserData();
 
@@ -44,7 +44,7 @@ public class RegisteredUserRepositoryImpl implements RegisteredUserRepository {
             preparedStatement.setBytes(2, userData.getEncryptedPassword().getHashedPassword());
             preparedStatement.setBytes(3, userData.getEncryptedPassword().getSalt());
 
-            preparedStatement.executeUpdate();
+            affectedRows = preparedStatement.executeUpdate();
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -53,34 +53,39 @@ public class RegisteredUserRepositoryImpl implements RegisteredUserRepository {
         } catch (SQLException e) {
             throw new SQLException("Error adding registered user to the database", e);
         }
+
+        return affectedRows > 0;
     }
 
     @Override
-    public Optional<RegisteredUser> read(int id) throws SQLException {
-        String selectQuery = "SELECT id, login, hashedpassword, salt FROM registeredusers WHERE id = ?";
+    public RegisteredUser read(RegisteredUserData userData) throws SQLException {
+        String selectQuery = "SELECT * FROM registeredusers WHERE login = ? AND hashedpassword = ? AND salt = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
-            preparedStatement.setInt(1, id);
+            preparedStatement.setString(1, userData.getLogin());
+            preparedStatement.setBytes(2, userData.getEncryptedPassword().getHashedPassword());
+            preparedStatement.setBytes(3, userData.getEncryptedPassword().getSalt());
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    RegisteredUserData registeredUserData = new RegisteredUserData(
-                            resultSet.getString("login"),
-                            new EncryptedPassword(
-                                    resultSet.getBytes("hashedpassword"),
-                                    resultSet.getBytes("salt")
-                            )
-                    );
-                    RegisteredUser registeredUser = new RegisteredUser(registeredUserData, new User(null, 0));
+                    RegisteredUser registeredUser = new RegisteredUser(userData, new User(null, 0));
                     registeredUser.setId(resultSet.getInt("id"));
-
-                    return Optional.of(registeredUser);
+                    return registeredUser;
                 } else {
-                    return Optional.empty();
+                    return null;
                 }
             }
         } catch (SQLException e) {
             throw new SQLException("Error reading registered user from the database", e);
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            throw new IOException(e);
         }
     }
 }

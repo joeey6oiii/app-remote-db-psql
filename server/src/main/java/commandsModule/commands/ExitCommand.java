@@ -54,7 +54,8 @@ public class ExitCommand implements BaseCommand {
      */
     @Override
     public void execute() throws IOException {
+        // todo
         logger.info("Client disconnects");
-        new SaveCommand().execute();
+//        new SaveCommand().execute();
     }
 }

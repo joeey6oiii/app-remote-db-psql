@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public interface PersonRepository {
 
-    void insert(Person person, int ownerId) throws SQLException;
+    boolean insert(Person person, int ownerId) throws SQLException;
 
-    void remove(int id) throws SQLException;
+    boolean remove(int id) throws SQLException;
 
-    void update(Person person, int id) throws SQLException;
+    boolean update(Person person, int id) throws SQLException;
 }

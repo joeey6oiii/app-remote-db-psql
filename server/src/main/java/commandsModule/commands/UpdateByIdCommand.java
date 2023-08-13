@@ -1,6 +1,7 @@
 package commandsModule.commands;
 
 import commands.CommandType;
+import databaseModule.MemoryBackedDBManager;
 import databaseModule.handler.PersonCollectionHandler;
 import model.Person;
 import org.apache.logging.log4j.LogManager;
@@ -14,11 +15,12 @@ import java.util.Optional;
  * A class that implements the "update_by_id" command.
  */
 @Command
-public class UpdateByIdCommand implements ParameterizedCommand, ObjectArgumentCommand<Person> {
+public class UpdateByIdCommand implements ParameterizedCommand, ObjectArgumentCommand<Person>, CallerIdCommand {
     private static final Logger logger = LogManager.getLogger("logger.UpdateByIdCommand");
     private String response;
     private String[] args;
     private Person argument;
+    private int callerId;
 
     /**
      * A method that returns the name of the command.
@@ -88,6 +90,11 @@ public class UpdateByIdCommand implements ParameterizedCommand, ObjectArgumentCo
         return "Updates element in database by specified ID";
     }
 
+    @Override
+    public void setCallerId(int callerId) {
+        this.callerId = callerId;
+    }
+
     /**
      * When called, iterates through the collection to find the {@link Person} object with the specified id. If not found,
      * outputs <code>String</code>, otherwise replaces in the database current {@link Person} with the specified id
@@ -97,18 +104,15 @@ public class UpdateByIdCommand implements ParameterizedCommand, ObjectArgumentCo
      */
     @Override
     public void execute() throws IOException {
-        PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
-        int id = Integer.parseInt(args[1]);
-        Optional<Person> optionalPerson = personCollectionHandler.getCollection()
-                .stream().filter(p -> Objects.equals(p.getId(), id)).findFirst();
-        if (optionalPerson.isPresent()) {
-            Person existingPerson = optionalPerson.get();
-            personCollectionHandler.getCollection().remove(existingPerson);
-            argument.setId(id);
-            personCollectionHandler.addElement(argument);
-            this.response ="Updated element with id " + id;
+        int elementId = Integer.parseInt(args[1]);
+
+        int result = MemoryBackedDBManager.getInstance().updateElementInDBAndMemory(argument, elementId, callerId);
+        if (result == 1) {
+            response = "Updated element with id " + elementId;
+        } else if (result == 0) {
+            response = "Something went wrong. Element with id " + elementId + " was not updated. Please, try again later";
         } else {
-            this.response = "No element matches id " + id;
+            response = "You have no access to update element with id " + elementId;
         }
         logger.info("Executed UpdateByIdCommand");
     }

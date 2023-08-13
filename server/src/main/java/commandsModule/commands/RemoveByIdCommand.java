@@ -1,7 +1,7 @@
 package commandsModule.commands;
 
 import commands.CommandType;
-import databaseModule.handler.PersonCollectionHandler;
+import databaseModule.MemoryBackedDBManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,10 +11,11 @@ import java.io.IOException;
  * Class that implements the "remove_by_id" command.
  */
 @Command
-public class RemoveByIdCommand implements ParameterizedCommand {
+public class RemoveByIdCommand implements ParameterizedCommand, CallerIdCommand {
     private static final Logger logger = LogManager.getLogger("logger.RemoveByIdCommand");
     private String response;
     private String[] args;
+    private int callerId;
 
     /**
      * A method that returns the name of the command.
@@ -68,6 +69,11 @@ public class RemoveByIdCommand implements ParameterizedCommand {
         return "Removes an element from the database by id";
     }
 
+    @Override
+    public void setCallerId(int callerId) {
+        this.callerId = callerId;
+    }
+
     /**
      * When called, removes an element from the collection in the database by the specified id.
      *
@@ -75,16 +81,15 @@ public class RemoveByIdCommand implements ParameterizedCommand {
      */
     @Override
     public void execute() throws IOException {
-        PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
-        int id = Integer.parseInt(args[1]);
-        if (personCollectionHandler.getCollection().isEmpty()) {
-            this.response = "Collection is empty, there is nothing to remove";
+        int elementId = Integer.parseInt(args[1]);
+
+        int result = MemoryBackedDBManager.getInstance().removeElementFromDBAndMemory(elementId, callerId);
+        if (result == 1) {
+            response = "Removed element with id " + elementId;
+        } else if (result == 0) {
+            response = "Something went wrong. Element with id " + elementId + " was not removed. Please, try again later";
         } else {
-            if (personCollectionHandler.removeElement(id)) {
-                this.response = "Removed element with id " + id;
-            } else {
-                this.response = "No element matches id " + id;
-            }
+            response = "You have no access to remove element with id " + elementId;
         }
         logger.info("Executed RemoveByIdCommand");
     }
