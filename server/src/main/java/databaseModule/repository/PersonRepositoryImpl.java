@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
 
-public class PersonRepositoryImpl implements PersonRepository, Closeable {
+public class PersonRepositoryImpl implements PersonRepository, AccessControlRepository, Closeable {
     private final Connection connection;
     private final CoordinatesRepositoryImpl coordinatesRepository;
     private final LocationRepositoryImpl locationRepository;
@@ -41,7 +41,7 @@ public class PersonRepositoryImpl implements PersonRepository, Closeable {
     }
 
     @Override
-    public void insert(Person person, int ownerId) throws SQLException {
+    public boolean insert(Person person, int ownerId) throws SQLException {
         String insertQuery = "INSERT INTO person " +
                 "(name, coordinates_id, creation_date, height, " +
                 "birthday, passport_id, hair_color, location_id, owner_id) " +
@@ -62,6 +62,7 @@ public class PersonRepositoryImpl implements PersonRepository, Closeable {
             locationId = locationRepository.getElementId(location);
         }
 
+        int affectedRows;
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setString(1, person.getName());
             preparedStatement.setInt(2, coordinatesId);
@@ -77,7 +78,7 @@ public class PersonRepositoryImpl implements PersonRepository, Closeable {
             }
             preparedStatement.setInt(9, ownerId);
 
-            preparedStatement.executeUpdate();
+            affectedRows = preparedStatement.executeUpdate();
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -86,27 +87,28 @@ public class PersonRepositoryImpl implements PersonRepository, Closeable {
         } catch (SQLException e) {
             throw new SQLException("Error adding person to the database", e);
         }
+
+        return affectedRows > 0;
     }
 
     @Override
-    public void remove(int id) throws SQLException {
+    public boolean remove(int id) throws SQLException {
         String deleteQuery = "DELETE FROM person WHERE id = ?";
 
+        int affectedRows;
         try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
             preparedStatement.setInt(1, id);
 
-            int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows != 1) {
-                throw new SQLException("Deleting person failed, no rows affected.");
-            }
+            affectedRows = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error removing person from the database", e);
         }
+
+        return affectedRows > 0;
     }
 
     @Override
-    public void update(Person person, int id) throws SQLException {
+    public boolean update(Person person, int id) throws SQLException {
         String getIdsQuery = "SELECT coordinates_id, location_id FROM person WHERE id = ?";
 
         try (PreparedStatement getIdStatement = connection.prepareStatement(getIdsQuery)) {
@@ -136,6 +138,7 @@ public class PersonRepositoryImpl implements PersonRepository, Closeable {
                             "hair_color = ?, location_id = ? " +
                             "WHERE id = ?";
 
+                    int affectedRows;
                     try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
                         preparedStatement.setString(1, person.getName());
                         preparedStatement.setInt(2, coordinatesId);
@@ -151,16 +154,32 @@ public class PersonRepositoryImpl implements PersonRepository, Closeable {
                         }
                         preparedStatement.setInt(9, id);
 
-                        int affectedRows = preparedStatement.executeUpdate();
-
-                        if (affectedRows != 1) {
-                            throw new SQLException("Updating person failed, no rows affected.");
-                        }
+                        affectedRows = preparedStatement.executeUpdate();
                     } catch (SQLException e) {
                         throw new SQLException("Error updating person in the database", e);
                     }
+
+                    return affectedRows > 0;
                 } else {
-                    throw new SQLException("Person not found.");
+                    throw new SQLException("Person not found");
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean checkAccess(int elementId, int ownerId) throws SQLException {
+        String getIdsQuery = "SELECT owner_id FROM person WHERE id = ?";
+
+        try (PreparedStatement getIdStatement = connection.prepareStatement(getIdsQuery)) {
+            getIdStatement.setInt(1, elementId);
+
+            try (ResultSet resultSet = getIdStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int personOwnerId = resultSet.getInt("owner_id");
+                    return personOwnerId == ownerId;
+                } else {
+                    return false;
                 }
             }
         }

@@ -39,7 +39,7 @@ public class Server {
                 collectionLoader.loadElementsFromDB();
             }
             collectionHandler.sortCollection();
-            logger.info("Loaded person objects from the database to a collection");
+            logger.info("Loaded elements from the database to a collection");
 
             ConnectionModuleFactory factory = new DatagramConnectionModuleFactory();
             ConnectionModule module;

@@ -6,7 +6,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -74,6 +73,7 @@ public class HistoryCommand implements BaseCommand {
      */
     @Override
     public void execute() throws IOException {
+        // todo remake completely (hint: HashMap of authenticated users. Token->AU. Every AU keeps its command history)
         List<BaseCommand> list = CommandHandler.getHistory();
         if (list.isEmpty()) {
             this.response = "No command history yet";

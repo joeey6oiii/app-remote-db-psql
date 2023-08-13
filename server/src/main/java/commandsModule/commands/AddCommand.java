@@ -1,6 +1,7 @@
 package commandsModule.commands;
 
 import commands.CommandType;
+import databaseModule.MemoryBackedDBManager;
 import model.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,10 +12,11 @@ import java.io.IOException;
  * A class that implements the "add" command.
  */
 @Command
-public class AddCommand implements BaseCommand, ObjectArgumentCommand<Person> {
+public class AddCommand implements BaseCommand, ObjectArgumentCommand<Person>, CallerIdCommand {
     private static final Logger logger = LogManager.getLogger("logger.AddCommand");
     private String response;
     private Person argument;
+    private int callerId;
 
     /**
      * A method that returns the name of the command.
@@ -66,6 +68,11 @@ public class AddCommand implements BaseCommand, ObjectArgumentCommand<Person> {
         return "Adds element to collection";
     }
 
+    @Override
+    public void setCallerId(int callerId) {
+        this.callerId = callerId;
+    }
+
     /**
      * When called, adds received {@link Person} object to the collection.
      *
@@ -73,8 +80,11 @@ public class AddCommand implements BaseCommand, ObjectArgumentCommand<Person> {
      */
     @Override
     public void execute() throws IOException {
-        // todo
-        response = "well well well, AddCommand is out of order";
+        if (MemoryBackedDBManager.getInstance().addElementToDBAndMemory(argument, callerId)) {
+            response = "Element was added";
+        } else {
+            response = "Something went wrong. Element was not added. Please, try again later";
+        }
         logger.info("Executed AddCommand");
     }
 }

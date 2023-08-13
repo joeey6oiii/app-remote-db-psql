@@ -1,7 +1,7 @@
 package commandsModule.commands;
 
 import commands.CommandType;
-import databaseModule.handler.PersonCollectionHandler;
+import databaseModule.MemoryBackedDBManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,9 +11,10 @@ import java.io.IOException;
  * A class that implements the "clear" command.
  */
 @Command
-public class ClearCommand implements BaseCommand {
+public class ClearCommand implements BaseCommand, CallerIdCommand {
     private static final Logger logger = LogManager.getLogger("logger.ClearCommand");
     private String response;
+    private int callerId;
 
     /**
      * A method that returns the name of the command.
@@ -49,6 +50,11 @@ public class ClearCommand implements BaseCommand {
         return "Clears the collection";
     }
 
+    @Override
+    public void setCallerId(int callerId) {
+        this.callerId = callerId;
+    }
+
     /**
      * When called, clears the collection in the database.
      *
@@ -56,12 +62,15 @@ public class ClearCommand implements BaseCommand {
      */
     @Override
     public void execute() throws IOException {
-        PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
-        if (personCollectionHandler.getCollection().isEmpty()) {
-            this.response = "Collection is empty, there is nothing to clear";
+        int result = MemoryBackedDBManager.getInstance().clearElementsInDBAndMemory(callerId);
+        if (result == 1) {
+            response = "All your elements were removed";
+        } else if (result == 2) {
+            response = "You have not created any elements yet";
+        } else if (result == -1) {
+            response = "Something went wrong. Some of your elements were not removed";
         } else {
-            personCollectionHandler.clearCollection();
-            this.response = "Cleared the collection";
+            response = "Something went wrong. No elements removed. Please, try again later";
         }
         logger.info("Executed ClearCommand");
     }

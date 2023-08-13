@@ -2,21 +2,25 @@ package commandsModule.commands;
 
 import commands.CommandType;
 import comparators.HeightComparator;
-import databaseModule.handler.PersonCollectionHandler;
+import databaseModule.MemoryBackedDBManager;
 import model.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A class that implements the "remove_greater" command.
  */
 @Command
-public class RemoveGreaterCommand implements BaseCommand, ObjectArgumentCommand<Person> {
+public class RemoveGreaterCommand implements BaseCommand, ObjectArgumentCommand<Person>, CallerIdCommand {
     private static final Logger logger = LogManager.getLogger("logger.RemoveGreaterCommand");
     private String response;
     private Person argument;
+    private int callerId;
 
     /**
      * A method that returns the name of the command.
@@ -68,6 +72,11 @@ public class RemoveGreaterCommand implements BaseCommand, ObjectArgumentCommand<
         return "Removes from the collection all elements greater than the specified";
     }
 
+    @Override
+    public void setCallerId(int callerId) {
+        this.callerId = callerId;
+    }
+
     /**
      * When called, removes all {@link Person} elements from the collection whose height field is greater than the
      * height field of the received created object.
@@ -76,13 +85,33 @@ public class RemoveGreaterCommand implements BaseCommand, ObjectArgumentCommand<
      */
     @Override
     public void execute() throws IOException {
-        PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
-        if (personCollectionHandler.getCollection().isEmpty()) {
-            this.response = "Collection is empty, there is nothing to remove";
-        } else {
-            personCollectionHandler.getCollection().removeIf(p -> new HeightComparator().compare(p, argument) > 0);
-            this.response = "Removed elements whose height parameter is greater than " + argument.getHeight();
+        List<Person> ownerElements;
+        MemoryBackedDBManager dbManager = MemoryBackedDBManager.getInstance();
+        try {
+            ownerElements = dbManager.getOwnerElements(callerId, ArrayList::new);
+        } catch (SQLException e) {
+            response = "Unable to load your elements. Please, try again later";
+            logger.error("Error loading user database elements", e);
+            return;
         }
+
         logger.info("Executed RemoveGreaterCommand");
+
+        if (ownerElements.isEmpty()) {
+            response = "Nothing to remove. You have not created any elements yet";
+            return;
+        }
+
+        int counter = 0;
+        HeightComparator comparator = new HeightComparator();
+
+        for (Person currentPerson : ownerElements) {
+            if (comparator.compare(currentPerson, argument) > 0 &&
+                    dbManager.removeElementFromDBAndMemory(currentPerson.getId(), callerId) == 1) {
+                counter++;
+            }
+        }
+
+        response = "Removed " + counter + " elements whose height parameter is greater than " + argument.getHeight();
     }
 }

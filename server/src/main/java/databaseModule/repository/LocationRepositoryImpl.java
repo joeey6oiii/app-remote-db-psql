@@ -6,7 +6,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
-import java.util.Optional;
 import java.util.Properties;
 
 public class LocationRepositoryImpl implements LocationRepository, IdentifiableRepository<Integer, Location>, Closeable {
@@ -32,22 +31,25 @@ public class LocationRepositoryImpl implements LocationRepository, IdentifiableR
     }
 
     @Override
-    public void insert(Location location) throws SQLException {
+    public boolean insert(Location location) throws SQLException {
         String insertQuery = "INSERT INTO location (location_x, location_y, location_name) VALUES (?, ?, ?)";
 
+        int affectedRows;
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
             preparedStatement.setFloat(1, location.getX());
             preparedStatement.setInt(2, location.getY());
             preparedStatement.setString(3, location.getName());
 
-            preparedStatement.executeUpdate();
+            affectedRows = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error adding location to the database", e);
         }
+
+        return affectedRows > 0;
     }
 
     @Override
-    public Optional<Location> read(int id) throws SQLException {
+    public Location read(int id) throws SQLException {
         String selectQuery = "SELECT * FROM location WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
@@ -59,50 +61,49 @@ public class LocationRepositoryImpl implements LocationRepository, IdentifiableR
                     location.setX(resultSet.getFloat("location_x"));
                     location.setY(resultSet.getInt("location_y"));
                     location.setName(resultSet.getString("location_name"));
-                    return Optional.of(location);
+                    return location;
+                } else {
+                    return null;
                 }
             }
         } catch (SQLException e) {
             throw new SQLException("Error reading location from the database", e);
         }
-        return Optional.empty();
     }
 
     @Override
-    public void remove(int id) throws SQLException {
+    public boolean remove(int id) throws SQLException {
         String deleteQuery = "DELETE FROM location WHERE id = ?";
 
+        int affectedRows;
         try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
             preparedStatement.setInt(1, id);
 
-            int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows != 1) {
-                throw new SQLException("Deleting location failed, no rows affected.");
-            }
+            affectedRows = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error removing location from the database", e);
         }
+
+        return affectedRows > 0;
     }
 
     @Override
-    public void update(Location location, int id) throws SQLException {
+    public boolean update(Location location, int id) throws SQLException {
         String updateQuery = "UPDATE location SET location_x = ?, location_y = ?, location_name = ? WHERE id = ?";
 
+        int affectedRows;
         try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
             preparedStatement.setFloat(1, location.getX());
             preparedStatement.setInt(2, location.getY());
             preparedStatement.setString(3, location.getName());
             preparedStatement.setInt(4, id);
 
-            int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows != 1) {
-                throw new SQLException("Updating location failed, no rows affected.");
-            }
+            affectedRows = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error updating location in the database", e);
         }
+
+        return affectedRows > 0;
     }
 
     @Override
@@ -118,9 +119,11 @@ public class LocationRepositoryImpl implements LocationRepository, IdentifiableR
                 if (resultSet.next()) {
                     return resultSet.getInt("id");
                 } else {
-                    throw new SQLException("Location not found.");
+                    return null;
                 }
             }
+        } catch (SQLException e) {
+            throw new SQLException("Error getting location id from the database", e);
         }
     }
 

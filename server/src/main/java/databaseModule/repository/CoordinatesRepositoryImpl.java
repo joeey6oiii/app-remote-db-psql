@@ -6,7 +6,6 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
-import java.util.Optional;
 import java.util.Properties;
 
 public class CoordinatesRepositoryImpl implements CoordinatesRepository,
@@ -33,21 +32,24 @@ public class CoordinatesRepositoryImpl implements CoordinatesRepository,
     }
 
     @Override
-    public void insert(Coordinates coordinates) throws SQLException {
+    public boolean insert(Coordinates coordinates) throws SQLException {
         String insertQuery = "INSERT INTO coordinates (coordinates_x, coordinates_y) VALUES (?, ?)";
 
+        int affectedRows;
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
             preparedStatement.setLong(1, coordinates.getX());
             preparedStatement.setInt(2, coordinates.getY());
 
-            preparedStatement.executeUpdate();
+            affectedRows = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error adding coordinates to the database", e);
         }
+
+        return affectedRows > 0;
     }
 
     @Override
-    public Optional<Coordinates> read(int id) throws SQLException {
+    public Coordinates read(int id) throws SQLException {
         String selectQuery = "SELECT * FROM coordinates WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
@@ -58,49 +60,48 @@ public class CoordinatesRepositoryImpl implements CoordinatesRepository,
                     Coordinates coordinates = new Coordinates();
                     coordinates.setX(resultSet.getLong("coordinates_x"));
                     coordinates.setY(resultSet.getInt("coordinates_y"));
-                    return Optional.of(coordinates);
+                    return coordinates;
+                } else {
+                    return null;
                 }
             }
         } catch (SQLException e) {
             throw new SQLException("Error reading coordinates from the database", e);
         }
-        return Optional.empty();
     }
 
     @Override
-    public void remove(int id) throws SQLException {
+    public boolean remove(int id) throws SQLException {
         String deleteQuery = "DELETE FROM coordinates WHERE id = ?";
 
+        int affectedRows;
         try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
             preparedStatement.setInt(1, id);
 
-            int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows != 1) {
-                throw new SQLException("Deleting coordinates failed, no rows affected.");
-            }
+            affectedRows = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error removing coordinates from the database", e);
         }
+
+        return affectedRows > 0;
     }
 
     @Override
-    public void update(Coordinates coordinates, int id) throws SQLException {
+    public boolean update(Coordinates coordinates, int id) throws SQLException {
         String updateQuery = "UPDATE coordinates SET coordinates_x = ?, coordinates_y = ? WHERE id = ?";
 
+        int affectedRows;
         try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
             preparedStatement.setLong(1, coordinates.getX());
             preparedStatement.setInt(2, coordinates.getY());
             preparedStatement.setInt(3, id);
 
-            int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows != 1) {
-                throw new SQLException("Updating coordinates failed, no rows affected.");
-            }
+            affectedRows = preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new SQLException("Error updating coordinates in the database", e);
         }
+
+        return affectedRows > 0;
     }
 
     @Override
@@ -115,9 +116,11 @@ public class CoordinatesRepositoryImpl implements CoordinatesRepository,
                 if (resultSet.next()) {
                     return resultSet.getInt("id");
                 } else {
-                    throw new SQLException("Coordinates not found.");
+                    return null;
                 }
             }
+        } catch (SQLException e) {
+            throw new SQLException("Error getting coordinates id from the database", e);
         }
     }
 
