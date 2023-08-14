@@ -53,15 +53,6 @@ public class Server {
             }
             logger.info("Server started");
 
-//            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-//                try {
-//                    // something to close
-//                } catch (IOException e) {
-//                    logger.error("An error occurred while closing the database connection", e);
-//                    logger.info("Force shutdown...");
-//                }
-//            }));
-
             while (true) {
                 try {
                     RequestData requestData = module.receiveData();

@@ -1,6 +1,7 @@
 package databaseModule.repository;
 
 import model.Coordinates;
+import utils.MappingUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -57,10 +58,7 @@ public class CoordinatesRepositoryImpl implements CoordinatesRepository,
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    Coordinates coordinates = new Coordinates();
-                    coordinates.setX(resultSet.getLong("coordinates_x"));
-                    coordinates.setY(resultSet.getInt("coordinates_y"));
-                    return coordinates;
+                    return MappingUtils.mapResultSetToCoordinates(resultSet);
                 } else {
                     return null;
                 }

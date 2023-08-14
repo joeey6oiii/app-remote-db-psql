@@ -1,6 +1,7 @@
 package databaseModule.repository;
 
 import model.Location;
+import utils.MappingUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -57,11 +58,7 @@ public class LocationRepositoryImpl implements LocationRepository, IdentifiableR
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    Location location = new Location();
-                    location.setX(resultSet.getFloat("location_x"));
-                    location.setY(resultSet.getInt("location_y"));
-                    location.setName(resultSet.getString("location_name"));
-                    return location;
+                    return MappingUtils.mapResultSetToLocation(resultSet);
                 } else {
                     return null;
                 }
