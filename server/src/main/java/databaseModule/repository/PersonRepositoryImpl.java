@@ -3,6 +3,7 @@ package databaseModule.repository;
 import model.Coordinates;
 import model.Location;
 import model.Person;
+import utils.MappingUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -89,6 +90,25 @@ public class PersonRepositoryImpl implements PersonRepository, AccessControlRepo
         }
 
         return affectedRows > 0;
+    }
+
+    @Override
+    public Person read(int id) throws SQLException {
+        String selectQuery = "SELECT * FROM person WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
+            preparedStatement.setInt(1, id);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return MappingUtils.mapResultSetToPerson(resultSet);
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error reading person from the database", e);
+        }
     }
 
     @Override

@@ -2,14 +2,12 @@ package commandsModule.commands;
 
 import commands.CommandType;
 import databaseModule.MemoryBackedDBManager;
-import databaseModule.handler.PersonCollectionHandler;
 import model.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Objects;
-import java.util.Optional;
+import java.sql.SQLException;
 
 /**
  * A class that implements the "update_by_id" command.
@@ -105,14 +103,23 @@ public class UpdateByIdCommand implements ParameterizedCommand, ObjectArgumentCo
     @Override
     public void execute() throws IOException {
         int elementId = Integer.parseInt(args[1]);
+        MemoryBackedDBManager dbManager = MemoryBackedDBManager.getInstance();
 
-        int result = MemoryBackedDBManager.getInstance().updateElementInDBAndMemory(argument, elementId, callerId);
+        int result = dbManager.updateElementInDBAndMemory(argument, elementId, callerId);
         if (result == 1) {
             response = "Updated element with id " + elementId;
         } else if (result == 0) {
             response = "Something went wrong. Element with id " + elementId + " was not updated. Please, try again later";
         } else {
-            response = "You have no access to update element with id " + elementId;
+            try {
+                if (dbManager.checkElementExistence(elementId)) {
+                    response = "You have no access to update element with id " + elementId;
+                } else {
+                    response = "Element with id " + elementId + " does not exist";
+                }
+            } catch (SQLException e) {
+                throw new IOException(e);
+            }
         }
         logger.info("Executed UpdateByIdCommand");
     }

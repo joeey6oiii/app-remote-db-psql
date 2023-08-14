@@ -165,13 +165,16 @@ public class MemoryBackedDBManager {
      *         </ul>
      */
     public synchronized int clearElementsInDBAndMemory(int ownerId) {
+        List<Person> ownerElements = new ArrayList<>();
+        int elementsSize = 0;
         try {
-            List<Person> ownerElements = this.getOwnerElements(ownerId, ArrayList::new);
+            ownerElements = this.getOwnerElements(ownerId, ArrayList::new);
             if (ownerElements.isEmpty()) {
                 return 2;
             } else {
                 int elementId;
                 int counter = 0;
+                elementsSize = ownerElements.size();
 
                 try (PersonRepositoryImpl personRepository = new PersonRepositoryImpl()) {
                     for (Iterator<Person> iterator = ownerElements.iterator(); iterator.hasNext(); ) {
@@ -185,14 +188,19 @@ public class MemoryBackedDBManager {
                     }
                 }
 
-                if (counter == ownerElements.size()) {
+                if (counter == elementsSize) {
                     return 1;
                 } else {
                     return -1;
                 }
             }
         } catch (SQLException | IOException e) {
-            logger.error("Elements were not removed", e);
+            if (elementsSize > ownerElements.size()) {
+                logger.error("Some elements were not removed", e);
+                return -1;
+            } else {
+                logger.error("Elements were not removed", e);
+            }
         }
 
         return 0;
@@ -212,6 +220,26 @@ public class MemoryBackedDBManager {
         try (PersonCollectionLoader<C> collectionLoader = new PersonCollectionLoader<>(collectionSupplier.get())) {
             collectionLoader.loadElementsFromDB(ownerId);
             return collectionLoader.getCollection();
+        }
+    }
+
+    /**
+     * Checks the existence of an element identified by the given element ID
+     * within the data source. This method queries a repository to determine
+     * if an element with the specified ID exists.
+     *
+     * @param elementId The ID of the element to check for existence
+     * @return {@code true} if an element with the specified ID exists,
+     *         {@code false} otherwise
+     * @throws SQLException If a database access error occurs while querying
+     *                      the repository for element existence
+     * @throws IOException If an I/O error occurs while establishing the connection
+     *                     to the data source, which could include reading data
+     *                     from a file
+     */
+    public boolean checkElementExistence(int elementId) throws SQLException, IOException {
+        try (PersonRepositoryImpl personRepository = new PersonRepositoryImpl()) {
+            return personRepository.read(elementId) != null;
         }
     }
 }

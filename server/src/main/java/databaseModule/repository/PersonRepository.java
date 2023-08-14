@@ -8,6 +8,8 @@ public interface PersonRepository {
 
     boolean insert(Person person, int ownerId) throws SQLException;
 
+    Person read(int id) throws SQLException;
+
     boolean remove(int id) throws SQLException;
 
     boolean update(Person person, int id) throws SQLException;
