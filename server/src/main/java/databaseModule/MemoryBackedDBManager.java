@@ -33,17 +33,8 @@ public class MemoryBackedDBManager {
      * If an instance does not yet exist, this method creates a new instance and returns it.
      * Subsequent calls to this method will return the already existing instance.
      * <p>
-     * This method guarantees that the MemoryBackedDBManager is a singleton, meaning that all
-     * parts of the application that obtain a reference to the instance will work with the same
-     * shared object.
-     * <p>
-     * Usage Example:
-     * <pre>{@code
-     * MemoryBackedDBManager dbManager = MemoryBackedDBManager.getInstance();
-     * // Use the singleton instance for data management operations.
-     * }</pre>
      *
-     * @return The singleton instance of the MemoryBackedDBManager class.
+     * @return The singleton instance of the MemoryBackedDBManager class
      */
     public static MemoryBackedDBManager getInstance() {
         if (singleInstance == null) {
@@ -126,19 +117,19 @@ public class MemoryBackedDBManager {
                 return 2;
             }
 
-            personRepository.update(person, elementId);
-
             PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
             Optional<Person> optionalPerson = personCollectionHandler.getCollection()
                     .stream().filter(p -> Objects.equals(p.getId(), elementId)).findFirst();
 
             if (optionalPerson.isPresent()) {
+                personRepository.update(person, elementId);
+
                 Person existingPerson = optionalPerson.get();
                 personCollectionHandler.getCollection().remove(existingPerson);
                 person.setId(elementId);
                 personCollectionHandler.addElement(person);
             } else {
-                throw new IOException("Collection elements do not match database elements");
+                throw new IOException("Element was not updated. Collection elements do not match database elements");
             }
 
             return 1;

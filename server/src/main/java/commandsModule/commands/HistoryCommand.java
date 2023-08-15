@@ -74,19 +74,19 @@ public class HistoryCommand implements BaseCommand {
     @Override
     public void execute() throws IOException {
         // todo remake completely (hint: HashMap of authenticated users. Token->AU. Every AU keeps its command history)
-        List<BaseCommand> list = CommandHandler.getHistory();
-        if (list.isEmpty()) {
-            this.response = "No command history yet";
-        } else {
-            List<String> history = list.stream()
-                    .map(BaseCommand::getName)
-                    .collect(Collectors.toList());
-            int i = 9;
-            if (history.size() > i) {
-                history = history.subList(history.size() - i, history.size());
-            }
-            this.response = history.toString();
-        }
+//        List<BaseCommand> list = CommandHandler.getHistory();
+//        if (list.isEmpty()) {
+//            this.response = "No command history yet";
+//        } else {
+//            List<String> history = list.stream()
+//                    .map(BaseCommand::getName)
+//                    .collect(Collectors.toList());
+//            int i = 9;
+//            if (history.size() > i) {
+//                history = history.subList(history.size() - i, history.size());
+//            }
+//            this.response = history.toString();
+//        }
         logger.info("Executed HistoryCommand");
     }
 }

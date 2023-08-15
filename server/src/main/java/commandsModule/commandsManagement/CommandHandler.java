@@ -19,7 +19,6 @@ import java.util.*;
 public class CommandHandler {
     private static final Logger logger = LogManager.getLogger("logger.CommandHandler");
     private final Map<String, BaseCommand> commands;
-    private static List<BaseCommand> history;
 
     /**
      * A constructor for a CommandHandler.
@@ -28,7 +27,6 @@ public class CommandHandler {
      */
     public CommandHandler() {
         commands = new LinkedHashMap<>();
-        history = getHistory();
 
         commands.put("add", new AddCommand());
         commands.put("info", new InfoCommand());
@@ -54,18 +52,6 @@ public class CommandHandler {
      */
     public Map<String, BaseCommand> getCommands() {
         return commands;
-    }
-
-    /**
-     * A method for getting command execution history.
-     *
-     * @return history of used commands
-     */
-    public static List<BaseCommand> getHistory() {
-        if (history == null) {
-            history = new ArrayList<>();
-        }
-        return history;
     }
 
     /**
@@ -101,19 +87,19 @@ public class CommandHandler {
                 response = command.getResponse();
             }
 
-            history.add(command);
+//            history.add(command);
         } catch (IllegalArgumentException | NullPointerException e) {
             response = "Command has invalid argument(s)";
-            logger.fatal(response, e);
+            logger.error(response, e);
         } catch (IndexOutOfBoundsException e) {
             response = "Command has invalid number of arguments";
-            logger.fatal(response, e);
+            logger.error(response, e);
         } catch (IOException e) {
             response = "Something went wrong during I/O operations";
-            logger.fatal(response, e);
+            logger.error(response, e);
         } catch (Exception e) {
             response = "Unexpected error happened during command execution";
-            logger.fatal(response, e);
+            logger.error(response, e);
         }
 
         new ExecutionResultResponseSender().sendResponse(connectionModule, user, new CommandExecutionResponse(response));
