@@ -15,10 +15,7 @@ public class MappingUtils {
         person.setId(resultSet.getInt("id"));
         person.setName(resultSet.getString("name"));
 
-        Coordinates coordinates = new Coordinates();
-        coordinates.setX(resultSet.getLong("coordinates_x"));
-        coordinates.setY(resultSet.getInt("coordinates_y"));
-        person.setCoordinates(coordinates);
+        person.setCoordinates(mapResultSetToCoordinates(resultSet));
 
         person.setCreationDate(resultSet.getTimestamp("creation_date"));
         person.setHeight(resultSet.getInt("height"));
@@ -32,11 +29,7 @@ public class MappingUtils {
         }
 
         if (!resultSet.wasNull()) {
-            Location location = new Location();
-            location.setX(resultSet.getFloat("location_x"));
-            location.setY(resultSet.getInt("location_y"));
-            location.setName(resultSet.getString("location_name"));
-            person.setLocation(location);
+            person.setLocation(mapResultSetToLocation(resultSet));
         }
 
         return person;
