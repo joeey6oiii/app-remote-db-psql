@@ -41,7 +41,9 @@ public class PersonCollectionLoader<T extends Collection<Person>> implements Col
     }
 
     public void loadElementsFromDB() throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM person");
+        String selectQuery = "SELECT * FROM person";
+
+        try (PreparedStatement statement = connection.prepareStatement(selectQuery);
              ResultSet resultSet = statement.executeQuery()) {
             while (resultSet.next()) {
                 collection.add(MappingUtils.mapResultSetToPerson(resultSet));
@@ -50,7 +52,9 @@ public class PersonCollectionLoader<T extends Collection<Person>> implements Col
     }
 
     public void loadElementsFromDB(int ownerId) throws SQLException {
-        try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM person WHERE owner_id = ?")) {
+        String selectQuery = "SELECT * FROM person WHERE owner_id = ?";
+
+        try (PreparedStatement statement = connection.prepareStatement(selectQuery)) {
             statement.setInt(1, ownerId);
             try (ResultSet resultSet = statement.executeQuery()) {
                 while (resultSet.next()) {

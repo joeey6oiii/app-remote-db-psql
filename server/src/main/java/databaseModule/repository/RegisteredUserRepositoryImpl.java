@@ -1,5 +1,6 @@
 package databaseModule.repository;
 
+import userModules.passwordService.EncryptedPassword;
 import userModules.users.RegisteredUser;
 import userModules.users.User;
 import userModules.users.data.RegisteredUserData;
@@ -10,7 +11,7 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
 
-public class RegisteredUserRepositoryImpl implements RegisteredUserRepository, Closeable {
+public class RegisteredUserRepositoryImpl implements RegisteredUserRepository, IdentifiableRepository<Integer, RegisteredUser>, Closeable {
     private final Connection connection;
 
     public RegisteredUserRepositoryImpl() throws IOException, SQLException {
@@ -58,17 +59,18 @@ public class RegisteredUserRepositoryImpl implements RegisteredUserRepository, C
     }
 
     @Override
-    public RegisteredUser read(RegisteredUserData userData) throws SQLException {
-        String selectQuery = "SELECT * FROM registeredusers WHERE login = ? AND hashedpassword = ? AND salt = ?";
+    public RegisteredUser read(String login) throws SQLException {
+        String selectQuery = "SELECT * FROM registeredusers WHERE login = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
-            preparedStatement.setString(1, userData.getLogin());
-            preparedStatement.setBytes(2, userData.getEncryptedPassword().getHashedPassword());
-            preparedStatement.setBytes(3, userData.getEncryptedPassword().getSalt());
+            preparedStatement.setString(1, login);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    RegisteredUser registeredUser = new RegisteredUser(userData, new User(null, 0));
+                    RegisteredUserData data = new RegisteredUserData(login,
+                            new EncryptedPassword(resultSet.getBytes("hashedpassword"),
+                                    resultSet.getBytes("salt")));
+                    RegisteredUser registeredUser = new RegisteredUser(data, new User(null, 0));
                     registeredUser.setId(resultSet.getInt("id"));
                     return registeredUser;
                 } else {
@@ -77,6 +79,25 @@ public class RegisteredUserRepositoryImpl implements RegisteredUserRepository, C
             }
         } catch (SQLException e) {
             throw new SQLException("Error reading registered user from the database", e);
+        }
+    }
+
+    @Override
+    public Integer getElementId(RegisteredUser element) throws SQLException {
+        String query = "SELECT id FROM registeredusers WHERE login = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, element.getRegisteredUserData().getLogin());
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("id");
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new SQLException("Error getting registered user id from the database", e);
         }
     }
 

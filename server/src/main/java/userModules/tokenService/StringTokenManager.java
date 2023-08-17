@@ -1,6 +1,7 @@
 package userModules.tokenService;
 
 import token.StringToken;
+import utils.UserUtils;
 
 import java.security.SecureRandom;
 
@@ -11,7 +12,7 @@ public class StringTokenManager implements TokenManager<String> {
 
     {
         random = new SecureRandom();
-        TOKEN_LENGTH = 10;
+        TOKEN_LENGTH = UserUtils.INSTANCE.getTokenLengthValue();
         CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-=_+[]{}|;:,.<>?";
     }
 

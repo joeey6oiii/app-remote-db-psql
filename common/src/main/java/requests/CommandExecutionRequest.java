@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * A class that represents the client command execution request.
  */
-public class CommandExecutionRequest implements Request, Serializable {
+public class CommandExecutionRequest implements TokenRequest, Serializable {
     private final Token<?> token;
     private final CommandDescription command;
     private final String[] args;

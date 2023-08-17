@@ -1,5 +1,6 @@
 package commandsModule.commands;
 
+import clientModules.authentication.User;
 import clientModules.connection.DataTransferConnectionModule;
 import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.ClientCommandsHandler;
@@ -39,10 +40,9 @@ public class CommandsReceiver {
             new ServerErrorResultHandler().handleResponse(errResponse);
         } else if (response instanceof ClientCommandsResponse commandsResponse){
             new ClientCommandsHandler().handleResponse(commandsResponse);
-        } else {
-            return false;
+            return true;
         }
 
-        return true;
+        return false;
     }
 }

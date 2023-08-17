@@ -21,7 +21,7 @@ public class AuthorizationHandler implements ResponseHandler<AuthorizationRespon
         if (isSuccess) {
             Token<?> token = authorizationResponse.getToken();
 
-            if (token == null) {
+            if (token == null || token.getTokenValue() == null) {
                 return false;
             }
             User.getInstance().setToken(token);

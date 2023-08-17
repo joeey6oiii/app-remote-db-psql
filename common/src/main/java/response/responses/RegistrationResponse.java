@@ -4,7 +4,7 @@ import token.Token;
 
 import java.io.Serializable;
 
-public class RegistrationResponse implements Response, Serializable {
+public class RegistrationResponse implements TokenResponse, Serializable {
     private final boolean success;
     private final Token<?> token;
     private final String result;

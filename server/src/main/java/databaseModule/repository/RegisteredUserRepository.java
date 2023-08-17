@@ -9,7 +9,7 @@ public interface RegisteredUserRepository {
 
     boolean insert(RegisteredUser registeredUser) throws SQLException;
 
-    RegisteredUser read(RegisteredUserData userData) throws SQLException;
+    RegisteredUser read(String login) throws SQLException;
 
 //    boolean remove(int id) throws SQLException;                                  // Both can be implemented later if needed
 
