@@ -13,6 +13,9 @@ import serverModules.request.data.ClientRequestInfo;
 import serverModules.request.data.RequestData;
 import serverModules.request.handlers.RequestHandlerManager;
 import serverModules.request.reader.RequestReader;
+import userModules.sessionService.AuthenticatedUserRegistrySessionManager;
+import userModules.sessionService.SessionManager;
+import utils.UserUtils;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -52,6 +55,11 @@ public class Server {
                 throw e;
             }
             logger.info("Server started");
+
+            SessionManager sessionManager = new AuthenticatedUserRegistrySessionManager();
+            sessionManager.startSessionExpirationCheck(UserUtils.INSTANCE.getSessionDurationInMinutes());
+
+            Runtime.getRuntime().addShutdownHook(new Thread(sessionManager::stopSessionExpirationCheck));
 
             while (true) {
                 try {

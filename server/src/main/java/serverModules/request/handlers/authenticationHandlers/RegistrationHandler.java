@@ -11,6 +11,7 @@ import serverModules.response.sender.ResponseSender;
 import token.Token;
 import userModules.AuthenticatedUserRegistry;
 import userModules.passwordService.MD2PasswordEncryptor;
+import userModules.sessionService.Session;
 import userModules.tokenService.StringTokenManager;
 import userModules.tokenService.TokenManager;
 import userModules.users.AuthenticatedUser;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 public class RegistrationHandler implements RequestHandler {
     private static final Logger logger = LogManager.getLogger("logger.RegistrationHandler");
@@ -54,8 +56,8 @@ public class RegistrationHandler implements RequestHandler {
 
                     registeredUser.setId(userRepository.getElementId(registeredUser));
 
-                    AuthenticatedUser authenticatedUser = new AuthenticatedUser(registeredUser);
-                    // todo session
+                    Session session = new Session(LocalDateTime.now(), UserUtils.INSTANCE.getSessionDurationInMinutes());
+                    AuthenticatedUser authenticatedUser = new AuthenticatedUser(registeredUser, session);
                     AuthenticatedUserRegistry.getInstance().addAuthenticatedUser(token, authenticatedUser);
                 } else {
                     response = "Unable to register your account. Please, try again later";

@@ -3,6 +3,7 @@ package serverModules.request.handlers.authenticationHandlers;
 import databaseModule.repository.RegisteredUserRepositoryImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import requests.AuthorizationRequest;
 import requests.RegistrationRequest;
 import response.responses.AuthorizationResponse;
 import response.responses.RegistrationResponse;
@@ -12,15 +13,18 @@ import serverModules.response.sender.ResponseSender;
 import token.Token;
 import userModules.AuthenticatedUserRegistry;
 import userModules.passwordService.MD2PasswordEncryptor;
+import userModules.sessionService.Session;
 import userModules.tokenService.StringTokenManager;
 import userModules.tokenService.TokenManager;
 import userModules.users.AuthenticatedUser;
 import userModules.users.RegisteredUser;
+import utils.UserUtils;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 public class AuthorizationHandler implements RequestHandler {
     private static final Logger logger = LogManager.getLogger("logger.AuthorizationHandler");
@@ -32,7 +36,7 @@ public class AuthorizationHandler implements RequestHandler {
         TokenManager<?> tokenManager = new StringTokenManager();
         String response;
 
-        RegistrationRequest request = (RegistrationRequest) info.getRequest();
+        AuthorizationRequest request = (AuthorizationRequest) info.getRequest();
         String login = request.getAuthenticationData().getLogin();
 
         try (RegisteredUserRepositoryImpl userRepository = new RegisteredUserRepositoryImpl()) {
@@ -47,8 +51,8 @@ public class AuthorizationHandler implements RequestHandler {
                     token = tokenManager.generateToken();
                     response = "You have been successfully authorized";
 
-                    AuthenticatedUser authenticatedUser = new AuthenticatedUser(registeredUser);
-                    // todo session
+                    Session session = new Session(LocalDateTime.now(), UserUtils.INSTANCE.getSessionDurationInMinutes());
+                    AuthenticatedUser authenticatedUser = new AuthenticatedUser(registeredUser, session);
                     AuthenticatedUserRegistry.getInstance().addAuthenticatedUser(token, authenticatedUser);
                 }
             }

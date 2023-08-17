@@ -39,8 +39,7 @@ public class CommandsReceiver {
         if (response instanceof ErrorResponse errResponse) {
             new ServerErrorResultHandler().handleResponse(errResponse);
         } else if (response instanceof ClientCommandsResponse commandsResponse){
-            new ClientCommandsHandler().handleResponse(commandsResponse);
-            return true;
+            return new ClientCommandsHandler().handleResponse(commandsResponse);
         }
 
         return false;

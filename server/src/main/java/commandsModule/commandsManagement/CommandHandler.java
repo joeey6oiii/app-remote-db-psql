@@ -16,6 +16,7 @@ import serverModules.connection.ConnectionModule;
 import serverModules.response.sender.ExecutionResultResponseSender;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -79,6 +80,7 @@ public class CommandHandler {
      */
     public void execute(ConnectionModule connectionModule, User user, CommandExecutionRequest request) {
         String response;
+        boolean flag = false;
 
         try {
             AuthenticatedUserRegistry userRegistry = AuthenticatedUserRegistry.getInstance();
@@ -89,9 +91,13 @@ public class CommandHandler {
             if (authenticatedUser == null || authenticatedUser.getId() == null || token == null || token.getTokenValue() == null) {
                 response = "You don't have permission to execute commands on the server";
                 logger.error("Unauthorized user got access to command execution process");
+                flag = true;
+            } else if (authenticatedUser.getSession().isSessionExpired(LocalDateTime.now())) {
+                response = "Your session has expired. Please, log in again";
+                logger.info("User session has expired while command execution process");
+                flag = true;
 
-                new ResponseSender().sendResponse(connectionModule, user, new AuthorizationResponse(false, null, response));
-                return;
+                AuthenticatedUserRegistry.getInstance().removeAuthenticatedUser(token);
             } else {
                 CommandDescription simplifiedCommand = request.getDescriptionCommand();
                 BaseCommand command = this.getCommandByDescription(simplifiedCommand);
@@ -125,6 +131,10 @@ public class CommandHandler {
             logger.error(response, e);
         }
 
-        new ExecutionResultResponseSender().sendResponse(connectionModule, user, new CommandExecutionResponse(response));
+        if (!flag) {
+            new ExecutionResultResponseSender().sendResponse(connectionModule, user, new CommandExecutionResponse(response));
+        } else {
+            new ResponseSender().sendResponse(connectionModule, user, new AuthorizationResponse(false, null, response));
+        }
     }
 }
