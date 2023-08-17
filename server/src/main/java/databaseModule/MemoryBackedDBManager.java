@@ -32,7 +32,6 @@ public class MemoryBackedDBManager {
      * <p>
      * If an instance does not yet exist, this method creates a new instance and returns it.
      * Subsequent calls to this method will return the already existing instance.
-     * <p>
      *
      * @return The singleton instance of the MemoryBackedDBManager class
      */

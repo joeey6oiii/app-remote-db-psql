@@ -21,7 +21,7 @@ public class RegistrationHandler implements ResponseHandler<RegistrationResponse
         if (isSuccess) {
             Token<?> token = registrationResponse.getToken();
 
-            if (token == null) {
+            if (token == null || token.getTokenValue() == null) {
                 return false;
             }
             User.getInstance().setToken(token);

@@ -3,6 +3,7 @@ package commandsModule.commands;
 import commands.CommandType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import userModules.AuthenticatedUserRegistry;
 
 import java.io.IOException;
 
@@ -10,8 +11,9 @@ import java.io.IOException;
  * Class that implements the "exit" command.
  */
 @Command
-public class ExitCommand implements BaseCommand {
+public class ExitCommand implements BaseCommand, CallerIdCommand {
     private static final Logger logger = LogManager.getLogger("logger.ExitCommand");
+    private int callerId;
 
     /**
      * A method that returns the name of the command.
@@ -47,15 +49,17 @@ public class ExitCommand implements BaseCommand {
         return "Closes the program without saving";
     }
 
+    @Override
+    public void setCallerId(int callerId) {
+        this.callerId = callerId;
+    }
+
     /**
-     * When called, calls {@link SaveCommand#execute()} method to save the database data to the file.
-     *
      * @throws IOException when failed during I/O operations
      */
     @Override
     public void execute() throws IOException {
-        // todo
-        logger.info("Client disconnects");
-//        new SaveCommand().execute();
+        AuthenticatedUserRegistry.getInstance().removeAuthenticatedUser(callerId);
+        logger.info("Executed ExitCommand. User disconnects");
     }
 }

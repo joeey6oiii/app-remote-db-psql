@@ -23,10 +23,6 @@ public class AuthenticatedUser extends RegisteredUser {
         return this.commandHistory;
     }
 
-    public void setCommandHistory(List<BaseCommand> commandHistory) {
-        this.commandHistory = commandHistory;
-    }
-
     public void addCommandToHistory(BaseCommand command) {
         this.commandHistory.add(command);
     }

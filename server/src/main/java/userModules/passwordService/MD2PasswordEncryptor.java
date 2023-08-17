@@ -3,7 +3,10 @@ package userModules.passwordService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import response.data.AuthenticationData;
+import userModules.users.data.RegisteredUserData;
 import utils.ByteArrayUtils;
+import utils.UserUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,12 +47,29 @@ public class MD2PasswordEncryptor implements PasswordEncryptor {
         byte[] salt = this.generateSalt();
 
         byte[] seasonedPasswd = ByteArrayUtils.concatByteArrays(salt,
-                ByteArrayUtils.charArrayToByteArray(password), this.generatePepper());
+                ByteArrayUtils.charArrayToByteArray(password), this.getPepper());
 
         MessageDigest md = MessageDigest.getInstance("MD2", "BC");
         byte[] hashedBytes = md.digest(seasonedPasswd);
 
         return new EncryptedPassword(hashedBytes, salt);
+    }
+
+    @Override
+    public boolean checkPassword(AuthenticationData authenticationData, RegisteredUserData registeredUserData) throws NoSuchAlgorithmException, NoSuchProviderException {
+        Security.addProvider(new BouncyCastleProvider());
+
+        if (authenticationData.getPassword().length < UserUtils.INSTANCE.getMinPasswdLengthValue()) {
+            return false;
+        }
+
+        byte[] seasonedPasswd = ByteArrayUtils.concatByteArrays(registeredUserData.getEncryptedPassword().getSalt(),
+                ByteArrayUtils.charArrayToByteArray(authenticationData.getPassword()), this.getPepper());
+
+        MessageDigest md = MessageDigest.getInstance("MD2", "BC");
+        byte[] hashedBytes = md.digest(seasonedPasswd);
+
+        return MessageDigest.isEqual(hashedBytes, registeredUserData.getEncryptedPassword().getHashedPassword());
     }
 
     /**
@@ -64,7 +84,7 @@ public class MD2PasswordEncryptor implements PasswordEncryptor {
     }
 
     @Override
-    public byte[] generatePepper() {
+    public byte[] getPepper() {
         return this.pepper;
     }
 

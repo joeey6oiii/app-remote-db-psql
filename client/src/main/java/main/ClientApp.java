@@ -48,6 +48,22 @@ public class ClientApp {
                 }
             }));
 
+            AuthenticationManager authenticationManager = new AuthenticationManager(connectionModule);
+            int authenticated = 0;
+
+            while (authenticated != 1) {
+                try {
+                    authenticated = authenticationManager.authenticateFromInput();
+
+                    if (authenticated == 2) {
+                        System.out.println("Shutdown...");
+                        System.exit(0);
+                    }
+                } catch (ServerUnavailableException | ResponseTimeoutException | IOException | NullPointerException e) {
+                    System.out.println("Server is currently unavailable. Please try again later");
+                }
+            }
+
             long timeout = 5;
             boolean initializedCommands = false;
             CommandsReceiver commandsReceiver = new CommandsReceiver(connectionModule);
@@ -65,22 +81,6 @@ public class ClientApp {
             List<CommandDescription> commands = CommandRegistry.getCommands();
             Scanner consoleInputReader = new Scanner(System.in);
             CommandHandler handler = new CommandHandler(commands, consoleInputReader, connectionModule);
-
-            AuthenticationManager authenticationManager = new AuthenticationManager(connectionModule);
-            int authenticated = 0;
-
-            while (authenticated != 1) {
-                try {
-                    authenticated = authenticationManager.authenticateFromInput();
-
-                    if (authenticated == 2) {
-                        System.out.println("Shutdown...");
-                        System.exit(0);
-                    }
-                } catch (ServerUnavailableException | ResponseTimeoutException | IOException | NullPointerException e) {
-                    System.out.println("Server is currently unavailable. Please try again later");
-                }
-            }
 
             System.out.println("Console input allowed");
             handler.startHandlingInput();

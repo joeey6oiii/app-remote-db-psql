@@ -5,7 +5,12 @@ import commandsModule.commands.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import requests.CommandExecutionRequest;
+import response.responses.AuthorizationResponse;
 import response.responses.CommandExecutionResponse;
+import serverModules.response.sender.ResponseSender;
+import token.Token;
+import userModules.AuthenticatedUserRegistry;
+import userModules.users.AuthenticatedUser;
 import userModules.users.User;
 import serverModules.connection.ConnectionModule;
 import serverModules.response.sender.ExecutionResultResponseSender;
@@ -36,7 +41,7 @@ public class CommandHandler {
         commands.put("help", new HelpCommand(this.commands));
         commands.put("exit", new ExitCommand());
         commands.put("update_by_id", new UpdateByIdCommand());
-        commands.put("history", new HistoryCommand(this.commands));
+        commands.put("history", new HistoryCommand());
         commands.put("sum_of_height", new SumOfHeightCommand());
         commands.put("average_of_height", new AverageOfHeightCommand());
         commands.put("print_field_descending_birthday", new PrintFieldDescendingBirthdayCommand());
@@ -74,21 +79,39 @@ public class CommandHandler {
      */
     public void execute(ConnectionModule connectionModule, User user, CommandExecutionRequest request) {
         String response;
+
         try {
-            CommandDescription simplifiedCommand = request.getDescriptionCommand();
-            BaseCommand command = this.getCommandByDescription(simplifiedCommand);
+            AuthenticatedUserRegistry userRegistry = AuthenticatedUserRegistry.getInstance();
 
-            if (command instanceof ParameterizedCommand parameterizedCommand) {
-                parameterizedCommand.setArguments(request.getArgs());
-                parameterizedCommand.execute();
-                response = parameterizedCommand.getResponse();
+            Token<?> token = request.getToken();
+            AuthenticatedUser authenticatedUser = userRegistry.getAuthenticatedUser(token);
+
+            if (authenticatedUser == null || authenticatedUser.getId() == null || token == null || token.getTokenValue() == null) {
+                response = "You don't have permission to execute commands on the server";
+                logger.error("Unauthorized user got access to command execution process");
+
+                new ResponseSender().sendResponse(connectionModule, user, new AuthorizationResponse(false, null, response));
+                return;
             } else {
-                command.execute();
-                response = command.getResponse();
-            }
+                CommandDescription simplifiedCommand = request.getDescriptionCommand();
+                BaseCommand command = this.getCommandByDescription(simplifiedCommand);
 
-//            history.add(command);
-        } catch (IllegalArgumentException | NullPointerException e) {
+                if (command instanceof CallerIdCommand callerIdCommand) {
+                    callerIdCommand.setCallerId(authenticatedUser.getId());
+                }
+
+                if (command instanceof ParameterizedCommand parameterizedCommand) {
+                    parameterizedCommand.setArguments(request.getArgs());
+                    parameterizedCommand.execute();
+                    response = parameterizedCommand.getResponse();
+                } else {
+                    command.execute();
+                    response = command.getResponse();
+                }
+
+                authenticatedUser.addCommandToHistory(command);
+            }
+        } catch (IllegalArgumentException e) {
             response = "Command has invalid argument(s)";
             logger.error(response, e);
         } catch (IndexOutOfBoundsException e) {

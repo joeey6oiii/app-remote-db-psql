@@ -93,12 +93,20 @@ public class CommandHandler {
 
             consoleInput = scanner.nextLine().trim();
             if (consoleInput.isEmpty()) { continue; }
+
             String[] tokens = consoleInput.toLowerCase().split(" ");
-            CommandDescription command = commands.get(tokens[0]);
-            if (command == null) {
-                System.out.println("Not Recognized as an Internal or External Command");
+            if (Objects.equals(tokens[0], "cls")) {
+                missedCommands.clear();
                 continue;
             }
+
+            CommandDescription command = commands.get(tokens[0]);
+
+            if (command == null) {
+                System.out.println("Not Recognized as an Internal or External Command. Type \"help\" to see available commands");
+                continue;
+            }
+
             if (!missedCommands.isEmpty()) {
                 missedCommands.put(command, tokens);
                 System.out.println("Added command to the end of the missed commands collection due to its not emptiness");

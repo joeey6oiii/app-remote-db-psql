@@ -1,7 +1,6 @@
 package requests;
 
 import commands.CommandDescription;
-import token.StringToken;
 import token.Token;
 
 /**
