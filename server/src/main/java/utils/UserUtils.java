@@ -3,6 +3,10 @@ package utils;
 public enum UserUtils {
     INSTANCE;
 
+    public int getSessionDurationInMinutes() {
+        return 3;
+    }
+
     public int getMinPasswdLengthValue() {
         return 8;
     }

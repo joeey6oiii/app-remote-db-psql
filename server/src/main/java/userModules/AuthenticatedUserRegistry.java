@@ -3,6 +3,8 @@ package userModules;
 import token.Token;
 import userModules.users.AuthenticatedUser;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class AuthenticatedUserRegistry {
@@ -18,6 +20,10 @@ public class AuthenticatedUserRegistry {
             singleInstance = new AuthenticatedUserRegistry();
         }
         return singleInstance;
+    }
+
+    public <K, V> Set<Map.Entry<Token<?>, AuthenticatedUser>> getEntrySet() {
+        return authenticatedUsers.entrySet();
     }
 
     public void addAuthenticatedUser(Token<?> token, AuthenticatedUser authenticatedUser) {
