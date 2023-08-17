@@ -25,6 +25,11 @@ import java.io.StreamCorruptedException;
  * A class that represents the person single argument command execution result receiver.
  */
 public class PersonCommandResultReceiver implements CommandReceiver {
+    private final DataTransferConnectionModule dataTransferConnectionModule;
+
+    public PersonCommandResultReceiver(DataTransferConnectionModule dataTransferConnectionModule) {
+        this.dataTransferConnectionModule = dataTransferConnectionModule;
+    }
 
     /**
      * A method that receives the simplified uncommon argument command, sends request to a server, gets response
@@ -32,17 +37,16 @@ public class PersonCommandResultReceiver implements CommandReceiver {
      *
      * @param command simplified command
      * @param args simplified command arguments
-     * @param dataTransferConnectionModule client core
      */
     @Override
-    public void receiveCommand(CommandDescription command, String[] args, DataTransferConnectionModule dataTransferConnectionModule) {
+    public void receiveCommand(CommandDescription command, String[] args) {
         Person builtPerson = new PersonObjectBuilder().buildObject();
 
         ObjectArgumentCommandExecutionRequest<Person> commandRequest =
                 new ObjectArgumentCommandExecutionRequest<>(User.getInstance().getToken(), command, args, builtPerson);
         Response response;
         try {
-            response = new RequestSender().sendRequest(dataTransferConnectionModule, commandRequest);
+            response = new RequestSender(dataTransferConnectionModule).sendRequest(commandRequest);
             boolean isSuccess = false;
 
             if (response instanceof ErrorResponse errResponse) {

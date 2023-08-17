@@ -24,6 +24,11 @@ import java.util.Scanner;
  * A class that represents the exit command receiver.
  */
 public class ExitCommandReceiver implements CommandReceiver {
+    private final DataTransferConnectionModule dataTransferConnectionModule;
+
+    public ExitCommandReceiver(DataTransferConnectionModule dataTransferConnectionModule) {
+        this.dataTransferConnectionModule = dataTransferConnectionModule;
+    }
 
     /**
      * A method that receives the simplified "exit" command, sends request to a server,
@@ -31,10 +36,9 @@ public class ExitCommandReceiver implements CommandReceiver {
      *
      * @param command simplified command
      * @param args simplified command arguments
-     * @param dataTransferConnectionModule client core
      */
     @Override
-    public void receiveCommand(CommandDescription command, String[] args, DataTransferConnectionModule dataTransferConnectionModule) {
+    public void receiveCommand(CommandDescription command, String[] args) {
         System.out.print("Are you sure you want to exit? [Y/N]\n$ ");
         Scanner consoleInputReader = new Scanner(System.in);
         String consoleInput;
@@ -51,7 +55,7 @@ public class ExitCommandReceiver implements CommandReceiver {
         CommandExecutionRequest commandRequest = new CommandExecutionRequest(User.getInstance().getToken(), command, args);
         Response response;
         try {
-            response = new RequestSender().sendRequest(dataTransferConnectionModule, commandRequest);
+            response = new RequestSender(dataTransferConnectionModule).sendRequest(commandRequest);
             boolean isSuccess = false;
 
             if (response instanceof ErrorResponse errResponse) {

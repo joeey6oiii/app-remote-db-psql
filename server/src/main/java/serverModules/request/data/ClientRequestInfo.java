@@ -9,41 +9,31 @@ import serverModules.connection.ConnectionModule;
  * Contains information about the user, the client request, and the server core.
  */
 public class ClientRequestInfo {
-    private final ConnectionModule connectionModule;
     private final User user;
     private final Request request;
 
     /**
      * A constructor for the client request information.
      *
-     * @param connectionModule The server core
      * @param user The client
      * @param request The client request
      */
-    public ClientRequestInfo(ConnectionModule connectionModule, User user, Request request) {
-        this.connectionModule = connectionModule;
+    public ClientRequestInfo(User user, Request request) {
         this.user = user;
         this.request = request;
     }
 
     /**
-     * @return the current server core.
-     */
-    public ConnectionModule getConnectionModule() {
-        return connectionModule;
-    }
-
-    /**
      * @return the current client.
      */
-    public User getRequestOrigin() {
-        return user;
+    public User getRequesterUser() {
+        return this.user;
     }
 
     /**
      * @return the current client request.
      */
     public Request getRequest() {
-        return request;
+        return this.request;
     }
 }

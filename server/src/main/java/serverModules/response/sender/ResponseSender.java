@@ -16,18 +16,22 @@ import java.net.InetAddress;
  */
 public class ResponseSender implements ResponseAble<Response> {
     private static final Logger logger = LogManager.getLogger("logger.ResponseSender");
+    private final ConnectionModule connectionModule;
+
+    public ResponseSender(ConnectionModule connectionModule) {
+        this.connectionModule = connectionModule;
+    }
 
     /**
      * A method that serializes the received response, divides it by chunks and sends them to the client.
      * Sends <code>byte[]</code>, where header length placed on the first position, then from second position to length
      * of the header placed serialized header, and after placed the chunk (part of the data)
      *
-     * @param connectionModule server core
      * @param user client
      * @param response answer to the client
      */
     @Override
-    public void sendResponse(ConnectionModule connectionModule, User user, Response response) throws IllegalArgumentException {
+    public void sendResponse(User user, Response response) throws IllegalArgumentException {
         if (response != null) {
             ByteArrayObjectSerializer serializer = new ByteArrayObjectSerializer();
 

@@ -23,7 +23,7 @@ public class RegistrationReceiver {
 
     public boolean register(String login, char[] password) throws ServerUnavailableException, ResponseTimeoutException, IOException {
         RegistrationRequest registrationRequest = new RegistrationRequest(new AuthenticationData(login, password));
-        Response response = new RequestSender().sendRequest(dataTransferConnectionModule, registrationRequest);
+        Response response = new RequestSender(dataTransferConnectionModule).sendRequest(registrationRequest);
 
         if (response instanceof ErrorResponse errResponse) {
             new ServerErrorResultHandler().handleResponse(errResponse);

@@ -4,9 +4,8 @@ import databaseModule.repository.RegisteredUserRepositoryImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import requests.AuthorizationRequest;
-import requests.RegistrationRequest;
 import response.responses.AuthorizationResponse;
-import response.responses.RegistrationResponse;
+import serverModules.connection.ConnectionModule;
 import serverModules.request.data.ClientRequestInfo;
 import serverModules.request.handlers.RequestHandler;
 import serverModules.response.sender.ResponseSender;
@@ -28,6 +27,11 @@ import java.time.LocalDateTime;
 
 public class AuthorizationHandler implements RequestHandler {
     private static final Logger logger = LogManager.getLogger("logger.AuthorizationHandler");
+    private final ResponseSender responseSender;
+
+    public AuthorizationHandler(ConnectionModule connectionModule) {
+        this.responseSender = new ResponseSender(connectionModule);
+    }
 
     @Override
     public void handleRequest(ClientRequestInfo info) {
@@ -61,6 +65,6 @@ public class AuthorizationHandler implements RequestHandler {
             logger.error("Error authorizing user", e);
         }
 
-        new ResponseSender().sendResponse(info.getConnectionModule(), info.getRequestOrigin(), new AuthorizationResponse(isSuccess, token, response));
+        responseSender.sendResponse(info.getRequesterUser(), new AuthorizationResponse(isSuccess, token, response));
     }
 }

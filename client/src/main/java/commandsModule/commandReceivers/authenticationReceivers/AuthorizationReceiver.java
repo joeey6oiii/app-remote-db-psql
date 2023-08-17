@@ -23,7 +23,7 @@ public class AuthorizationReceiver {
 
     public boolean authorize(String login, char[] password) throws ServerUnavailableException, ResponseTimeoutException, IOException {
         AuthorizationRequest authorizationRequest = new AuthorizationRequest(new AuthenticationData(login, password));
-        Response response = new RequestSender().sendRequest(dataTransferConnectionModule, authorizationRequest);
+        Response response = new RequestSender(dataTransferConnectionModule).sendRequest(authorizationRequest);
 
         if (response instanceof ErrorResponse errResponse) {
             new ServerErrorResultHandler().handleResponse(errResponse);

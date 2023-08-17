@@ -34,7 +34,7 @@ public class CommandsReceiver {
      */
     public boolean initCommands() throws ServerUnavailableException, ResponseTimeoutException, IOException {
         ClientCommandsRequest commandsRequest = new ClientCommandsRequest();
-        Response response = new RequestSender().sendRequest(dataTransferConnectionModule, commandsRequest);
+        Response response = new RequestSender(dataTransferConnectionModule).sendRequest(commandsRequest);
 
         if (response instanceof ErrorResponse errResponse) {
             new ServerErrorResultHandler().handleResponse(errResponse);

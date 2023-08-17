@@ -14,7 +14,6 @@ public class CommandHandler {
     private static Map<String, CommandDescription> commands;
     private static Map<CommandDescription, String[]> missedCommands;
     private final CommandManager commandManager;
-    private final DataTransferConnectionModule module;
     private final Scanner scanner;
 
     /**
@@ -22,14 +21,13 @@ public class CommandHandler {
      *
      * @param commands simplified commands map
      * @param scanner tool to scan input from the console
-     * @param module client core
+     * @param dataTransferConnectionModule client core
      */
-    public CommandHandler(Map<String, CommandDescription> commands, Scanner scanner, DataTransferConnectionModule module) {
+    public CommandHandler(Map<String, CommandDescription> commands, Scanner scanner, DataTransferConnectionModule dataTransferConnectionModule) {
         CommandHandler.commands = commands;
         missedCommands = new LinkedHashMap<>();
         this.scanner = scanner;
-        this.module = module;
-        commandManager = new CommandManager();
+        commandManager = new CommandManager(dataTransferConnectionModule);
     }
 
     /**
@@ -37,14 +35,13 @@ public class CommandHandler {
      *
      * @param commands simplified commands list
      * @param scanner tool to scan input from the console
-     * @param module client core
+     * @param dataTransferConnectionModule client core
      */
-    public CommandHandler(List<CommandDescription> commands, Scanner scanner, DataTransferConnectionModule module) {
+    public CommandHandler(List<CommandDescription> commands, Scanner scanner, DataTransferConnectionModule dataTransferConnectionModule) {
         CommandHandler.commands = commands.stream().collect(Collectors.toMap(CommandDescription::getCommandName, Function.identity()));
         missedCommands = new LinkedHashMap<>();
         this.scanner = scanner;
-        this.module = module;
-        commandManager = new CommandManager();
+        commandManager = new CommandManager(dataTransferConnectionModule);
     }
 
     /**
@@ -73,7 +70,7 @@ public class CommandHandler {
 
     /**
      * A method that manages the simplified commands by handling input or missed commands collection.
-     * Uses {@link CommandManager#manageCommand(CommandDescription, String[], DataTransferConnectionModule)} to
+     * Uses {@link CommandManager#manageCommand(CommandDescription, String[])} to
      * continue operations connected to sending and receiving.
      */
     public void startHandlingInput() {
@@ -101,7 +98,6 @@ public class CommandHandler {
             }
 
             CommandDescription command = commands.get(tokens[0]);
-
             if (command == null) {
                 System.out.println("Not Recognized as an Internal or External Command. Type \"help\" to see available commands");
                 continue;
@@ -111,14 +107,14 @@ public class CommandHandler {
                 missedCommands.put(command, tokens);
                 System.out.println("Added command to the end of the missed commands collection due to its not emptiness");
             } else {
-                commandManager.manageCommand(command, tokens, module);
+                commandManager.manageCommand(command, tokens);
                 continue;
             }
 
             if (!missedCommands.isEmpty()) {
                 System.out.println("Trying to send commands from missed commands collection...");
                 Map<CommandDescription, String[]> copyOfMissedCommands = new LinkedHashMap<>(missedCommands);
-                copyOfMissedCommands.forEach((key, value) -> commandManager.manageCommand(key, value, module));
+                copyOfMissedCommands.forEach(commandManager::manageCommand);
             }
         }
     }
