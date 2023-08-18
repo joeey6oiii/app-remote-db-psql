@@ -10,7 +10,7 @@ import serverModules.request.data.ClientRequestInfo;
 import serverModules.request.handlers.RequestHandler;
 import serverModules.response.sender.ResponseSender;
 import token.Token;
-import userModules.AuthenticatedUserRegistry;
+import userModules.sessionService.AuthenticatedUserRegistry;
 import userModules.passwordService.MD2PasswordEncryptor;
 import userModules.sessionService.Session;
 import userModules.tokenService.StringTokenManager;
@@ -60,10 +60,13 @@ public class AuthorizationHandler implements RequestHandler {
                         response = "You are already logged in";
                     } else {
                         token = tokenManager.generateToken();
-                        userRegistry.addAuthenticatedUser(token, authenticatedUser);
+
+                        if (!userRegistry.addAuthenticatedUser(token, authenticatedUser)) {
+                            throw new IOException("Unable to add authenticated user to the collection of authenticated users");
+                        }
 
                         isSuccess = true;
-                        response = "You have been successfully authorized";
+                        response = "You are successfully logged in";
                     }
                 }
             }

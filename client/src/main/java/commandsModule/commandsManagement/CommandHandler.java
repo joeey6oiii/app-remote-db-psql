@@ -1,12 +1,12 @@
 package commandsModule.commandsManagement;
 
-import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
 import commands.CommandDescription;
-import exceptions.ResponseTimeoutException;
-import exceptions.ServerUnavailableException;
+import commandsModule.commands.AuthCommand;
+import commandsModule.commands.CLSCommand;
+import commandsModule.commands.ClientHelpCommand;
+import commandsModule.commands.OfflineCommand;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -15,40 +15,48 @@ import java.util.stream.Collectors;
  * A class that handles the simplified commands.
  */
 public class CommandHandler {
-    private static Map<String, CommandDescription> commands;
-    private static Map<CommandDescription, String[]> missedCommands;
+    private static Map<String, CommandDescription> commandsMap;
+    private static Map<CommandDescription, String[]> missedCommandsMap;
+    private final Map<String, OfflineCommand> offlineCommandsMap;
     private final CommandManager commandManager;
-    private final AuthenticationManager authenticationManager;
     private final Scanner scanner;
 
     /**
      * A constructor for command handler with map commands.
      *
-     * @param commands simplified commands map
+     * @param commandsMap simplified commands map
      * @param scanner tool to scan input from the console
      * @param dataTransferConnectionModule client core
      */
-    public CommandHandler(Map<String, CommandDescription> commands, Scanner scanner, DataTransferConnectionModule dataTransferConnectionModule) {
-        CommandHandler.commands = commands;
-        missedCommands = new LinkedHashMap<>();
+    public CommandHandler(Map<String, CommandDescription> commandsMap, Scanner scanner, DataTransferConnectionModule dataTransferConnectionModule) {
+        CommandHandler.commandsMap = commandsMap;
+        missedCommandsMap = new LinkedHashMap<>();
         this.scanner = scanner;
         commandManager = new CommandManager(dataTransferConnectionModule);
-        authenticationManager = new AuthenticationManager(dataTransferConnectionModule);
+
+        offlineCommandsMap = new LinkedHashMap<>();
+        offlineCommandsMap.put("auth", new AuthCommand(dataTransferConnectionModule));
+        offlineCommandsMap.put("cls", new CLSCommand());
+        offlineCommandsMap.put("c_help", new ClientHelpCommand(offlineCommandsMap));
     }
 
     /**
      * A constructor for command handler with list commands. List automatically converts to a map.
      *
-     * @param commands simplified commands list
+     * @param commandsMap simplified commands list
      * @param scanner tool to scan input from the console
      * @param dataTransferConnectionModule client core
      */
-    public CommandHandler(List<CommandDescription> commands, Scanner scanner, DataTransferConnectionModule dataTransferConnectionModule) {
-        CommandHandler.commands = commands.stream().collect(Collectors.toMap(CommandDescription::getCommandName, Function.identity()));
-        missedCommands = new LinkedHashMap<>();
+    public CommandHandler(List<CommandDescription> commandsMap, Scanner scanner, DataTransferConnectionModule dataTransferConnectionModule) {
+        CommandHandler.commandsMap = commandsMap.stream().collect(Collectors.toMap(CommandDescription::getCommandName, Function.identity()));
+        missedCommandsMap = new LinkedHashMap<>();
         this.scanner = scanner;
         commandManager = new CommandManager(dataTransferConnectionModule);
-        authenticationManager = new AuthenticationManager(dataTransferConnectionModule);
+
+        offlineCommandsMap = new LinkedHashMap<>();
+        offlineCommandsMap.put("auth", new AuthCommand(dataTransferConnectionModule));
+        offlineCommandsMap.put("cls", new CLSCommand());
+        offlineCommandsMap.put("c_help", new ClientHelpCommand(offlineCommandsMap));
     }
 
     /**
@@ -56,9 +64,9 @@ public class CommandHandler {
      *
      * @param name simplified command name
      */
-    public static CommandDescription getCommandByName(String name) {
-        if (commands != null) {
-            return commands.get(name);
+    public static CommandDescription getCommandFromName(String name) {
+        if (commandsMap != null) {
+            return commandsMap.get(name);
         }
         return null;
     }
@@ -67,12 +75,11 @@ public class CommandHandler {
      * A method that returns missed commands' collection.
      * Missed commands are commands that were not executed on server due to some problems (Ex: Server was unavailable)
      */
-    public static Map<CommandDescription, String[]> getMissedCommands() {
-        if (missedCommands != null) {
-            return missedCommands;
+    public static Map<CommandDescription, String[]> getMissedCommandsMap() {
+        if (missedCommandsMap == null) {
+            return new LinkedHashMap<>();
         }
-        missedCommands = new LinkedHashMap<>();
-        return missedCommands;
+        return missedCommandsMap;
     }
 
     /**
@@ -83,7 +90,7 @@ public class CommandHandler {
     public void startHandlingInput() {
         String consoleInput;
         while (true) {
-            if (!missedCommands.isEmpty()) {
+            if (!missedCommandsMap.isEmpty()) {
                 System.out.println("Server failed to execute some commands (perhaps the" +
                         " server is or was unavailable). Returning to the console input");
             }
@@ -99,37 +106,29 @@ public class CommandHandler {
             if (consoleInput.isEmpty()) { continue; }
 
             String[] tokens = consoleInput.toLowerCase().split(" ");
-            if (Objects.equals(tokens[0], "cls")) {                     // todo make client commands
-                missedCommands.clear();
-                continue;
-            }
-
-            if (Objects.equals(tokens[0], "auth")) {
-                try {
-                    authenticationManager.authenticateFromInput();
-                } catch (ResponseTimeoutException | ServerUnavailableException | IOException e) {
-                    System.out.println("Server is unavailable. Please, try again later");
+            
+            CommandDescription command = commandsMap.get(tokens[0]);
+            if (command == null) {
+                OfflineCommand offlineCommand = offlineCommandsMap.get(tokens[0]);
+                if (offlineCommand == null) {
+                    System.out.println("Not Recognized as an Internal or External Command. Type \"help\" or \"c_help\" to see available commands");
+                } else {
+                    offlineCommand.execute();
                 }
                 continue;
             }
 
-            CommandDescription command = commands.get(tokens[0]);
-            if (command == null) {
-                System.out.println("Not Recognized as an Internal or External Command. Type \"help\" to see available commands");
-                continue;
-            }
-
-            if (!missedCommands.isEmpty()) {
-                missedCommands.put(command, tokens);
+            if (!missedCommandsMap.isEmpty()) {
+                missedCommandsMap.put(command, tokens);
                 System.out.println("Added command to the end of the missed commands collection due to its not emptiness");
             } else {
                 commandManager.manageCommand(command, tokens);
                 continue;
             }
 
-            if (!missedCommands.isEmpty()) {
+            if (!missedCommandsMap.isEmpty()) {
                 System.out.println("Trying to send commands from missed commands collection...");
-                Map<CommandDescription, String[]> copyOfMissedCommands = new LinkedHashMap<>(missedCommands);
+                Map<CommandDescription, String[]> copyOfMissedCommands = new LinkedHashMap<>(missedCommandsMap);
                 copyOfMissedCommands.forEach(commandManager::manageCommand);
             }
         }

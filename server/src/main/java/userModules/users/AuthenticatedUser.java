@@ -11,7 +11,7 @@ public class AuthenticatedUser extends RegisteredUser {
     private final Session session;
 
     public AuthenticatedUser(RegisteredUser registeredUser, Session session) {
-        super(registeredUser.getRegisteredUserData(), registeredUser.getUser());
+        super(registeredUser.getRegisteredUserData(), new User(registeredUser.getAddress(), registeredUser.getPort()));
         super.setId(registeredUser.getId());
         this.session = session;
     }

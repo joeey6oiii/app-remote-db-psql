@@ -47,14 +47,14 @@ public class ExecutionResultReceiver implements CommandReceiver {
 
             if (response.getClass().isAssignableFrom(CommandExecutionResponse.class)) {
                 response.accept(responseVisitor);
-                CommandHandler.getMissedCommands().remove(command, args);
+                CommandHandler.getMissedCommandsMap().remove(command, args);
             } else {
                 response.accept(responseVisitor);
-                CommandHandler.getMissedCommands().put(command, args);
+                CommandHandler.getMissedCommandsMap().put(command, args);
             }
         } catch (StreamCorruptedException | ServerUnavailableException
                  | ResponseTimeoutException | NullPointerException e) {
-            CommandHandler.getMissedCommands().put(command, args);
+            CommandHandler.getMissedCommandsMap().put(command, args);
         } catch (IOException e) {
             System.out.println("Something went wrong during I/O operations");
         }

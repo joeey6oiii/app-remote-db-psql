@@ -3,7 +3,7 @@ package commandsModule.commands;
 import commands.CommandType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import userModules.AuthenticatedUserRegistry;
+import userModules.sessionService.AuthenticatedUserRegistry;
 import utils.UserUtils;
 
 import java.io.IOException;

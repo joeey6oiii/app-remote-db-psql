@@ -1,7 +1,6 @@
 package userModules.sessionService;
 
 import token.Token;
-import userModules.AuthenticatedUserRegistry;
 import userModules.users.AuthenticatedUser;
 
 import java.time.LocalDateTime;
