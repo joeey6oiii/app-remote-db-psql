@@ -1,28 +1,32 @@
 package serverModules.request.handlers;
 
-import commandsModule.commandsManagement.CommandHandler;
+import commandsModule.commandsManagement.UserCommandHandler;
 import requests.CommandExecutionRequest;
-import userModules.users.User;
 import serverModules.connection.ConnectionModule;
+import userModules.users.User;
 import serverModules.request.data.ClientRequestInfo;
 
 /**
  * A class that works with the client command execution request.
  */
 public class ClientCommandHandler implements RequestHandler {
+    private final ConnectionModule connectionModule;
+
+    public ClientCommandHandler(ConnectionModule connectionModule) {
+        this.connectionModule = connectionModule;
+    }
 
     /**
      * A method that handles the client command execution request and calls the
-     * {@link CommandHandler#execute(ConnectionModule, User, CommandExecutionRequest)} method.
+     * {@link UserCommandHandler#executeCommand(CommandExecutionRequest)} method.
      *
      * @param info information about the request
      */
     @Override
     public void handleRequest(ClientRequestInfo info) {
-        ConnectionModule connectionModule = info.getConnectionModule();
-        User client = info.getRequestOrigin();
+        User client = info.getRequesterUser();
         CommandExecutionRequest request = (CommandExecutionRequest) info.getRequest();
 
-        new CommandHandler().execute(connectionModule, client, request);
+        new UserCommandHandler(connectionModule, client).executeCommand(request);
     }
 }

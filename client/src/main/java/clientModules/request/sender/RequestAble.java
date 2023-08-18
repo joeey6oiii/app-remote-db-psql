@@ -17,8 +17,7 @@ public interface RequestAble<T extends Response, V> {
     /**
      * A method that sends a request of a T type to the server.
      *
-     * @param module client core
      * @param request concrete request
      */
-    T sendRequest(DataTransferConnectionModule module, V request) throws IOException, ServerUnavailableException, ResponseTimeoutException;
+    T sendRequest(V request) throws IOException, ServerUnavailableException, ResponseTimeoutException;
 }

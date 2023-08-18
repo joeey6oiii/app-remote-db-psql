@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import requests.RegistrationRequest;
 import response.responses.RegistrationResponse;
+import serverModules.connection.ConnectionModule;
 import serverModules.request.data.ClientRequestInfo;
 import serverModules.request.handlers.RequestHandler;
 import serverModules.response.sender.ResponseSender;
@@ -27,6 +28,11 @@ import java.time.LocalDateTime;
 
 public class RegistrationHandler implements RequestHandler {
     private static final Logger logger = LogManager.getLogger("logger.RegistrationHandler");
+    private final ResponseSender responseSender;
+
+    public RegistrationHandler(ConnectionModule connectionModule) {
+        this.responseSender = new ResponseSender(connectionModule);
+    }
 
     @Override
     public void handleRequest(ClientRequestInfo info) {
@@ -47,7 +53,7 @@ public class RegistrationHandler implements RequestHandler {
             } else {
                 RegisteredUser registeredUser = new RegisteredUser(new RegisteredUserData(login,
                         new MD2PasswordEncryptor().encryptPassword(request.getAuthenticationData().getPassword())),
-                        info.getRequestOrigin());
+                        info.getRequesterUser());
 
                 if (userRepository.insert(registeredUser)) {
                     isSuccess = true;
@@ -68,6 +74,6 @@ public class RegistrationHandler implements RequestHandler {
             logger.error("Error registering user", e);
         }
 
-        new ResponseSender().sendResponse(info.getConnectionModule(), info.getRequestOrigin(), new RegistrationResponse(isSuccess, token, response));
+        responseSender.sendResponse(info.getRequesterUser(), new RegistrationResponse(isSuccess, token, response));
     }
 }

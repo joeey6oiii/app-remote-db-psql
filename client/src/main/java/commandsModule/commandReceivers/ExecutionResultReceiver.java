@@ -23,6 +23,11 @@ import java.io.StreamCorruptedException;
  * A class that represents the command execution result receiver.
  */
 public class ExecutionResultReceiver implements CommandReceiver {
+    private final DataTransferConnectionModule dataTransferConnectionModule;
+
+    public ExecutionResultReceiver(DataTransferConnectionModule dataTransferConnectionModule) {
+        this.dataTransferConnectionModule = dataTransferConnectionModule;
+    }
 
     /**
      * A method that receives the simplified command, sends request to a server, gets response and
@@ -30,14 +35,13 @@ public class ExecutionResultReceiver implements CommandReceiver {
      *
      * @param command simplified command
      * @param args simplified command arguments
-     * @param dataTransferConnectionModule client core
      */
     @Override
-    public void receiveCommand(CommandDescription command, String[] args, DataTransferConnectionModule dataTransferConnectionModule) {
+    public void receiveCommand(CommandDescription command, String[] args) {
         CommandExecutionRequest commandRequest = new CommandExecutionRequest(User.getInstance().getToken(), command, args);
         Response response;
         try {
-            response = new RequestSender().sendRequest(dataTransferConnectionModule, commandRequest);
+            response = new RequestSender(dataTransferConnectionModule).sendRequest(commandRequest);
             boolean isSuccess = false;
 
             if (response instanceof ErrorResponse errResponse) {

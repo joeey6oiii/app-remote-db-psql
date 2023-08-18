@@ -27,20 +27,24 @@ import java.util.LinkedList;
  */
 public class ScriptCommandReceiver implements CommandReceiver {
     private static final LinkedList<String> historyOfDangerScript = new LinkedList<>();
+    private final DataTransferConnectionModule dataTransferConnectionModule;
+
+    public ScriptCommandReceiver(DataTransferConnectionModule dataTransferConnectionModule) {
+        this.dataTransferConnectionModule = dataTransferConnectionModule;
+    }
 
     /**
      * A method that receives the simplified "execute_script" command, parses file, sends request to a server,
      * gets response and calls the {@link ExecutionResultHandler#handleResponse(CommandExecutionResponse)} method.
      * After, iterates through <code>String[]</code> of commands from the parsed file
-     * and calls the {@link CommandManager#manageCommand(CommandDescription, String[], DataTransferConnectionModule)} method.
+     * and calls the {@link CommandManager#manageCommand(CommandDescription, String[])} method.
      * Stores "history of danger scripts" collection to avoid looping
      *
      * @param scriptCommand simplified command
      * @param args simplified command arguments
-     * @param dataTransferConnectionModule client core
      */
     @Override
-    public void receiveCommand(CommandDescription scriptCommand, String[] args, DataTransferConnectionModule dataTransferConnectionModule) {
+    public void receiveCommand(CommandDescription scriptCommand, String[] args) {
         if (historyOfDangerScript.contains(args[0])) {
             System.out.println("Detected dangerous command: the script will loop if the command is executed\n" +
                     "Continuing executing script from the next command...");
@@ -59,14 +63,14 @@ public class ScriptCommandReceiver implements CommandReceiver {
             return;
         }
 
-        CommandManager commandManager = new CommandManager();
+        CommandManager commandManager = new CommandManager(dataTransferConnectionModule);
         try (InputStream inputStream = new FileInputStream(script)) {
             boolean isSuccess = false;
             try {
-                RequestSender requestSender = new RequestSender();
+                RequestSender requestSender = new RequestSender(dataTransferConnectionModule);
                 CommandExecutionRequest commandRequest = new CommandExecutionRequest(User.getInstance().getToken(), scriptCommand, args);
 
-                Response response = requestSender.sendRequest(dataTransferConnectionModule, commandRequest);
+                Response response = requestSender.sendRequest(commandRequest);
 
                 if (response instanceof ErrorResponse errResponse) {
                     new ServerErrorResultHandler().handleResponse(errResponse);
@@ -102,7 +106,7 @@ public class ScriptCommandReceiver implements CommandReceiver {
 
                 CommandDescription command = CommandHandler.getCommandByName(tokens[0].toLowerCase());
                 if (command != null) {
-                    commandManager.manageCommand(command, tokens, dataTransferConnectionModule);
+                    commandManager.manageCommand(command, tokens);
                 } else {
                     System.out.println("Command \"" + tokens[0] + "\" Was Not Recognized as an" +
                             " Internal or External Command\nContinuing executing script...");

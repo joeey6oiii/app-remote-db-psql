@@ -1,6 +1,5 @@
 package commandsModule.commandReceivers;
 
-import clientModules.connection.DataTransferConnectionModule;
 import commands.CommandDescription;
 
 /**
@@ -13,7 +12,6 @@ public interface CommandReceiver {
      *
      * @param command simplified command
      * @param args simplified command arguments
-     * @param module client core
      */
-    void receiveCommand(CommandDescription command, String[] args, DataTransferConnectionModule module);
+    void receiveCommand(CommandDescription command, String[] args);
 }

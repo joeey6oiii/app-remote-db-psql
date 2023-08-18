@@ -3,10 +3,10 @@ package serverModules.request.handlers;
 import commands.CommandDescription;
 import commandsModule.commandsManagement.CommandRegistry;
 import response.responses.ClientCommandsResponse;
+import serverModules.response.sender.ResponseSender;
 import userModules.users.User;
 import serverModules.connection.ConnectionModule;
 import serverModules.request.data.ClientRequestInfo;
-import serverModules.response.sender.ClientCommandsResponseSender;
 
 import java.util.List;
 
@@ -14,6 +14,11 @@ import java.util.List;
  * A class that works with the client commands request.
  */
 public class ClientCommandsHandler implements RequestHandler {
+    private final ResponseSender responseSender;
+
+    public ClientCommandsHandler(ConnectionModule connectionModule) {
+        this.responseSender = new ResponseSender(connectionModule);
+    }
 
     /**
      * A method that handles the client commands request and sends the client commands response.
@@ -22,12 +27,12 @@ public class ClientCommandsHandler implements RequestHandler {
      */
     @Override
     public void handleRequest(ClientRequestInfo info) {
-        ConnectionModule connectionModule = info.getConnectionModule();
-        User client = info.getRequestOrigin();
+        User client = info.getRequesterUser();
+
         CommandRegistry commandRegistry = new CommandRegistry();
         List<CommandDescription> commands = commandRegistry.getCommands();
-        ClientCommandsResponse commandsResponse = new ClientCommandsResponse(commands);
 
-        new ClientCommandsResponseSender().sendResponse(connectionModule, client, commandsResponse);
+        ClientCommandsResponse commandsResponse = new ClientCommandsResponse(commands);
+        responseSender.sendResponse(client, commandsResponse);
     }
 }
