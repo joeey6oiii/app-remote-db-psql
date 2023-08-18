@@ -49,12 +49,12 @@ public class ScriptCommandReceiver implements CommandReceiver {
      */
     @Override
     public void receiveCommand(CommandDescription scriptCommand, String[] args) {
-        if (!this.checkDanger(args) || !checkArgs(args)) {
+        if (!this.checkDanger(args) || !this.checkArgs(args)) {
             return;
         }
 
         File script = new File(args[1]);
-        if (!checkFile(script)) {
+        if (!this.checkFile(script)) {
             return;
         }
 

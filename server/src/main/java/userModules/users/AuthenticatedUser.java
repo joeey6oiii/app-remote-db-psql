@@ -12,6 +12,7 @@ public class AuthenticatedUser extends RegisteredUser {
 
     public AuthenticatedUser(RegisteredUser registeredUser, Session session) {
         super(registeredUser.getRegisteredUserData(), registeredUser.getUser());
+        super.setId(registeredUser.getId());
         this.session = session;
     }
 

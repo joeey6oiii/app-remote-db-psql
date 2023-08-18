@@ -41,7 +41,7 @@ public class ExitCommandReceiver implements CommandReceiver {
      */
     @Override
     public void receiveCommand(CommandDescription command, String[] args) {
-        if (!confirmExit()) {
+        if (!this.confirmExit()) {
             CommandHandler.getMissedCommands().remove(command, args);
             return;
         }

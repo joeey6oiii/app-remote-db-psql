@@ -51,13 +51,20 @@ public class AuthorizationHandler implements RequestHandler {
                 if (!(new MD2PasswordEncryptor().checkPassword(request.getAuthenticationData(), registeredUser.getRegisteredUserData()))) {
                     response = "Unable to authorize you. Incorrect password";
                 } else {
-                    isSuccess = true;
-                    token = tokenManager.generateToken();
-                    response = "You have been successfully authorized";
-
                     Session session = new Session(LocalDateTime.now(), UserUtils.INSTANCE.getSessionDurationInMinutes());
                     AuthenticatedUser authenticatedUser = new AuthenticatedUser(registeredUser, session);
-                    AuthenticatedUserRegistry.getInstance().addAuthenticatedUser(token, authenticatedUser);
+
+                    AuthenticatedUserRegistry userRegistry = AuthenticatedUserRegistry.getInstance();
+
+                    if (userRegistry.checkUserExistence(authenticatedUser)) {
+                        response = "You are already logged in";
+                    } else {
+                        token = tokenManager.generateToken();
+                        userRegistry.addAuthenticatedUser(token, authenticatedUser);
+
+                        isSuccess = true;
+                        response = "You have been successfully authorized";
+                    }
                 }
             }
         } catch (IOException | SQLException | NoSuchAlgorithmException | NoSuchProviderException | NullPointerException e) {
