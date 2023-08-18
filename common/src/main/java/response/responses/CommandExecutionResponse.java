@@ -1,5 +1,7 @@
 package response.responses;
 
+import response.visitor.ResponseVisitor;
+
 import java.io.Serializable;
 
 /**
@@ -22,5 +24,10 @@ public class CommandExecutionResponse implements Response, Serializable {
      */
     public String getResult() {
         return result;
+    }
+
+    @Override
+    public boolean accept(ResponseVisitor visitor) {
+        return visitor.visit(this);
     }
 }

@@ -80,6 +80,7 @@ public class UserCommandHandler implements CommandHandler<CommandExecutionReques
      *
      * @param request the request, received from the client
      */
+    @Override
     public void executeCommand(CommandExecutionRequest request) {
         String response;
         ResponseAble<Response> responseSender = new ResponseSender(connectionModule);
@@ -105,11 +106,13 @@ public class UserCommandHandler implements CommandHandler<CommandExecutionReques
                 CommandDescription simplifiedCommand = request.getDescriptionCommand();
                 BaseCommand command = this.getCommandByDescription(simplifiedCommand);
 
-                if (command instanceof CallerIdCommand callerIdCommand) {
+                if (command.getClass().isAssignableFrom(CallerIdCommand.class)) {
+                    CallerIdCommand callerIdCommand = (CallerIdCommand) command;
                     callerIdCommand.setCallerId(authenticatedUser.getId());
                 }
 
-                if (command instanceof ParameterizedCommand parameterizedCommand) {
+                if (command.getClass().isAssignableFrom(ParameterizedCommand.class)) {
+                    ParameterizedCommand parameterizedCommand = (ParameterizedCommand) command;
                     parameterizedCommand.setArguments(request.getArgs());
                     parameterizedCommand.execute();
                     response = parameterizedCommand.getResponse();

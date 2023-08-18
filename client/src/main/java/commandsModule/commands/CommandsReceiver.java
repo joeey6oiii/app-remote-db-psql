@@ -2,15 +2,19 @@ package commandsModule.commands;
 
 import clientModules.authentication.User;
 import clientModules.connection.DataTransferConnectionModule;
+import clientModules.request.sender.RequestAble;
 import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.ClientCommandsHandler;
 import clientModules.response.handlers.ServerErrorResultHandler;
+import clientModules.response.visitor.ResponseHandlerVisitor;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.ClientCommandsRequest;
+import requests.Request;
 import response.responses.ClientCommandsResponse;
 import response.responses.ErrorResponse;
 import response.responses.Response;
+import response.visitor.ResponseVisitor;
 
 import java.io.IOException;
 
@@ -18,10 +22,12 @@ import java.io.IOException;
  * A class that represents the commands' receiver.
  */
 public class CommandsReceiver {
-    private final DataTransferConnectionModule dataTransferConnectionModule;
+    private final RequestAble<Response, Request> requestSender;
+    private final ResponseVisitor responseVisitor;
 
     public CommandsReceiver(DataTransferConnectionModule dataTransferConnectionModule) {
-        this.dataTransferConnectionModule = dataTransferConnectionModule;
+        this.requestSender = new RequestSender(dataTransferConnectionModule);
+        this.responseVisitor = new ResponseHandlerVisitor();
     }
 
     /**
@@ -34,12 +40,12 @@ public class CommandsReceiver {
      */
     public boolean initCommands() throws ServerUnavailableException, ResponseTimeoutException, IOException {
         ClientCommandsRequest commandsRequest = new ClientCommandsRequest();
-        Response response = new RequestSender(dataTransferConnectionModule).sendRequest(commandsRequest);
+        Response response = requestSender.sendRequest(commandsRequest);
 
-        if (response instanceof ErrorResponse errResponse) {
-            new ServerErrorResultHandler().handleResponse(errResponse);
-        } else if (response instanceof ClientCommandsResponse commandsResponse){
-            return new ClientCommandsHandler().handleResponse(commandsResponse);
+        if (response.getClass().isAssignableFrom(ClientCommandsResponse.class)) {
+            return response.accept(responseVisitor);
+        } else {
+            response.accept(responseVisitor);
         }
 
         return false;

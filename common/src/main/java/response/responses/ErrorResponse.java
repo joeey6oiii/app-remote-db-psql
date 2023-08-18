@@ -1,5 +1,7 @@
 package response.responses;
 
+import response.visitor.ResponseVisitor;
+
 import java.io.Serializable;
 
 public class ErrorResponse implements Response, Serializable {
@@ -11,5 +13,10 @@ public class ErrorResponse implements Response, Serializable {
 
     public String getResult() {
         return this.result;
+    }
+
+    @Override
+    public boolean accept(ResponseVisitor visitor) {
+        return visitor.visit(this);
     }
 }

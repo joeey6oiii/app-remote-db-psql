@@ -1,20 +1,20 @@
 package commandsModule.commandReceivers;
 
-import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
+import clientModules.request.sender.RequestAble;
 import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.ExecutionResultHandler;
-import clientModules.response.handlers.ServerErrorResultHandler;
 import clientModules.authentication.User;
+import clientModules.response.visitor.ResponseHandlerVisitor;
 import commands.CommandDescription;
 import commandsModule.commandsManagement.CommandHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.CommandExecutionRequest;
-import response.responses.AuthorizationResponse;
+import requests.Request;
 import response.responses.CommandExecutionResponse;
-import response.responses.ErrorResponse;
 import response.responses.Response;
+import response.visitor.ResponseVisitor;
 
 import java.io.IOException;
 import java.io.StreamCorruptedException;
@@ -23,10 +23,12 @@ import java.io.StreamCorruptedException;
  * A class that represents the command execution result receiver.
  */
 public class ExecutionResultReceiver implements CommandReceiver {
-    private final DataTransferConnectionModule dataTransferConnectionModule;
+    private final RequestAble<Response, Request> requestSender;
+    private final ResponseVisitor responseVisitor;
 
     public ExecutionResultReceiver(DataTransferConnectionModule dataTransferConnectionModule) {
-        this.dataTransferConnectionModule = dataTransferConnectionModule;
+        this.requestSender = new RequestSender(dataTransferConnectionModule);
+        this.responseVisitor = new ResponseHandlerVisitor();
     }
 
     /**
@@ -41,31 +43,20 @@ public class ExecutionResultReceiver implements CommandReceiver {
         CommandExecutionRequest commandRequest = new CommandExecutionRequest(User.getInstance().getToken(), command, args);
         Response response;
         try {
-            response = new RequestSender(dataTransferConnectionModule).sendRequest(commandRequest);
-            boolean isSuccess = false;
+            response = requestSender.sendRequest(commandRequest);
 
-            if (response instanceof ErrorResponse errResponse) {
-                new ServerErrorResultHandler().handleResponse(errResponse);
-            } else if (response instanceof CommandExecutionResponse executionResponse) {
-                isSuccess = new ExecutionResultHandler().handleResponse(executionResponse);
-            } else if (response instanceof AuthorizationResponse authorizationResponse && !authorizationResponse.isSuccess()) {
-                new AuthenticationManager(dataTransferConnectionModule).authenticateFromInput();
-            } else {
-                System.out.println("Received invalid response from server");
-            }
-
-            if (isSuccess) {
+            if (response.getClass().isAssignableFrom(CommandExecutionResponse.class)) {
+                response.accept(responseVisitor);
                 CommandHandler.getMissedCommands().remove(command, args);
             } else {
+                response.accept(responseVisitor);
                 CommandHandler.getMissedCommands().put(command, args);
             }
-        } catch (StreamCorruptedException | ServerUnavailableException | ResponseTimeoutException e) {
+        } catch (StreamCorruptedException | ServerUnavailableException
+                 | ResponseTimeoutException | NullPointerException e) {
             CommandHandler.getMissedCommands().put(command, args);
         } catch (IOException e) {
             System.out.println("Something went wrong during I/O operations");
-        } catch (NullPointerException e) {
-            System.out.println("Empty response received");
-            CommandHandler.getMissedCommands().put(command, args);
         }
     }
 }

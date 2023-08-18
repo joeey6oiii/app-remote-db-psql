@@ -1,8 +1,12 @@
 package commandsModule.commandsManagement;
 
+import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
 import commands.CommandDescription;
+import exceptions.ResponseTimeoutException;
+import exceptions.ServerUnavailableException;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -14,6 +18,7 @@ public class CommandHandler {
     private static Map<String, CommandDescription> commands;
     private static Map<CommandDescription, String[]> missedCommands;
     private final CommandManager commandManager;
+    private final AuthenticationManager authenticationManager;
     private final Scanner scanner;
 
     /**
@@ -28,6 +33,7 @@ public class CommandHandler {
         missedCommands = new LinkedHashMap<>();
         this.scanner = scanner;
         commandManager = new CommandManager(dataTransferConnectionModule);
+        authenticationManager = new AuthenticationManager(dataTransferConnectionModule);
     }
 
     /**
@@ -42,6 +48,7 @@ public class CommandHandler {
         missedCommands = new LinkedHashMap<>();
         this.scanner = scanner;
         commandManager = new CommandManager(dataTransferConnectionModule);
+        authenticationManager = new AuthenticationManager(dataTransferConnectionModule);
     }
 
     /**
@@ -92,8 +99,17 @@ public class CommandHandler {
             if (consoleInput.isEmpty()) { continue; }
 
             String[] tokens = consoleInput.toLowerCase().split(" ");
-            if (Objects.equals(tokens[0], "cls")) {
+            if (Objects.equals(tokens[0], "cls")) {                     // todo make client commands
                 missedCommands.clear();
+                continue;
+            }
+
+            if (Objects.equals(tokens[0], "auth")) {
+                try {
+                    authenticationManager.authenticateFromInput();
+                } catch (ResponseTimeoutException | ServerUnavailableException | IOException e) {
+                    System.out.println("Server is unavailable. Please, try again later");
+                }
                 continue;
             }
 

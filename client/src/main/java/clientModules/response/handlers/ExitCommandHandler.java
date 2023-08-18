@@ -16,6 +16,7 @@ public class ExitCommandHandler implements ResponseHandler<CommandExecutionRespo
     public boolean handleResponse(CommandExecutionResponse response) {
         System.out.println("Shutdown...");
         System.exit(0);
+
         return true;
     }
 }

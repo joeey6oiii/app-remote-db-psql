@@ -19,9 +19,17 @@ public class ClientCommandsHandler implements ResponseHandler<ClientCommandsResp
      */
     @Override
     public boolean handleResponse(ClientCommandsResponse response) {
+        if (response == null) {
+            return false;
+        }
+
         List<CommandDescription> commands = response.getCommands();
+        if (commands == null || commands.isEmpty()) {
+            return false;
+        }
+
         CommandRegistry.setCommands(commands);
 
-        return commands != null && !CommandRegistry.getCommands().isEmpty();
+        return true;
     }
 }
