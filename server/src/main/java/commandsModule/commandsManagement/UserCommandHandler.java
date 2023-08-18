@@ -11,7 +11,7 @@ import response.responses.Response;
 import serverModules.response.sender.ResponseAble;
 import serverModules.response.sender.ResponseSender;
 import token.Token;
-import userModules.AuthenticatedUserRegistry;
+import userModules.sessionService.AuthenticatedUserRegistry;
 import userModules.users.AuthenticatedUser;
 import userModules.users.User;
 import serverModules.connection.ConnectionModule;

@@ -28,7 +28,7 @@ public class ClientCommandsHandler implements ResponseHandler<ClientCommandsResp
             return false;
         }
 
-        CommandRegistry.setCommands(commands);
+        CommandRegistry.getInstance().setCommands(commands);
 
         return true;
     }

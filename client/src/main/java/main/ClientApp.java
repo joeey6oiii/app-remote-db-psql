@@ -78,7 +78,7 @@ public class ClientApp {
             }
             System.out.println("Commands initialized");
 
-            List<CommandDescription> commands = CommandRegistry.getCommands();
+            List<CommandDescription> commands = CommandRegistry.getInstance().getCommands();
             Scanner consoleInputReader = new Scanner(System.in);
             CommandHandler handler = new CommandHandler(commands, consoleInputReader, connectionModule);
 

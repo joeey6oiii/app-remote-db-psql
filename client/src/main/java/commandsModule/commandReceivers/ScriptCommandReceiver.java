@@ -66,14 +66,14 @@ public class ScriptCommandReceiver implements CommandReceiver {
 
                 if (response.getClass().isAssignableFrom(CommandExecutionResponse.class)) {
                     response.accept(responseVisitor);
-                    CommandHandler.getMissedCommands().remove(scriptCommand, args);
+                    CommandHandler.getMissedCommandsMap().remove(scriptCommand, args);
                 } else {
                     response.accept(responseVisitor);
-                    CommandHandler.getMissedCommands().put(scriptCommand, args);
+                    CommandHandler.getMissedCommandsMap().put(scriptCommand, args);
                     return;
                 }
             } catch (StreamCorruptedException | ServerUnavailableException | ResponseTimeoutException | NullPointerException e) {
-                CommandHandler.getMissedCommands().put(scriptCommand, args);
+                CommandHandler.getMissedCommandsMap().put(scriptCommand, args);
                 return;
             }
 
@@ -87,7 +87,7 @@ public class ScriptCommandReceiver implements CommandReceiver {
                     historyOfDangerScript.add(args[0]);
                 }
 
-                CommandDescription command = CommandHandler.getCommandByName(tokens[0].toLowerCase());
+                CommandDescription command = CommandHandler.getCommandFromName(tokens[0].toLowerCase());
                 if (command != null) {
                     commandManager.manageCommand(command, tokens);
                 } else {

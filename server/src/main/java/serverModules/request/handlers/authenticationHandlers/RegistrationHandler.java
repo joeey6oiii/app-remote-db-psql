@@ -10,7 +10,7 @@ import serverModules.request.data.ClientRequestInfo;
 import serverModules.request.handlers.RequestHandler;
 import serverModules.response.sender.ResponseSender;
 import token.Token;
-import userModules.AuthenticatedUserRegistry;
+import userModules.sessionService.AuthenticatedUserRegistry;
 import userModules.passwordService.MD2PasswordEncryptor;
 import userModules.sessionService.Session;
 import userModules.tokenService.StringTokenManager;
