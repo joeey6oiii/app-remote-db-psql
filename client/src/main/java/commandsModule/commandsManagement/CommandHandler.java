@@ -5,7 +5,7 @@ import commands.CommandDescription;
 import commandsModule.commands.AuthCommand;
 import commandsModule.commands.CLSCommand;
 import commandsModule.commands.ClientHelpCommand;
-import commandsModule.commands.OfflineCommand;
+import commandsModule.commands.ClientCommand;
 
 import java.util.*;
 import java.util.function.Function;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 public class CommandHandler {
     private static Map<String, CommandDescription> commandsMap;
     private static Map<CommandDescription, String[]> missedCommandsMap;
-    private final Map<String, OfflineCommand> offlineCommandsMap;
+    private final Map<String, ClientCommand> clientCommandsMap;
     private final CommandManager commandManager;
     private final Scanner scanner;
 
@@ -34,10 +34,10 @@ public class CommandHandler {
         this.scanner = scanner;
         commandManager = new CommandManager(dataTransferConnectionModule);
 
-        offlineCommandsMap = new LinkedHashMap<>();
-        offlineCommandsMap.put("auth", new AuthCommand(dataTransferConnectionModule));
-        offlineCommandsMap.put("cls", new CLSCommand());
-        offlineCommandsMap.put("c_help", new ClientHelpCommand(offlineCommandsMap));
+        clientCommandsMap = new LinkedHashMap<>();
+        clientCommandsMap.put("auth", new AuthCommand(dataTransferConnectionModule));
+        clientCommandsMap.put("cls", new CLSCommand());
+        clientCommandsMap.put("c_help", new ClientHelpCommand(clientCommandsMap));
     }
 
     /**
@@ -53,10 +53,10 @@ public class CommandHandler {
         this.scanner = scanner;
         commandManager = new CommandManager(dataTransferConnectionModule);
 
-        offlineCommandsMap = new LinkedHashMap<>();
-        offlineCommandsMap.put("auth", new AuthCommand(dataTransferConnectionModule));
-        offlineCommandsMap.put("cls", new CLSCommand());
-        offlineCommandsMap.put("c_help", new ClientHelpCommand(offlineCommandsMap));
+        clientCommandsMap = new LinkedHashMap<>();
+        clientCommandsMap.put("auth", new AuthCommand(dataTransferConnectionModule));
+        clientCommandsMap.put("cls", new CLSCommand());
+        clientCommandsMap.put("c_help", new ClientHelpCommand(clientCommandsMap));
     }
 
     /**
@@ -109,11 +109,11 @@ public class CommandHandler {
             
             CommandDescription command = commandsMap.get(tokens[0]);
             if (command == null) {
-                OfflineCommand offlineCommand = offlineCommandsMap.get(tokens[0]);
-                if (offlineCommand == null) {
+                ClientCommand clientCommand = clientCommandsMap.get(tokens[0]);
+                if (clientCommand == null) {
                     System.out.println("Not Recognized as an Internal or External Command. Type \"help\" or \"c_help\" to see available commands");
                 } else {
-                    offlineCommand.execute();
+                    clientCommand.execute();
                 }
                 continue;
             }

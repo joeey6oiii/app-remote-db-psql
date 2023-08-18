@@ -1,6 +1,6 @@
 package commandsModule.commands;
 
-public interface OfflineCommand {
+public interface ClientCommand {
 
     String getName();
 

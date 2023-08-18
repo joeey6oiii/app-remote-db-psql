@@ -2,7 +2,7 @@ package commandsModule.commands;
 
 import commandsModule.commandsManagement.CommandHandler;
 
-public class CLSCommand implements OfflineCommand {
+public class CLSCommand implements ClientCommand {
 
     @Override
     public String getName() {
@@ -16,7 +16,11 @@ public class CLSCommand implements OfflineCommand {
 
     @Override
     public void execute() {
-        CommandHandler.getMissedCommandsMap().clear();
-        System.out.println("Cleared cache of missed commands");
+        if (CommandHandler.getMissedCommandsMap().isEmpty()) {
+            System.out.println("Cache of missed commands is empty");
+        } else {
+            CommandHandler.getMissedCommandsMap().clear();
+            System.out.println("Cleared cache of missed commands");
+        }
     }
 }

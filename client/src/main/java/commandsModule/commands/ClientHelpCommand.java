@@ -3,10 +3,10 @@ package commandsModule.commands;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ClientHelpCommand implements OfflineCommand {
-    private final Map<String, OfflineCommand> commands;
+public class ClientHelpCommand implements ClientCommand {
+    private final Map<String, ClientCommand> commands;
 
-    public ClientHelpCommand(Map<String, OfflineCommand> commands) {
+    public ClientHelpCommand(Map<String, ClientCommand> commands) {
         this.commands = commands;
     }
 
@@ -17,7 +17,7 @@ public class ClientHelpCommand implements OfflineCommand {
 
     @Override
     public String getDescription() {
-        return "Prints a list of available offline commands";
+        return "Prints a list of available client commands";
     }
 
     @Override
