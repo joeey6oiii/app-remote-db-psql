@@ -1,6 +1,11 @@
 package response.responses;
 
+import response.visitor.ResponseVisitor;
+
 /**
  * An interface for all response-implementers.
  */
-public interface Response {}
+public interface Response {
+
+    boolean accept(ResponseVisitor visitor);
+}

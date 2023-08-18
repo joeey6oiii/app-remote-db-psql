@@ -1,4 +1,7 @@
 /.idea
 /target
 /bin/
-server/src/main/resources/db.cfg
+server\src\main\resources\db.cfg
+**/*.class
+*.jar
+*.lst

@@ -1,36 +1,37 @@
 package commandsModule.commandReceivers.authenticationReceivers;
 
 import clientModules.connection.DataTransferConnectionModule;
+import clientModules.request.sender.RequestAble;
 import clientModules.request.sender.RequestSender;
-import clientModules.response.handlers.authenticationHandlers.RegistrationHandler;
-import clientModules.response.handlers.ServerErrorResultHandler;
+import clientModules.response.visitor.ResponseHandlerVisitor;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.RegistrationRequest;
+import requests.Request;
 import response.data.AuthenticationData;
-import response.responses.ErrorResponse;
 import response.responses.RegistrationResponse;
 import response.responses.Response;
+import response.visitor.ResponseVisitor;
 
 import java.io.IOException;
 
 public class RegistrationReceiver {
-    DataTransferConnectionModule dataTransferConnectionModule;
+    private final RequestAble<Response, Request> requestSender;
+    private final ResponseVisitor responseVisitor;
 
     public RegistrationReceiver(DataTransferConnectionModule dataTransferConnectionModule) {
-        this.dataTransferConnectionModule = dataTransferConnectionModule;
+        this.requestSender = new RequestSender(dataTransferConnectionModule);
+        this.responseVisitor = new ResponseHandlerVisitor();
     }
 
     public boolean register(String login, char[] password) throws ServerUnavailableException, ResponseTimeoutException, IOException {
         RegistrationRequest registrationRequest = new RegistrationRequest(new AuthenticationData(login, password));
-        Response response = new RequestSender(dataTransferConnectionModule).sendRequest(registrationRequest);
+        Response response = requestSender.sendRequest(registrationRequest);
 
-        if (response instanceof ErrorResponse errResponse) {
-            new ServerErrorResultHandler().handleResponse(errResponse);
-        } else if (!(response instanceof RegistrationResponse registrationResponse)) {
-            System.out.println("Received invalid response from server");
+        if (response.getClass().isAssignableFrom(RegistrationResponse.class)) {
+            return response.accept(responseVisitor);
         } else {
-            return new RegistrationHandler().handleResponse(registrationResponse);
+            response.accept(responseVisitor);
         }
 
         return false;

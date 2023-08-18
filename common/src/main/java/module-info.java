@@ -6,5 +6,6 @@ module common {
     exports utility;
     exports response.responses;
     exports response.data;
+    exports response.visitor;
     exports token;
 }

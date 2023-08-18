@@ -1,36 +1,37 @@
 package commandsModule.commandReceivers.authenticationReceivers;
 
 import clientModules.connection.DataTransferConnectionModule;
+import clientModules.request.sender.RequestAble;
 import clientModules.request.sender.RequestSender;
-import clientModules.response.handlers.authenticationHandlers.AuthorizationHandler;
-import clientModules.response.handlers.ServerErrorResultHandler;
+import clientModules.response.visitor.ResponseHandlerVisitor;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.AuthorizationRequest;
+import requests.Request;
 import response.data.AuthenticationData;
 import response.responses.AuthorizationResponse;
-import response.responses.ErrorResponse;
 import response.responses.Response;
+import response.visitor.ResponseVisitor;
 
 import java.io.IOException;
 
 public class AuthorizationReceiver {
-    private final DataTransferConnectionModule dataTransferConnectionModule;
+    private final RequestAble<Response, Request> requestSender;
+    private final ResponseVisitor responseVisitor;
 
     public AuthorizationReceiver(DataTransferConnectionModule dataTransferConnectionModule) {
-        this.dataTransferConnectionModule = dataTransferConnectionModule;
+        this.requestSender = new RequestSender(dataTransferConnectionModule);
+        this.responseVisitor = new ResponseHandlerVisitor();
     }
 
     public boolean authorize(String login, char[] password) throws ServerUnavailableException, ResponseTimeoutException, IOException {
         AuthorizationRequest authorizationRequest = new AuthorizationRequest(new AuthenticationData(login, password));
-        Response response = new RequestSender(dataTransferConnectionModule).sendRequest(authorizationRequest);
+        Response response = requestSender.sendRequest(authorizationRequest);
 
-        if (response instanceof ErrorResponse errResponse) {
-            new ServerErrorResultHandler().handleResponse(errResponse);
-        } else if (!(response instanceof AuthorizationResponse authorizationResponse)) {
-            System.out.println("Received invalid response from server");
+        if (response.getClass().isAssignableFrom(AuthorizationResponse.class)) {
+            return response.accept(responseVisitor);
         } else {
-            return new AuthorizationHandler().handleResponse(authorizationResponse);
+            response.accept(responseVisitor);
         }
 
         return false;

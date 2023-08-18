@@ -1,6 +1,7 @@
 package response.responses;
 
 import commands.CommandDescription;
+import response.visitor.ResponseVisitor;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,5 +26,10 @@ public class ClientCommandsResponse implements Response, Serializable {
      */
     public List<CommandDescription> getCommands() {
         return this.commands;
+    }
+
+    @Override
+    public boolean accept(ResponseVisitor visitor) {
+        return visitor.visit(this);
     }
 }

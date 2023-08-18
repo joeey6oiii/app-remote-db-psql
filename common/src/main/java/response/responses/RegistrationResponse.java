@@ -1,5 +1,6 @@
 package response.responses;
 
+import response.visitor.ResponseVisitor;
 import token.Token;
 
 import java.io.Serializable;
@@ -25,5 +26,10 @@ public class RegistrationResponse implements TokenResponse, Serializable {
 
     public String getResult() {
         return this.result;
+    }
+
+    @Override
+    public boolean accept(ResponseVisitor visitor) {
+        return visitor.visit(this);
     }
 }

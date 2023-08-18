@@ -1,11 +1,11 @@
 package commandsModule.commandReceivers;
 
-import clientModules.authentication.AuthenticationManager;
 import clientModules.connection.DataTransferConnectionModule;
+import clientModules.request.sender.RequestAble;
 import clientModules.request.sender.RequestSender;
 import clientModules.response.handlers.ExecutionResultHandler;
-import clientModules.response.handlers.ServerErrorResultHandler;
 import clientModules.authentication.User;
+import clientModules.response.visitor.ResponseHandlerVisitor;
 import commands.CommandDescription;
 import commandsModule.commandsManagement.CommandHandler;
 import commandsModule.commandsManagement.CommandManager;
@@ -13,10 +13,10 @@ import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import org.apache.commons.io.IOUtils;
 import requests.CommandExecutionRequest;
-import response.responses.AuthorizationResponse;
+import requests.Request;
 import response.responses.CommandExecutionResponse;
-import response.responses.ErrorResponse;
 import response.responses.Response;
+import response.visitor.ResponseVisitor;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -27,10 +27,14 @@ import java.util.LinkedList;
  */
 public class ScriptCommandReceiver implements CommandReceiver {
     private static final LinkedList<String> historyOfDangerScript = new LinkedList<>();
-    private final DataTransferConnectionModule dataTransferConnectionModule;
+    private final RequestAble<Response, Request> requestSender;
+    private final ResponseVisitor responseVisitor;
+    private final CommandManager commandManager;
 
     public ScriptCommandReceiver(DataTransferConnectionModule dataTransferConnectionModule) {
-        this.dataTransferConnectionModule = dataTransferConnectionModule;
+        this.requestSender = new RequestSender(dataTransferConnectionModule);
+        this.responseVisitor = new ResponseHandlerVisitor();
+        this.commandManager = new CommandManager(dataTransferConnectionModule);
     }
 
     /**
@@ -45,51 +49,30 @@ public class ScriptCommandReceiver implements CommandReceiver {
      */
     @Override
     public void receiveCommand(CommandDescription scriptCommand, String[] args) {
-        if (historyOfDangerScript.contains(args[0])) {
-            System.out.println("Detected dangerous command: the script will loop if the command is executed\n" +
-                    "Continuing executing script from the next command...");
-            historyOfDangerScript.clear();
-            return;
-        }
-
-        if (args.length < 2) {
-            System.out.println("Not enough arguments. Returning to the console input");
+        if (!this.checkDanger(args) || !checkArgs(args)) {
             return;
         }
 
         File script = new File(args[1]);
-        if (!script.exists()) {
-            System.out.println("File not found. Returning to the console input");
+        if (!checkFile(script)) {
             return;
         }
 
-        CommandManager commandManager = new CommandManager(dataTransferConnectionModule);
         try (InputStream inputStream = new FileInputStream(script)) {
-            boolean isSuccess = false;
             try {
-                RequestSender requestSender = new RequestSender(dataTransferConnectionModule);
                 CommandExecutionRequest commandRequest = new CommandExecutionRequest(User.getInstance().getToken(), scriptCommand, args);
 
                 Response response = requestSender.sendRequest(commandRequest);
 
-                if (response instanceof ErrorResponse errResponse) {
-                    new ServerErrorResultHandler().handleResponse(errResponse);
-                } else if (response instanceof CommandExecutionResponse executionResponse) {
-                    isSuccess = new ExecutionResultHandler().handleResponse(executionResponse);
-                } else if (response instanceof AuthorizationResponse authorizationResponse && !authorizationResponse.isSuccess()) {
-                    new AuthenticationManager(dataTransferConnectionModule).authenticateFromInput();
+                if (response.getClass().isAssignableFrom(CommandExecutionResponse.class)) {
+                    response.accept(responseVisitor);
+                    CommandHandler.getMissedCommands().remove(scriptCommand, args);
                 } else {
-                    System.out.println("Received invalid response from server");
+                    response.accept(responseVisitor);
+                    CommandHandler.getMissedCommands().put(scriptCommand, args);
+                    return;
                 }
-
-            } catch (StreamCorruptedException | ServerUnavailableException | ResponseTimeoutException ignored) {
-            } catch (NullPointerException e) {
-                System.out.println("Empty response received");
-            }
-
-            if (isSuccess) {
-                CommandHandler.getMissedCommands().remove(scriptCommand, args);
-            } else {
+            } catch (StreamCorruptedException | ServerUnavailableException | ResponseTimeoutException | NullPointerException e) {
                 CommandHandler.getMissedCommands().put(scriptCommand, args);
                 return;
             }
@@ -117,5 +100,34 @@ public class ScriptCommandReceiver implements CommandReceiver {
         }
 
         historyOfDangerScript.clear();
+    }
+
+    private boolean checkDanger(String[] args) {
+        if (historyOfDangerScript.contains(args[0])) {
+            System.out.println("Detected dangerous command: the script will loop if the command is executed\n" +
+                    "Continuing executing script from the next command...");
+            historyOfDangerScript.clear();
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkArgs(String[] args) {
+        if (args.length < 2) {
+            System.out.println("Not enough arguments. Returning to the console input");
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkFile(File script) {
+        if (!script.exists()) {
+            System.out.println("File not found. Returning to the console input");
+            return false;
+        }
+
+        return true;
     }
 }
