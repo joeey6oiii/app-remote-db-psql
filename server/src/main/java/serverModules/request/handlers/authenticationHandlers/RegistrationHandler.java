@@ -47,6 +47,9 @@ public class RegistrationHandler implements RequestHandler {
         try (RegisteredUserRepositoryImpl userRepository = new RegisteredUserRepositoryImpl()) {
             if (userRepository.read(login) != null) {
                 response = "Unable to register your account. User with this login already exists";
+            } else if (login.length() < UserUtils.INSTANCE.getMinLoginLengthValue()) {
+                response = "Unable to register your account. Login must be at least "
+                        + UserUtils.INSTANCE.getMinLoginLengthValue() + " characters long";
             } else if (request.getAuthenticationData().getPassword().length < UserUtils.INSTANCE.getMinPasswdLengthValue()) {
                 response = "Unable to register your account. Password must be at least "
                         + UserUtils.INSTANCE.getMinPasswdLengthValue() + " characters long";

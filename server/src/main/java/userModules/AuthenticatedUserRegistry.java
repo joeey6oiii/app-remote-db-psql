@@ -26,14 +26,33 @@ public class AuthenticatedUserRegistry {
         return authenticatedUsers.entrySet();
     }
 
-    public void addAuthenticatedUser(Token<?> token, AuthenticatedUser authenticatedUser) {
-        authenticatedUsers.put(token, authenticatedUser);
+    /**
+     * Adds an authenticated user to the collection of authenticated users.
+     *
+     * @param  token                the token associated with the authenticated user
+     * @param  authenticatedUser    the authenticated user to be added
+     * @return                      true if the user was added successfully, false otherwise
+     */
+    public boolean addAuthenticatedUser(Token<?> token, AuthenticatedUser authenticatedUser) {
+        return authenticatedUsers.putIfAbsent(token, authenticatedUser) == null;
     }
 
+    /**
+     * Retrieves the authenticated user associated with the given token.
+     *
+     * @param  token  the token used to authenticate the user
+     * @return        the authenticated user associated with the token
+     */
     public AuthenticatedUser getAuthenticatedUser(Token<?> token) {
         return authenticatedUsers.get(token);
     }
 
+    /**
+     * Retrieves the authenticated user with the specified ID.
+     *
+     * @param  id  the ID of the user to retrieve
+     * @return     the authenticated user with the specified ID, or null if no user is found
+     */
     public AuthenticatedUser getAuthenticatedUser(int id) {
         for (AuthenticatedUser user : authenticatedUsers.values()) {
             if (user.getId() == id) {
@@ -43,10 +62,20 @@ public class AuthenticatedUserRegistry {
         return null;
     }
 
+    /**
+     * Removes an authenticated user.
+     *
+     * @param  token  the token of the user to be removed
+     */
     public void removeAuthenticatedUser(Token<?> token) {
         authenticatedUsers.remove(token);
     }
 
+    /**
+     * Removes an authenticated user with the specified ID.
+     *
+     * @param  id  the ID of the user to be removed
+     */
     public void removeAuthenticatedUser(int id) {
         authenticatedUsers.forEach((token, user) -> {
             if (user.getId() == id) {
@@ -58,5 +87,15 @@ public class AuthenticatedUserRegistry {
                 });
             }
         });
+    }
+
+    /**
+     * Checks if the given authenticated user exists in the collection of authenticated users.
+     *
+     * @param  authenticatedUser  the authenticated user to be checked
+     * @return       true if the user exists, false otherwise
+     */
+    public boolean checkUserExistence(AuthenticatedUser authenticatedUser) {
+        return this.getAuthenticatedUser(authenticatedUser.getId()) != null;
     }
 }
