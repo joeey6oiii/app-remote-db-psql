@@ -6,9 +6,11 @@ public class User {
     private static User user;
     private Token<?> token;
 
+    private User() {}
+
     public static User getInstance() {
         if (user == null) {
-            return new User();
+            user = new User();
         }
         return user;
     }
@@ -18,6 +20,6 @@ public class User {
     }
 
     public Token<?> getToken() {
-        return token;
+        return this.token;
     }
 }

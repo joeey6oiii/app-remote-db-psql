@@ -29,12 +29,12 @@ public class ScriptCommandReceiver implements CommandReceiver {
     private static final LinkedList<String> historyOfDangerScript = new LinkedList<>();
     private final RequestAble<Response, Request> requestSender;
     private final ResponseVisitor responseVisitor;
-    private final CommandManager commandManager;
+    private final DataTransferConnectionModule dataTransferConnectionModule;
 
     public ScriptCommandReceiver(DataTransferConnectionModule dataTransferConnectionModule) {
         this.requestSender = new RequestSender(dataTransferConnectionModule);
         this.responseVisitor = new ResponseHandlerVisitor();
-        this.commandManager = new CommandManager(dataTransferConnectionModule);
+        this.dataTransferConnectionModule = dataTransferConnectionModule;
     }
 
     /**
@@ -76,6 +76,8 @@ public class ScriptCommandReceiver implements CommandReceiver {
                 CommandHandler.getMissedCommandsMap().put(scriptCommand, args);
                 return;
             }
+
+            CommandManager commandManager = new CommandManager(dataTransferConnectionModule);
 
             String contents = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             String[] lines = contents.split("\n");

@@ -20,7 +20,7 @@ import java.util.List;
 @Command
 public class RemoveLowerCommand implements BaseCommand, ObjectArgumentCommand<Person>, CallerIdCommand {
     private static final Logger logger = LogManager.getLogger("logger.RemoveLowerCommand");
-    private String response;
+    private StringBuilder response;
     private Person argument;
     private int callerId;
 
@@ -37,7 +37,7 @@ public class RemoveLowerCommand implements BaseCommand, ObjectArgumentCommand<Pe
      */
     @Override
     public String getResponse() {
-        return this.response;
+        return this.response.toString();
     }
 
     /**
@@ -87,26 +87,41 @@ public class RemoveLowerCommand implements BaseCommand, ObjectArgumentCommand<Pe
      */
     @Override
     public void execute() throws IOException {
+        this.response = new StringBuilder();
+
+        if (callerId == 0) {
+            this.response.append("Execution failed. Server could not identify you");
+            logger.error("Unidentified user called RemoveLowerCommand");
+            return;
+        }
+
+        if (argument == null) {
+            this.response.append("Execution failed. Server found null argument");
+            logger.error("Received null argument");
+            return;
+        }
+
         List<Person> ownerElements;
         MemoryBackedDBManager dbManager = MemoryBackedDBManager.getInstance();
         try {
             ownerElements = dbManager.getOwnerElements(callerId, ArrayList::new);
+            logger.info("Loaded user database elements");
         } catch (SQLException e) {
-            response = "Unable to load your elements. Please, try again later";
+            this.response.append("Failed to load your elements. Please, try again later");
             logger.error("Error loading user database elements", e);
             return;
         }
 
-        logger.info("Executed RemoveLowerCommand");
-
         if (ownerElements.isEmpty()) {
-            response = "Nothing to remove. You have not created any elements yet";
+            this.response.append("No created elements to remove yet");
+            logger.info(this.response.toString());
             return;
         }
 
         int counter = 0;
         HeightComparator comparator = new HeightComparator();
 
+        logger.info("Started comparing elements");
         for (Person currentPerson : ownerElements) {
             if (comparator.compare(currentPerson, argument) < 0 &&
                     dbManager.removeElementFromDBAndMemory(currentPerson.getId(), callerId) == 1) {
@@ -114,6 +129,7 @@ public class RemoveLowerCommand implements BaseCommand, ObjectArgumentCommand<Pe
             }
         }
 
-        response = "Removed " + counter + " elements whose height parameter is lower than " + argument.getHeight();
+        this.response.append("Removed ").append(counter).append(" elements whose height parameter is lower than ").append(argument.getHeight());
+        logger.info("Removed " + counter + " elements");
     }
 }

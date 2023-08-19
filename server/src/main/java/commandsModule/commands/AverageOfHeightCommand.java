@@ -14,7 +14,7 @@ import java.io.IOException;
 @Command
 public class AverageOfHeightCommand implements BaseCommand {
     private static final Logger logger = LogManager.getLogger("logger.AverageOfHeightCommand");
-    private String response;
+    private StringBuilder response;
 
     /**
      * A method that returns the name of the command.
@@ -29,7 +29,7 @@ public class AverageOfHeightCommand implements BaseCommand {
      */
     @Override
     public String getResponse() {
-        return this.response;
+        return this.response.toString();
     }
 
     /**
@@ -58,14 +58,16 @@ public class AverageOfHeightCommand implements BaseCommand {
      */
     @Override
     public void execute() throws IOException {
+        this.response = new StringBuilder();
+
         PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
         if (personCollectionHandler.getCollection().isEmpty()) {
-            this.response = "Collection is empty, can not execute average_of_height";
+            this.response.append("Collection is empty, can not execute average_of_height");
         } else {
             double averageHeight = personCollectionHandler.getCollection()
                     .stream().mapToInt(Person::getHeight).average().orElse(0);
-            this.response = "The average \"height\" value is " + averageHeight;
+            this.response.append("The average \"height\" value is ").append(averageHeight);
         }
-        logger.info("Executed AverageOfHeightCommand");
+        logger.info(this.response.toString());
     }
 }

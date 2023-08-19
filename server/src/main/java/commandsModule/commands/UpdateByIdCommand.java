@@ -15,7 +15,7 @@ import java.sql.SQLException;
 @Command
 public class UpdateByIdCommand implements ParameterizedCommand, ObjectArgumentCommand<Person>, CallerIdCommand {
     private static final Logger logger = LogManager.getLogger("logger.UpdateByIdCommand");
-    private String response;
+    private StringBuilder response;
     private String[] args;
     private Person argument;
     private int callerId;
@@ -33,7 +33,7 @@ public class UpdateByIdCommand implements ParameterizedCommand, ObjectArgumentCo
      */
     @Override
     public String getResponse() {
-        return this.response;
+        return this.response.toString();
     }
 
     /**
@@ -102,25 +102,51 @@ public class UpdateByIdCommand implements ParameterizedCommand, ObjectArgumentCo
      */
     @Override
     public void execute() throws IOException {
+        this.response = new StringBuilder();
+
+        if (callerId == 0) {
+            this.response.append("Execution failed. Server could not identify you");
+            logger.error("Unidentified user called UpdateByIdCommand");
+            return;
+        }
+
+        if (argument == null) {
+            this.response.append("Execution failed. Server found null argument");
+            logger.error("Received null argument");
+            return;
+        }
+
+        if (args.length < 2) {
+            this.response.append("Invalid number of arguments");
+            logger.error("Invalid number of arguments for UpdateByIdCommand");
+            return;
+        }
+
         int elementId = Integer.parseInt(args[1]);
         MemoryBackedDBManager dbManager = MemoryBackedDBManager.getInstance();
 
+        boolean tryAgainLater = false;
         int result = dbManager.updateElementInDBAndMemory(argument, elementId, callerId);
         if (result == 1) {
-            response = "Updated element with id " + elementId;
+            this.response.append("Updated element with id ").append(elementId);
         } else if (result == 0) {
-            response = "Something went wrong. Element with id " + elementId + " was not updated. Please, try again later";
+            this.response.append("Something went wrong. Element with id ").append(elementId).append(" was not updated");
+            tryAgainLater = true;
         } else {
             try {
                 if (dbManager.checkElementExistence(elementId)) {
-                    response = "You have no access to update element with id " + elementId;
+                    this.response.append("No access to element with id ").append(elementId);
                 } else {
-                    response = "Element with id " + elementId + " does not exist";
+                    this.response.append("Element with id ").append(elementId).append(" does not exist");
                 }
             } catch (SQLException e) {
                 throw new IOException(e);
             }
         }
-        logger.info("Executed UpdateByIdCommand");
+        logger.info(this.response.toString());
+
+        if (tryAgainLater) {
+            this.response.append(". Please, try again later");
+        }
     }
 }

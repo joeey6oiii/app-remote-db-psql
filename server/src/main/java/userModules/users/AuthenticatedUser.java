@@ -3,16 +3,18 @@ package userModules.users;
 import commandsModule.commands.BaseCommand;
 import userModules.sessionService.Session;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class AuthenticatedUser extends RegisteredUser {
-    private List<BaseCommand> commandHistory;
+    private final List<BaseCommand> commandHistory;
     private final Session session;
 
     public AuthenticatedUser(RegisteredUser registeredUser, Session session) {
         super(registeredUser.getRegisteredUserData(), new User(registeredUser.getAddress(), registeredUser.getPort()));
-        super.setId(registeredUser.getId());
+        this.setId(registeredUser.getId());
+        this.commandHistory = new ArrayList<>();
         this.session = session;
     }
 

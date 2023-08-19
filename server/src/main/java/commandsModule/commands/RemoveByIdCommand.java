@@ -13,7 +13,7 @@ import java.io.IOException;
 @Command
 public class RemoveByIdCommand implements ParameterizedCommand, CallerIdCommand {
     private static final Logger logger = LogManager.getLogger("logger.RemoveByIdCommand");
-    private String response;
+    private StringBuilder response;
     private String[] args;
     private int callerId;
 
@@ -30,7 +30,7 @@ public class RemoveByIdCommand implements ParameterizedCommand, CallerIdCommand 
      */
     @Override
     public String getResponse() {
-        return this.response;
+        return this.response.toString();
     }
 
     /**
@@ -81,16 +81,41 @@ public class RemoveByIdCommand implements ParameterizedCommand, CallerIdCommand 
      */
     @Override
     public void execute() throws IOException {
-        int elementId = Integer.parseInt(args[1]);
+        this.response = new StringBuilder();
 
+        if (callerId == 0) {
+            this.response.append("Execution failed. Server could not identify you");
+            logger.error("Unidentified user called RemoveByIdCommand");
+            return;
+        }
+
+        if (args.length < 2) {
+            this.response.append("Execution failed. Wrong number of arguments");
+            logger.error("Wrong number of arguments for RemoveByIdCommand");
+            return;
+        }
+
+        int elementId = Integer.parseInt(args[1]);
+        if (elementId <= 0) {
+            this.response.append("Execution failed. Wrong element id");
+            logger.error("Wrong element id for RemoveByIdCommand");
+            return;
+        }
+
+        boolean tryAgainLater = false;
         int result = MemoryBackedDBManager.getInstance().removeElementFromDBAndMemory(elementId, callerId);
         if (result == 1) {
-            response = "Removed element with id " + elementId;
+            this.response.append("Removed element with id ").append(elementId);
         } else if (result == 0) {
-            response = "Something went wrong. Element with id " + elementId + " was not removed. Please, try again later";
+            this.response.append("Something went wrong. Element with id ").append(elementId).append(" was not removed");
+            tryAgainLater = true;
         } else {
-            response = "You have no access to remove element with id " + elementId;
+            this.response.append("No access to element with id ").append(elementId);
         }
-        logger.info("Executed RemoveByIdCommand");
+        logger.info(this.response.toString());
+
+        if (tryAgainLater) {
+            this.response.append(". Please, try again later");
+        }
     }
 }

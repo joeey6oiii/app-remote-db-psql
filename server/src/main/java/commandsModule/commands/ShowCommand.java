@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Command
 public class ShowCommand implements BaseCommand {
     private static final Logger logger = LogManager.getLogger("logger.ShowCommand");
-    private String response;
+    private StringBuilder response;
 
     /**
      * A method that returns the name of the command.
@@ -29,7 +29,7 @@ public class ShowCommand implements BaseCommand {
      */
     @Override
     public String getResponse() {
-        return this.response;
+        return this.response.toString();
     }
 
     /**
@@ -59,15 +59,15 @@ public class ShowCommand implements BaseCommand {
     public void execute() throws IOException {
         PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
         if (personCollectionHandler.getCollection().isEmpty()) {
-            this.response = "Collection is empty, there is nothing to show";
+            this.response = new StringBuilder();
+            this.response.append("Collection is empty, there is nothing to show");
+            logger.info(this.response.toString());
         } else {
-            StringBuilder builder;
-            builder = new StringBuilder(personCollectionHandler.getCollection()
+            this.response = new StringBuilder(personCollectionHandler.getCollection()
                     .stream()
                     .map(Object::toString)
                     .collect(Collectors.joining("\n")));
-            this.response = builder.substring(0, builder.length() - 1);
+            logger.info("Compiled elements from the collection");
         }
-        logger.info("Executed ShowCommand");
     }
 }

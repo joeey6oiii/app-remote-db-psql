@@ -9,7 +9,6 @@ import commandsModule.commands.CommandRegistry;
 import commandsModule.commandsManagement.CommandHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
-import objectBuilder.CoordinatesObjectBuilder;
 
 import java.io.*;
 import java.net.InetAddress;

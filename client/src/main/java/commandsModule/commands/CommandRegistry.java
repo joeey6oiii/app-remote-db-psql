@@ -11,6 +11,8 @@ public class CommandRegistry {
     private static CommandRegistry singleInstance;
     private List<CommandDescription> commands;
 
+    private CommandRegistry() {}
+
     public static CommandRegistry getInstance() {
         if (singleInstance == null) {
             singleInstance = new CommandRegistry();
