@@ -96,7 +96,7 @@ public class Server {
                     }
                 });
             } catch (Exception e) {
-                logger.fatal("Unexpected error happened during server operations", e);
+                logger.error("Unexpected error happened during server operations", e);
             }
         }
     }
