@@ -13,7 +13,7 @@ import java.io.IOException;
 @Command
 public class ClearCommand implements BaseCommand, CallerIdCommand {
     private static final Logger logger = LogManager.getLogger("logger.ClearCommand");
-    private String response;
+    private StringBuilder response;
     private int callerId;
 
     /**
@@ -29,7 +29,7 @@ public class ClearCommand implements BaseCommand, CallerIdCommand {
      */
     @Override
     public String getResponse() {
-        return this.response;
+        return this.response.toString();
     }
 
     /**
@@ -62,16 +62,30 @@ public class ClearCommand implements BaseCommand, CallerIdCommand {
      */
     @Override
     public void execute() throws IOException {
+        this.response = new StringBuilder();
+
+        if (callerId == 0) {
+            this.response.append("Execution failed. Server could not identify you");
+            logger.error("Unidentified user called ClearCommand");
+            return;
+        }
+
+        boolean tryAgainLater = false;
         int result = MemoryBackedDBManager.getInstance().clearElementsInDBAndMemory(callerId);
         if (result == 1) {
-            response = "All your elements were removed";
+            this.response.append("All elements were removed");
         } else if (result == 2) {
-            response = "You have not created any elements yet";
+            this.response.append("No created elements to remove yet");
         } else if (result == -1) {
-            response = "Something went wrong. Some of your elements were not removed";
+            this.response.append("Something went wrong. Some of the elements were not removed");
         } else {
-            response = "Something went wrong. No elements removed. Please, try again later";
+            this.response.append("Something went wrong. No elements removed");
+            tryAgainLater = true;
         }
-        logger.info("Executed ClearCommand");
+        logger.info(this.response.toString());
+
+        if (tryAgainLater) {
+            this.response.append(". Please, try again later");
+        }
     }
 }

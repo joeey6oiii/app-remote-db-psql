@@ -14,7 +14,7 @@ import java.io.IOException;
 @Command
 public class SumOfHeightCommand implements BaseCommand {
     private static final Logger logger = LogManager.getLogger("logger.SumOfHeightCommand");
-    private String response;
+    private StringBuilder response;
 
     /**
      * A method that returns the name of the command.
@@ -29,7 +29,7 @@ public class SumOfHeightCommand implements BaseCommand {
      */
     @Override
     public String getResponse() {
-        return this.response;
+        return this.response.toString();
     }
 
     /**
@@ -58,13 +58,16 @@ public class SumOfHeightCommand implements BaseCommand {
      */
     @Override
     public void execute() throws IOException {
+        this.response = new StringBuilder();
+
         PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
         if (personCollectionHandler.getCollection().isEmpty()) {
-            this.response = "Collection is empty, can not execute sum_of_height";
+            this.response.append("Collection is empty, can not execute sum_of_height");
+            logger.info(this.response.toString());
         } else {
             int sum = personCollectionHandler.getCollection().stream().mapToInt(Person::getHeight).sum();
-            this.response = "Sum of \"height\" values is " + sum;
+            this.response.append("Sum of \"height\" values is ").append(sum);
+            logger.info("Counted sum of \"height\" values");
         }
-        logger.info("Executed SumOfHeightCommand");
     }
 }

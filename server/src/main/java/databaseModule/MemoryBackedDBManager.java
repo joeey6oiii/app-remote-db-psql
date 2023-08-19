@@ -25,6 +25,8 @@ public class MemoryBackedDBManager {
     private static final Logger logger = LogManager.getLogger("logger.MemoryBackedDBManager");
     private static MemoryBackedDBManager singleInstance;
 
+    private MemoryBackedDBManager() {}
+
     /**
      * Returns the singleton instance of the MemoryBackedDBManager class. The singleton pattern
      * ensures that only one instance of the MemoryBackedDBManager is created and shared across

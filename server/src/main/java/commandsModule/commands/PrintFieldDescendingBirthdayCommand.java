@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Command
 public class PrintFieldDescendingBirthdayCommand implements BaseCommand {
     private static final Logger logger = LogManager.getLogger("logger.PrintFieldDescendingBirthdayCommand");
-    private String response;
+    private StringBuilder response;
 
     /**
      * A method that returns the name of the command.
@@ -33,7 +33,7 @@ public class PrintFieldDescendingBirthdayCommand implements BaseCommand {
      */
     @Override
     public String getResponse() {
-        return this.response;
+        return this.response.toString();
     }
 
     /**
@@ -64,7 +64,9 @@ public class PrintFieldDescendingBirthdayCommand implements BaseCommand {
     public void execute() throws IOException {
         PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
         if (personCollectionHandler.getCollection().isEmpty()) {
-            this.response = "Collection is empty, can not execute print_field_descending_birthday";
+            this.response = new StringBuilder();
+            this.response.append("Collection is empty, can not execute print_field_descending_birthday");
+            logger.info(this.response.toString());
         } else {
             List<Date> list = personCollectionHandler.getCollection()
                     .stream()
@@ -72,12 +74,10 @@ public class PrintFieldDescendingBirthdayCommand implements BaseCommand {
                     .sorted(Collections.reverseOrder())
                     .toList();
 
-            StringBuilder builder;
-            builder = new StringBuilder(list.stream()
+            this.response = new StringBuilder(list.stream()
                     .map(Date::toString)
                     .collect(Collectors.joining("\n")));
-            this.response = new String(builder);
+            logger.info("Compiled birthday values in the descending order");
         }
-        logger.info("Executed PrintFieldDescendingBirthdayCommand");
     }
 }

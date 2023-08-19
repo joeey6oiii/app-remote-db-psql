@@ -76,6 +76,6 @@ public class HelpCommand implements BaseCommand {
                 .map(entry -> String.format(formatString, entry.getKey() + " ", entry.getValue().describe()))
                 .collect(Collectors.joining()));
         this.response = builder.substring(0, builder.length() - 1);
-        logger.info("Executed HelpCommand");
+        logger.info("Concatenated command names and their descriptions");
     }
 }

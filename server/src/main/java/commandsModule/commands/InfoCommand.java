@@ -13,7 +13,7 @@ import java.io.IOException;
 @Command
 public class InfoCommand implements BaseCommand {
     private static final Logger logger = LogManager.getLogger("logger.InfoCommand");
-    private String response;
+    private StringBuilder response;
 
     /**
      * A method that returns the name of the command.
@@ -28,7 +28,7 @@ public class InfoCommand implements BaseCommand {
      */
     @Override
     public String getResponse() {
-        return this.response;
+        return this.response.toString();
     }
 
     /**
@@ -58,11 +58,10 @@ public class InfoCommand implements BaseCommand {
     @Override
     public void execute() throws IOException {
         PersonCollectionHandler personCollectionHandler = PersonCollectionHandler.getInstance();
-        StringBuilder builder = new StringBuilder();
-        builder.append("Type: ").append(personCollectionHandler.getCollection().getClass()).append("\nLength: ")
+        this.response = new StringBuilder();
+        this.response.append("Type: ").append(personCollectionHandler.getCollection().getClass()).append("\nLength: ")
                 .append(personCollectionHandler.getCollection().size()).append("\nInitialization Time: ")
                 .append(personCollectionHandler.getInitializationDate());
-        this.response = new String(builder);
-        logger.info("Executed InfoCommand");
+        logger.info("Compiled information about the collection");
     }
 }

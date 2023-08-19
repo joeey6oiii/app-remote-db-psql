@@ -5,6 +5,8 @@ import databaseModule.MemoryBackedDBManager;
 import model.Person;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import userModules.sessionService.AuthenticatedUserRegistry;
+import userModules.users.AuthenticatedUser;
 
 import java.io.IOException;
 
@@ -12,9 +14,9 @@ import java.io.IOException;
  * A class that implements the "add" command.
  */
 @Command
-public class AddCommand implements BaseCommand, ObjectArgumentCommand<Person>, CallerIdCommand {
+public class AddCommand implements ObjectArgumentCommand<Person>, CallerIdCommand {
     private static final Logger logger = LogManager.getLogger("logger.AddCommand");
-    private String response;
+    private StringBuilder response;
     private Person argument;
     private int callerId;
 
@@ -31,7 +33,7 @@ public class AddCommand implements BaseCommand, ObjectArgumentCommand<Person>, C
      */
     @Override
     public String getResponse() {
-        return this.response;
+        return this.response.toString();
     }
 
     /**
@@ -80,11 +82,31 @@ public class AddCommand implements BaseCommand, ObjectArgumentCommand<Person>, C
      */
     @Override
     public void execute() throws IOException {
-        if (MemoryBackedDBManager.getInstance().addElementToDBAndMemory(argument, callerId)) {
-            response = "Element was added";
-        } else {
-            response = "Something went wrong. Element was not added. Please, try again later";
+        this.response = new StringBuilder();
+
+        if (callerId == 0) {
+            this.response.append("Execution failed. Server could not identify you");
+            logger.error("Unidentified user called AddCommand");
+            return;
         }
-        logger.info("Executed AddCommand");
+
+        if (argument == null) {
+            this.response.append("Execution failed. Server found null argument");
+            logger.error("Received null argument");
+            return;
+        }
+
+        boolean tryAgainLater = false;
+        if (MemoryBackedDBManager.getInstance().addElementToDBAndMemory(argument, callerId)) {
+            this.response.append("Element was added");
+        } else {
+            this.response.append("Something went wrong. Element was not added");
+            tryAgainLater = true;
+        }
+        logger.info(this.response.toString());
+
+        if (tryAgainLater) {
+            this.response.append(". Please, try again later");
+        }
     }
 }

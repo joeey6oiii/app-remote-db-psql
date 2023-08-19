@@ -1,6 +1,6 @@
 package commandsModule.commands;
 
-public interface CallerIdCommand {
+public interface CallerIdCommand extends BaseCommand {
 
     void setCallerId(int callerId);
 }

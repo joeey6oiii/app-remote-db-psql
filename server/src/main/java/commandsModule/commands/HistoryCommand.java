@@ -4,6 +4,7 @@ import commands.CommandType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import userModules.sessionService.AuthenticatedUserRegistry;
+import userModules.users.AuthenticatedUser;
 import utils.UserUtils;
 
 import java.io.IOException;
@@ -14,9 +15,9 @@ import java.util.stream.Collectors;
  * A class that implements the "history" command.
  */
 @Command
-public class HistoryCommand implements BaseCommand, CallerIdCommand {
+public class HistoryCommand implements CallerIdCommand {
     private static final Logger logger = LogManager.getLogger("logger.HistoryCommand");
-    private String response;
+    private StringBuilder response;
     private int callerId;
 
     /**
@@ -32,7 +33,7 @@ public class HistoryCommand implements BaseCommand, CallerIdCommand {
      */
     @Override
     public String getResponse() {
-        return this.response;
+        return this.response.toString();
     }
 
     /**
@@ -69,9 +70,25 @@ public class HistoryCommand implements BaseCommand, CallerIdCommand {
      */
     @Override
     public void execute() throws IOException {
-        List<BaseCommand> list = AuthenticatedUserRegistry.getInstance().getAuthenticatedUser(callerId).getCommandHistory();
+        this.response = new StringBuilder();
+
+        if (callerId == 0) {
+            this.response.append("Execution failed. Server could not identify you");
+            logger.error("Unidentified user called HistoryCommand");
+            return;
+        }
+
+        AuthenticatedUser authenticatedUser = AuthenticatedUserRegistry.getInstance().getAuthenticatedUser(callerId);
+        if (authenticatedUser == null) {
+            this.response.append("You don't have permission to execute commands on the server");
+            logger.error("Unauthorized user tried to execute HistoryCommand");
+            return;
+        }
+
+        List<BaseCommand> list = authenticatedUser.getCommandHistory();
         if (list.isEmpty()) {
-            this.response = "No command history yet";
+            this.response.append("No command history yet");
+            logger.info(this.response.toString());
         } else {
             List<String> history = list.stream()
                     .map(BaseCommand::getName)
@@ -80,8 +97,8 @@ public class HistoryCommand implements BaseCommand, CallerIdCommand {
             if (history.size() > maxSizeValue) {
                 history = history.subList(history.size() - maxSizeValue, history.size());
             }
-            this.response = history.toString();
+            this.response.append(history.toString());
+            logger.info("Compiled history up to 9 commands");
         }
-        logger.info("Executed HistoryCommand");
     }
 }

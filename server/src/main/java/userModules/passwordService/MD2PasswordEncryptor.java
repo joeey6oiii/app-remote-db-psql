@@ -29,7 +29,7 @@ public class MD2PasswordEncryptor implements PasswordEncryptor {
     {
         random = new SecureRandom();
         SALT_LENGTH = 16;
-        PEPPER_FILE = "pepper.txt";
+        PEPPER_FILE = "/pepper.txt";
         pepper = readPepperFromFile().getBytes(StandardCharsets.UTF_8);
     }
 

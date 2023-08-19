@@ -67,7 +67,9 @@ public class RegistrationHandler implements RequestHandler {
 
                     Session session = new Session(LocalDateTime.now(), UserUtils.INSTANCE.getSessionDurationInMinutes());
                     AuthenticatedUser authenticatedUser = new AuthenticatedUser(registeredUser, session);
-                    AuthenticatedUserRegistry.getInstance().addAuthenticatedUser(token, authenticatedUser);
+                    if (!AuthenticatedUserRegistry.getInstance().addAuthenticatedUser(token, authenticatedUser)) {
+                        response = "Server registered your account, but failed to authorize you. Please, try to authorize later";
+                    }
                 } else {
                     response = "Unable to register your account. Please, try again later";
                 }

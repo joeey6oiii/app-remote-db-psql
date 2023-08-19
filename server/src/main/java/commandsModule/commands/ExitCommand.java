@@ -28,7 +28,7 @@ public class ExitCommand implements BaseCommand, CallerIdCommand {
      */
     @Override
     public String getResponse() {
-        return "Standard \"exit\" command response";
+        return "Disconnect allowed";
     }
 
     /**
@@ -59,7 +59,19 @@ public class ExitCommand implements BaseCommand, CallerIdCommand {
      */
     @Override
     public void execute() throws IOException {
-        AuthenticatedUserRegistry.getInstance().removeAuthenticatedUser(callerId);
-        logger.info("Executed ExitCommand. User disconnects");
+        if (callerId == 0) {
+            logger.error("Unidentified user called ExitCommand");
+            return;
+        }
+
+        AuthenticatedUserRegistry userRegistry = AuthenticatedUserRegistry.getInstance();
+
+        if (userRegistry.getAuthenticatedUser(callerId) == null) {
+            logger.error("Unauthorized user tried to execute ExitCommand");
+            return;
+        }
+
+        logger.info("User disconnects from the server");
+        userRegistry.removeAuthenticatedUser(callerId);
     }
 }
