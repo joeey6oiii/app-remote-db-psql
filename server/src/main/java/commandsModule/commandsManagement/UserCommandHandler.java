@@ -92,7 +92,8 @@ public class UserCommandHandler implements CommandHandler<CommandExecutionReques
             Token<?> token = request.getToken();
             AuthenticatedUser authenticatedUser = userRegistry.getAuthenticatedUser(token);
 
-            if (authenticatedUser == null || authenticatedUser.getId() == null || token == null || token.getTokenValue() == null) {
+            if (authenticatedUser == null || authenticatedUser.getId() == null ||
+                    authenticatedUser.getId() == 0 || token == null || token.getTokenValue() == null) {
                 response = "You don't have permission to execute commands on the server";
                 logger.error("Unauthorized user got access to command execution process");
                 authorized = false;
@@ -106,13 +107,11 @@ public class UserCommandHandler implements CommandHandler<CommandExecutionReques
                 CommandDescription simplifiedCommand = request.getDescriptionCommand();
                 BaseCommand command = this.getCommandByDescription(simplifiedCommand);
 
-                if (command.getClass().isAssignableFrom(CallerIdCommand.class)) {
-                    CallerIdCommand callerIdCommand = (CallerIdCommand) command;
+                if (command instanceof CallerIdCommand callerIdCommand) {
                     callerIdCommand.setCallerId(authenticatedUser.getId());
                 }
 
-                if (command.getClass().isAssignableFrom(ParameterizedCommand.class)) {
-                    ParameterizedCommand parameterizedCommand = (ParameterizedCommand) command;
+                if (command instanceof ParameterizedCommand parameterizedCommand) {
                     parameterizedCommand.setArguments(request.getArgs());
                     parameterizedCommand.execute();
                     response = parameterizedCommand.getResponse();

@@ -63,8 +63,6 @@ public class RegistrationHandler implements RequestHandler {
                     token = tokenManager.generateToken();
                     response = "Your account has been successfully registered";
 
-                    registeredUser.setId(userRepository.getElementId(registeredUser));
-
                     Session session = new Session(LocalDateTime.now(), UserUtils.INSTANCE.getSessionDurationInMinutes());
                     AuthenticatedUser authenticatedUser = new AuthenticatedUser(registeredUser, session);
                     if (!AuthenticatedUserRegistry.getInstance().addAuthenticatedUser(token, authenticatedUser)) {

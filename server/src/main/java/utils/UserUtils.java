@@ -3,7 +3,7 @@ package utils;
 public enum UserUtils {
     INSTANCE;
 
-    private final int sessionDurationInMinutes = 3;
+    private final int sessionDurationInMinutes = 5;
     private final int minLoginLength = 4;
     private final int minPasswordLength = 8;
     private final int commandHistoryMaxSize = 9;

@@ -42,6 +42,7 @@ public class ClientApp {
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     connectionModule.disconnect();
+                    System.out.println("Disconnected from the server");
                 } catch (IOException e) {
                     System.out.println("An error occurred while disconnecting from the server\nForce shutdown...");
                 }

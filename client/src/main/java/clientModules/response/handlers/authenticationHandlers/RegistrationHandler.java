@@ -2,7 +2,6 @@ package clientModules.response.handlers.authenticationHandlers;
 
 import clientModules.authentication.User;
 import clientModules.response.handlers.ResponseHandler;
-import token.StringToken;
 import response.responses.RegistrationResponse;
 import token.Token;
 
