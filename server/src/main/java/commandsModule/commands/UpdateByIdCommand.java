@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 /**
  * A class that implements the "update_by_id" command.
@@ -133,15 +132,7 @@ public class UpdateByIdCommand implements ParameterizedCommand, ObjectArgumentCo
             this.response.append("Something went wrong. Element with id ").append(elementId).append(" was not updated");
             tryAgainLater = true;
         } else {
-            try {
-                if (dbManager.checkElementExistence(elementId)) {
-                    this.response.append("No access to element with id ").append(elementId);
-                } else {
-                    this.response.append("Element with id ").append(elementId).append(" does not exist");
-                }
-            } catch (SQLException e) {
-                throw new IOException(e);
-            }
+            this.response.append("No access to element with id ").append(elementId).append(" or the element does not exist");
         }
         logger.info(this.response.toString());
 

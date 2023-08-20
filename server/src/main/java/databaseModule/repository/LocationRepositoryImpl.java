@@ -110,7 +110,11 @@ public class LocationRepositoryImpl implements LocationRepository, IdentifiableR
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setFloat(1, location.getX());
             preparedStatement.setInt(2, location.getY());
-            preparedStatement.setString(3, location.getName());
+            if (location.getName() != null) {
+                preparedStatement.setString(3, location.getName());
+            } else {
+                preparedStatement.setNull(3, Types.VARCHAR);
+            }
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {

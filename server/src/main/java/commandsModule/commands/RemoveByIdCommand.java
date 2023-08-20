@@ -110,7 +110,7 @@ public class RemoveByIdCommand implements ParameterizedCommand, CallerIdCommand 
             this.response.append("Something went wrong. Element with id ").append(elementId).append(" was not removed");
             tryAgainLater = true;
         } else {
-            this.response.append("No access to element with id ").append(elementId);
+            this.response.append("No access to element with id ").append(elementId).append(" or the element does not exist");
         }
         logger.info(this.response.toString());
 
