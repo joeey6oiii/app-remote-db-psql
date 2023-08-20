@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public interface LocationRepository {
 
-    boolean insert(Location location) throws SQLException;
+    Integer insert(Location location) throws SQLException;
 
     Location read(int id) throws SQLException;
 

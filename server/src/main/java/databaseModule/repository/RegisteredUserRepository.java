@@ -7,11 +7,7 @@ import java.sql.SQLException;
 
 public interface RegisteredUserRepository {
 
-    boolean insert(RegisteredUser registeredUser) throws SQLException;
+    Integer insert(RegisteredUser registeredUser) throws SQLException;
 
     RegisteredUser read(String login) throws SQLException;
-
-//    boolean remove(int id) throws SQLException;                                  // Both can be implemented later if needed
-
-//    boolean update(RegisteredUser registeredUser, int id) throws SQLException;
 }

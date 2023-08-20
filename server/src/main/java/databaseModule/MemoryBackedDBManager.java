@@ -54,7 +54,7 @@ public class MemoryBackedDBManager {
      */
     public synchronized boolean addElementToDBAndMemory(Person person, int ownerId) {
         try (PersonRepositoryImpl personRepository = new PersonRepositoryImpl()) {
-            if (personRepository.insert(person, ownerId)) {
+            if (personRepository.insert(person, ownerId) != null) {
                 PersonCollectionHandler.getInstance().addElement(person);
                 return true;
             }
@@ -123,17 +123,20 @@ public class MemoryBackedDBManager {
                     .stream().filter(p -> Objects.equals(p.getId(), elementId)).findFirst();
 
             if (optionalPerson.isPresent()) {
-                personRepository.update(person, elementId);
+                if (personRepository.update(person, elementId)) {
+                    Person existingPerson = optionalPerson.get();
+                    personCollectionHandler.getCollection().remove(existingPerson);
 
-                Person existingPerson = optionalPerson.get();
-                personCollectionHandler.getCollection().remove(existingPerson);
-                person.setId(elementId);
-                personCollectionHandler.addElement(person);
+                    person.setId(elementId);
+                    personCollectionHandler.addElement(person);
+
+                    return 1;
+                } else {
+                    return 0;
+                }
             } else {
                 throw new IOException("Element was not updated. Collection elements do not match database elements");
             }
-
-            return 1;
         } catch (SQLException e) {
             logger.error("Element was not updated", e);
         }
@@ -172,10 +175,11 @@ public class MemoryBackedDBManager {
                     for (Iterator<Person> iterator = ownerElements.iterator(); iterator.hasNext(); ) {
                         elementId = iterator.next().getId();
 
-                        personRepository.remove(elementId);
-                        PersonCollectionHandler.getInstance().removeElement(elementId);
+                        if (personRepository.remove(elementId)) {
+                            PersonCollectionHandler.getInstance().removeElement(elementId);
+                            counter++;
+                        }
 
-                        counter++;
                         iterator.remove();
                     }
                 }

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public interface PersonRepository {
 
-    boolean insert(Person person, int ownerId) throws SQLException;
+    Integer insert(Person person, int ownerId) throws SQLException;
 
     Person read(int id) throws SQLException;
 

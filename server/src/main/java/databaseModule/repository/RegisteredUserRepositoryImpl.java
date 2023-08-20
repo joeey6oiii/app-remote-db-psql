@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
 
-public class RegisteredUserRepositoryImpl implements RegisteredUserRepository, IdentifiableRepository<Integer, RegisteredUser>, Closeable {
+public class RegisteredUserRepositoryImpl implements RegisteredUserRepository, Closeable {
     private final Connection connection;
 
     public RegisteredUserRepositoryImpl() throws IOException, SQLException {
@@ -34,10 +34,9 @@ public class RegisteredUserRepositoryImpl implements RegisteredUserRepository, I
     }
 
     @Override
-    public boolean insert(RegisteredUser registeredUser) throws SQLException {
+    public Integer insert(RegisteredUser registeredUser) throws SQLException {
         String insertQuery = "INSERT INTO registeredusers (login, hashedpassword, salt) VALUES (?, ?, ?)";
 
-        int affectedRows;
         try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
             RegisteredUserData userData = registeredUser.getRegisteredUserData();
 
@@ -45,17 +44,18 @@ public class RegisteredUserRepositoryImpl implements RegisteredUserRepository, I
             preparedStatement.setBytes(2, userData.getEncryptedPassword().getHashedPassword());
             preparedStatement.setBytes(3, userData.getEncryptedPassword().getSalt());
 
-            affectedRows = preparedStatement.executeUpdate();
+            int affectedRows = preparedStatement.executeUpdate();
 
             ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
             if (generatedKeys.next()) {
                 registeredUser.setId(generatedKeys.getInt(1));
+                return generatedKeys.getInt(1);
             }
         } catch (SQLException e) {
             throw new SQLException("Error adding registered user to the database", e);
         }
 
-        return affectedRows > 0;
+        return null;
     }
 
     @Override
@@ -79,25 +79,6 @@ public class RegisteredUserRepositoryImpl implements RegisteredUserRepository, I
             }
         } catch (SQLException e) {
             throw new SQLException("Error reading registered user from the database", e);
-        }
-    }
-
-    @Override
-    public Integer getElementId(RegisteredUser element) throws SQLException {
-        String query = "SELECT id FROM registeredusers WHERE login = ?";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, element.getRegisteredUserData().getLogin());
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getInt("id");
-                } else {
-                    return null;
-                }
-            }
-        } catch (SQLException e) {
-            throw new SQLException("Error getting registered user id from the database", e);
         }
     }
 

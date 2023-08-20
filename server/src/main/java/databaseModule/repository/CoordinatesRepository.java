@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public interface CoordinatesRepository {
 
-    boolean insert(Coordinates coordinates) throws SQLException;
+    Integer insert(Coordinates coordinates) throws SQLException;
 
     Coordinates read(int id) throws SQLException;
 
