@@ -42,54 +42,68 @@ public class PersonRepositoryImpl implements PersonRepository, AccessControlRepo
     }
 
     @Override
-    public boolean insert(Person person, int ownerId) throws SQLException {
-        String insertQuery = "INSERT INTO person " +
-                "(name, coordinates_id, creation_date, height, " +
-                "birthday, passport_id, hair_color, location_id, owner_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public Integer insert(Person person, int ownerId) throws SQLException {
+        try {
+            connection.setAutoCommit(false);
 
-        Coordinates coordinates = person.getCoordinates();
-        Location location = person.getLocation();
-        boolean nullLocation = location == null;
+            String insertQuery = "INSERT INTO person " +
+                    "(name, coordinates_id, creation_date, height, " +
+                    "birthday, passport_id, hair_color, location_id, owner_id) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        coordinatesRepository.insert(coordinates);
-        if (!nullLocation) {
-            locationRepository.insert(location);   
-        }
+            Coordinates coordinates = person.getCoordinates();
+            Location location = person.getLocation();
+            boolean nullLocation = location == null;
 
-        int coordinatesId = coordinatesRepository.getElementId(coordinates);
-        int locationId = 0;
-        if (!nullLocation) {
-            locationId = locationRepository.getElementId(location);
-        }
+            int coordinatesId = coordinatesRepository.insert(coordinates);
+            if (!(coordinatesId > 0)) {
+                throw new SQLException("Error adding coordinates to the database");
+            }
 
-        int affectedRows;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
-            preparedStatement.setString(1, person.getName());
-            preparedStatement.setInt(2, coordinatesId);
-            preparedStatement.setTimestamp(3, new Timestamp(person.getCreationDate().getTime()));
-            preparedStatement.setInt(4, person.getHeight());
-            preparedStatement.setDate(5, new java.sql.Date(person.getBirthday().getTime()));
-            preparedStatement.setString(6, person.getPassportId());
-            preparedStatement.setString(7, (person.getHairColor() != null) ? person.getHairColor().getLabel() : null);
+            int locationId = 0;
             if (!nullLocation) {
-                preparedStatement.setInt(8, locationId);
-            } else {
-                preparedStatement.setNull(8, Types.INTEGER);
+                locationId = locationRepository.insert(location);
+                if (!(locationId > 0)) {
+                    throw new SQLException("Error adding location to the database");
+                }
             }
-            preparedStatement.setInt(9, ownerId);
 
-            affectedRows = preparedStatement.executeUpdate();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
+                preparedStatement.setString(1, person.getName());
+                preparedStatement.setInt(2, coordinatesId);
+                preparedStatement.setTimestamp(3, new Timestamp(person.getCreationDate().getTime()));
+                preparedStatement.setInt(4, person.getHeight());
+                preparedStatement.setDate(5, new java.sql.Date(person.getBirthday().getTime()));
+                preparedStatement.setString(6, person.getPassportId());
+                preparedStatement.setString(7, (person.getHairColor() != null) ? person.getHairColor().getLabel() : null);
+                if (!nullLocation) {
+                    preparedStatement.setInt(8, locationId);
+                } else {
+                    preparedStatement.setNull(8, Types.INTEGER);
+                }
+                preparedStatement.setInt(9, ownerId);
 
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                person.setId(generatedKeys.getInt(1));
+                int affectedRows = preparedStatement.executeUpdate();
+
+                if (affectedRows > 0) {
+                    ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                    if (generatedKeys.next()) {
+                        connection.commit();
+                        person.setId(generatedKeys.getInt(1));
+                        return generatedKeys.getInt(1);
+                    }
+                } else {
+                    connection.rollback();
+                }
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new SQLException("Error adding person to the database", e);
             }
-        } catch (SQLException e) {
-            throw new SQLException("Error adding person to the database", e);
+
+            return null;
+        } finally {
+            connection.setAutoCommit(true);
         }
-
-        return affectedRows > 0;
     }
 
     @Override
@@ -113,77 +127,138 @@ public class PersonRepositoryImpl implements PersonRepository, AccessControlRepo
 
     @Override
     public boolean remove(int id) throws SQLException {
-        String deleteQuery = "DELETE FROM person WHERE id = ?";
+        try {
+            connection.setAutoCommit(false);
 
-        int affectedRows;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
-            preparedStatement.setInt(1, id);
+            String selectQuery = "SELECT * FROM person WHERE id = ?";
+            String deleteQuery = "DELETE FROM person WHERE id = ?";
 
-            affectedRows = preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            throw new SQLException("Error removing person from the database", e);
+            int coordinatesId = 0;
+            int locationId = 0;
+
+            try (PreparedStatement selectStatement = connection.prepareStatement(selectQuery);
+                 PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery)) {
+                selectStatement.setInt(1, id);
+
+                try (ResultSet resultSet = selectStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        coordinatesId = resultSet.getInt("coordinates_id");
+                        locationId = resultSet.getInt("location_id");
+                    } else {
+                        return false;
+                    }
+                }
+
+                deleteStatement.setInt(1, id);
+                int affectedRows = deleteStatement.executeUpdate();
+
+                if (affectedRows > 0) {
+                    this.coordinatesRepository.remove(coordinatesId);
+                    if (locationId != 0) {
+                        this.locationRepository.remove(locationId);
+                    }
+
+                    connection.commit();
+                    return true;
+                } else {
+                    connection.rollback();
+                    return false;
+                }
+            } catch (SQLException e) {
+                connection.rollback();
+                throw new SQLException("Error removing person from the database", e);
+            }
+        } finally {
+            connection.setAutoCommit(true);
         }
-
-        return affectedRows > 0;
     }
 
     @Override
     public boolean update(Person person, int id) throws SQLException {
-        String getIdsQuery = "SELECT coordinates_id, location_id FROM person WHERE id = ?";
+        try {
+            connection.setAutoCommit(false);
 
-        try (PreparedStatement getIdStatement = connection.prepareStatement(getIdsQuery)) {
-            getIdStatement.setInt(1, id);
+            String getIdsQuery = "SELECT coordinates_id, location_id FROM person WHERE id = ?";
 
-            try (ResultSet resultSet = getIdStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    Coordinates coordinates = person.getCoordinates();
-                    Location location = person.getLocation();
-                    boolean nullLocation = location == null;
+            try (PreparedStatement getIdStatement = connection.prepareStatement(getIdsQuery)) {
+                getIdStatement.setInt(1, id);
 
-                    int coordinatesId = resultSet.getInt("coordinates_id");
-                    int locationId = resultSet.getInt("location_id");
+                try (ResultSet resultSet = getIdStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        int updated = 0;
 
-                    if (resultSet.wasNull() && !nullLocation) {
-                        locationRepository.insert(location);
-                        locationId = locationRepository.getElementId(location);
-                    } else if (!nullLocation) {
-                        locationRepository.update(location, locationId);
-                    }
+                        Coordinates coordinates = person.getCoordinates();
+                        Location location = person.getLocation();
+                        boolean nullLocation = location == null;
 
-                    coordinatesRepository.update(coordinates, coordinatesId);
+                        int coordinatesId = resultSet.getInt("coordinates_id");
+                        int locationId = resultSet.getInt("location_id");
+                        boolean remove = false;
 
-                    String updateQuery = "UPDATE person " +
-                            "SET name = ?, coordinates_id = ?, creation_date = ?, " +
-                            "height = ?, birthday = ?, passport_id = ?, " +
-                            "hair_color = ?, location_id = ? " +
-                            "WHERE id = ?";
-
-                    int affectedRows;
-                    try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
-                        preparedStatement.setString(1, person.getName());
-                        preparedStatement.setInt(2, coordinatesId);
-                        preparedStatement.setTimestamp(3, new Timestamp(person.getCreationDate().getTime()));
-                        preparedStatement.setInt(4, person.getHeight());
-                        preparedStatement.setDate(5, new java.sql.Date(person.getBirthday().getTime()));
-                        preparedStatement.setString(6, person.getPassportId());
-                        preparedStatement.setString(7, (person.getHairColor() != null) ? person.getHairColor().getLabel() : null);
-                        if (!nullLocation) {
-                            preparedStatement.setInt(8, locationId);
+                        if (resultSet.wasNull() && !nullLocation) {
+                            locationId = locationRepository.insert(location);
+                            if (locationId > 0) {
+                                updated += 1;
+                            }
+                        } else if (!nullLocation) {
+                            if (locationRepository.update(location, locationId)) {
+                                updated += 1;
+                            }
+                        } else if (!resultSet.wasNull()) {
+                            remove = true;
                         } else {
-                            preparedStatement.setNull(8, Types.INTEGER);
+                            updated += 1;
                         }
-                        preparedStatement.setInt(9, id);
 
-                        affectedRows = preparedStatement.executeUpdate();
-                    } catch (SQLException e) {
-                        throw new SQLException("Error updating person in the database", e);
+                        if (coordinatesRepository.update(coordinates, coordinatesId)) {
+                            updated += 1;
+                        }
+
+                        String updateQuery = "UPDATE person " +
+                                "SET name = ?, coordinates_id = ?, creation_date = ?, " +
+                                "height = ?, birthday = ?, passport_id = ?, " +
+                                "hair_color = ?, location_id = ? " +
+                                "WHERE id = ?";
+
+                        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+                            preparedStatement.setString(1, person.getName());
+                            preparedStatement.setInt(2, coordinatesId);
+                            preparedStatement.setTimestamp(3, new Timestamp(person.getCreationDate().getTime()));
+                            preparedStatement.setInt(4, person.getHeight());
+                            preparedStatement.setDate(5, new java.sql.Date(person.getBirthday().getTime()));
+                            preparedStatement.setString(6, person.getPassportId());
+                            preparedStatement.setString(7, (person.getHairColor() != null) ? person.getHairColor().getLabel() : null);
+                            if (!nullLocation) {
+                                preparedStatement.setInt(8, locationId);
+                            } else {
+                                preparedStatement.setNull(8, Types.INTEGER);
+                            }
+                            preparedStatement.setInt(9, id);
+
+                            updated += preparedStatement.executeUpdate();
+
+                            if (remove && this.locationRepository.remove(locationId)) {
+                                updated += 1;
+                            }
+                        } catch (SQLException e) {
+                            connection.rollback();
+                            throw new SQLException("Error updating person in the database", e);
+                        }
+
+                        if (updated >= 3) {
+                            connection.commit();
+                            return true;
+                        } else {
+                            connection.rollback();
+                            return false;
+                        }
+                    } else {
+                        return false;
                     }
-
-                    return affectedRows > 0;
-                } else {
-                    throw new SQLException("Person not found");
                 }
             }
+        } finally {
+            connection.setAutoCommit(true);
         }
     }
 

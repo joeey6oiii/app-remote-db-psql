@@ -9,8 +9,7 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
 
-public class CoordinatesRepositoryImpl implements CoordinatesRepository,
-        IdentifiableRepository<Integer, Coordinates>, Closeable {
+public class CoordinatesRepositoryImpl implements CoordinatesRepository, Closeable {
     private final Connection connection;
 
     public CoordinatesRepositoryImpl() throws IOException, SQLException {
@@ -33,20 +32,26 @@ public class CoordinatesRepositoryImpl implements CoordinatesRepository,
     }
 
     @Override
-    public boolean insert(Coordinates coordinates) throws SQLException {
+    public Integer insert(Coordinates coordinates) throws SQLException {
         String insertQuery = "INSERT INTO coordinates (coordinates_x, coordinates_y) VALUES (?, ?)";
 
-        int affectedRows;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, coordinates.getX());
             preparedStatement.setInt(2, coordinates.getY());
 
-            affectedRows = preparedStatement.executeUpdate();
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows > 0) {
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                }
+            }
         } catch (SQLException e) {
             throw new SQLException("Error adding coordinates to the database", e);
         }
 
-        return affectedRows > 0;
+        return null;
     }
 
     @Override
@@ -100,26 +105,6 @@ public class CoordinatesRepositoryImpl implements CoordinatesRepository,
         }
 
         return affectedRows > 0;
-    }
-
-    @Override
-    public Integer getElementId(Coordinates coordinates) throws SQLException {
-        String query = "SELECT id FROM Coordinates WHERE coordinates_x = ? AND coordinates_y = ?";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setLong(1, coordinates.getX());
-            preparedStatement.setInt(2, coordinates.getY());
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getInt("id");
-                } else {
-                    return null;
-                }
-            }
-        } catch (SQLException e) {
-            throw new SQLException("Error getting coordinates id from the database", e);
-        }
     }
 
     @Override

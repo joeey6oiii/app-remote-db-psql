@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
 
-public class LocationRepositoryImpl implements LocationRepository, IdentifiableRepository<Integer, Location>, Closeable {
+public class LocationRepositoryImpl implements LocationRepository, Closeable {
     private final Connection connection;
 
     public LocationRepositoryImpl() throws IOException, SQLException {
@@ -32,21 +32,31 @@ public class LocationRepositoryImpl implements LocationRepository, IdentifiableR
     }
 
     @Override
-    public boolean insert(Location location) throws SQLException {
+    public Integer insert(Location location) throws SQLException {
         String insertQuery = "INSERT INTO location (location_x, location_y, location_name) VALUES (?, ?, ?)";
 
-        int affectedRows;
-        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setFloat(1, location.getX());
             preparedStatement.setInt(2, location.getY());
-            preparedStatement.setString(3, location.getName());
+            if (location.getName() != null) {
+                preparedStatement.setString(3, location.getName());
+            } else {
+                preparedStatement.setNull(3, Types.VARCHAR);
+            }
 
-            affectedRows = preparedStatement.executeUpdate();
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows > 0) {
+                ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                }
+            }
         } catch (SQLException e) {
             throw new SQLException("Error adding location to the database", e);
         }
 
-        return affectedRows > 0;
+        return null;
     }
 
     @Override
@@ -92,7 +102,11 @@ public class LocationRepositoryImpl implements LocationRepository, IdentifiableR
         try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
             preparedStatement.setFloat(1, location.getX());
             preparedStatement.setInt(2, location.getY());
-            preparedStatement.setString(3, location.getName());
+            if (location.getName() != null) {
+                preparedStatement.setString(3, location.getName());
+            } else {
+                preparedStatement.setNull(3, Types.VARCHAR);
+            }
             preparedStatement.setInt(4, id);
 
             affectedRows = preparedStatement.executeUpdate();
@@ -101,31 +115,6 @@ public class LocationRepositoryImpl implements LocationRepository, IdentifiableR
         }
 
         return affectedRows > 0;
-    }
-
-    @Override
-    public Integer getElementId(Location location) throws SQLException {
-        String query = "SELECT id FROM Location WHERE location_x = ? AND location_y = ? AND location_name = ?";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setFloat(1, location.getX());
-            preparedStatement.setInt(2, location.getY());
-            if (location.getName() != null) {
-                preparedStatement.setString(3, location.getName());
-            } else {
-                preparedStatement.setNull(3, Types.VARCHAR);
-            }
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getInt("id");
-                } else {
-                    return null;
-                }
-            }
-        } catch (SQLException e) {
-            throw new SQLException("Error getting location id from the database", e);
-        }
     }
 
     @Override

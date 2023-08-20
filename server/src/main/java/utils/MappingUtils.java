@@ -28,6 +28,7 @@ public class MappingUtils {
             person.setHairColor(hairColor);
         }
 
+        int locationId = resultSet.getInt("location_id");
         if (!resultSet.wasNull()) {
             person.setLocation(mapResultSetToLocation(resultSet));
         }

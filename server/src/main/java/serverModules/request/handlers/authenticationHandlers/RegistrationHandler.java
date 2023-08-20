@@ -58,7 +58,7 @@ public class RegistrationHandler implements RequestHandler {
                         new MD2PasswordEncryptor().encryptPassword(request.getAuthenticationData().getPassword())),
                         info.getRequesterUser());
 
-                if (userRepository.insert(registeredUser)) {
+                if (userRepository.insert(registeredUser) != null) {
                     isSuccess = true;
                     token = tokenManager.generateToken();
                     response = "Your account has been successfully registered";
