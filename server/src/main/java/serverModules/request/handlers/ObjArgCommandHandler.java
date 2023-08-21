@@ -5,7 +5,7 @@ import commandsModule.commandsManagement.UserCommandHandler;
 import requests.CommandExecutionRequest;
 import requests.ObjectArgumentCommandExecutionRequest;
 import serverModules.connection.ConnectionModule;
-import serverModules.request.data.ClientRequestInfo;
+import serverModules.request.data.RequestInfo;
 
 /**
  * A class that works with the client single argument command execution request.
@@ -26,7 +26,7 @@ public class ObjArgCommandHandler<T> implements RequestHandler {
      * @param info information about the request
      */
     @Override
-    public void handleRequest(ClientRequestInfo info) {
+    public void handleRequest(RequestInfo info) {
         UserCommandHandler userCommandHandler = new UserCommandHandler(connectionModule, info.getRequesterUser());
 
         ObjectArgumentCommandExecutionRequest<T> executionRequest = (ObjectArgumentCommandExecutionRequest<T>) info.getRequest();

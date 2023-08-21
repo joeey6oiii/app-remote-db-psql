@@ -9,13 +9,14 @@ import requests.Request;
 import serverModules.connection.ConnectionModule;
 import serverModules.connection.ConnectionModuleFactory;
 import serverModules.connection.DatagramConnectionModuleFactory;
-import serverModules.request.data.ClientRequestInfo;
+import serverModules.request.data.RequestInfo;
 import serverModules.request.data.RequestData;
 import serverModules.request.handlers.RequestHandlerManager;
 import serverModules.request.reader.RequestReader;
 import userModules.sessionService.AuthenticatedUserRegistrySessionManager;
 import userModules.sessionService.SessionManager;
 import userModules.users.AbstractUser;
+import userModules.users.User;
 import userModules.users.utils.UserUtils;
 
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class Server {
         RequestHandlerManager requestHandlerManager = new RequestHandlerManager(connectionModule);
 
         SessionManager sessionManager = new AuthenticatedUserRegistrySessionManager();
-        sessionManager.startSessionExpirationCheck(UserUtils.INSTANCE.getSessionDurationInMinutes());
+        sessionManager.startSessionExpirationCheck(UserUtils.INSTANCE.getSessionCheckIntervalInMinutes());
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             sessionManager.stopSessionExpirationCheck();
@@ -83,11 +84,11 @@ public class Server {
 
                 requestReadingThreadPool.submit(() -> {
                     try {
-                        byte[] dataByteArray = requestData.getByteArray();
+                        byte[] dataByteArray = requestData.getData();
                         Request request = requestReader.readRequest(dataByteArray);
-                        AbstractUser user = requestData.getUser();
+                        AbstractUser user = new User(requestData.getAddress(), requestData.getPort());
 
-                        ClientRequestInfo info = new ClientRequestInfo(user, request);
+                        RequestInfo info = new RequestInfo(user, request);
                         requestHandlerManager.manageRequest(info);
                     } catch (IOException e) {
                         logger.error("Something went wrong during I/O operations", e);

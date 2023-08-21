@@ -86,13 +86,13 @@ public class AddCommand implements ObjectArgumentCommand<Person>, CallerIdComman
 
         if (callerId == 0) {
             this.response.append("Execution failed. Server could not identify you");
-            logger.error("Unidentified user called AddCommand");
+            logger.debug("Unidentified user called AddCommand");
             return;
         }
 
         if (argument == null) {
             this.response.append("Execution failed. Server found null argument");
-            logger.error("Received null argument");
+            logger.debug("Received null argument");
             return;
         }
 

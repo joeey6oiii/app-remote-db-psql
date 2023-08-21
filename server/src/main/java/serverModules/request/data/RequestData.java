@@ -1,13 +1,14 @@
 package serverModules.request.data;
 
-import userModules.users.AbstractUser;
+import java.net.InetAddress;
 
 /**
  * A class that contains the information about the received request.
  */
 public class RequestData {
     private final byte[] data;
-    private final AbstractUser user;
+    private final InetAddress address;
+    private final int port;
     private final boolean nullStatus;
 
     /**
@@ -15,38 +16,43 @@ public class RequestData {
      */
     public RequestData() {
         data = new byte[0];
-        user = null;
+        address = null;
+        port = 0;
         nullStatus = true;
     }
 
-    /**
-     * A constructor for a client request received.
-     *
-     * @param data received data
-     * @param user the client
-     */
-    public RequestData(byte[] data, AbstractUser user) {
+    public RequestData(byte[] data, InetAddress address, int port) {
         this.data = data;
-        this.user = user;
+        this.address = address;
+        this.port = port;
         nullStatus = false;
     }
 
     /**
      * Retrieves the data byte array.
      */
-    public byte[] getByteArray() {
-        return data;
+    public byte[] getData() {
+        return this.data;
     }
 
     /**
-     * Retrieves the client.
+     * Retrieves the address value.
      */
-    public AbstractUser getUser() {
-        return user;
+    public InetAddress getAddress() {
+        return this.address;
     }
 
     /**
-     * A method that checks if the received request is empty or not.
+     * Retrieves the port value.
+     *
+     * @return the port value
+     */
+    public int getPort() {
+        return this.port;
+    }
+
+    /**
+     * Checks if the received request is empty or not.
      *
      * @return true if the request is empty, otherwise false
      */

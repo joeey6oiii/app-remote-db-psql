@@ -4,6 +4,8 @@ public enum UserUtils {
     INSTANCE;
 
     private final int sessionDurationInMinutes = 5;
+    private final long sessionCheckIntervalInMinutes = 4L;
+    private final long sessionCheckInitialDelayInMinutes = (long) 5.1D;
     private final int minLoginLength = 4;
     private final int minPasswordLength = 8;
     private final int commandHistoryMaxSize = 9;
@@ -11,6 +13,14 @@ public enum UserUtils {
 
     public int getSessionDurationInMinutes() {
         return sessionDurationInMinutes;
+    }
+
+    public long getSessionCheckIntervalInMinutes() {
+        return sessionCheckIntervalInMinutes;
+    }
+
+    public long getSessionCheckInitialDelayInMinutes() {
+        return sessionCheckInitialDelayInMinutes;
     }
 
     public int getMinLoginLengthValue() {

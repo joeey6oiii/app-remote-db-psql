@@ -40,7 +40,7 @@ public class ChunkedResponseSender implements ResponseSender {
         // let's pretend it uses ForkJoinPool as written in the specification
 
         if (user == null) {
-            logger.error("Received empty user");
+            logger.debug("Received empty user");
             return;
         }
 
@@ -48,7 +48,7 @@ public class ChunkedResponseSender implements ResponseSender {
         final int clientPort = user.getPort();
 
         if (response == null) {
-            logger.error("Received empty response");
+            logger.debug("Received empty response");
 
             try {
                 connectionModule.sendData(serializer.serialize(new ErrorResponse("Server could not generate response")), clientAddress, clientPort);

@@ -7,7 +7,7 @@ import serverModules.response.sender.ChunkedResponseSender;
 import serverModules.response.sender.ResponseSender;
 import userModules.users.AbstractUser;
 import serverModules.connection.ConnectionModule;
-import serverModules.request.data.ClientRequestInfo;
+import serverModules.request.data.RequestInfo;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class ClientCommandsHandler implements RequestHandler {
      * @param info information about the request
      */
     @Override
-    public void handleRequest(ClientRequestInfo info) {
+    public void handleRequest(RequestInfo info) {
         AbstractUser client = info.getRequesterUser();
 
         CommandRegistry commandRegistry = new CommandRegistry();

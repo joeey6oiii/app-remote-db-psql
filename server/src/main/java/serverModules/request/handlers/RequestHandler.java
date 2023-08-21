@@ -1,6 +1,6 @@
 package serverModules.request.handlers;
 
-import serverModules.request.data.ClientRequestInfo;
+import serverModules.request.data.RequestInfo;
 
 /**
  * An interface for all request handler-implementers.
@@ -12,5 +12,5 @@ public interface RequestHandler {
      *
      * @param info information about the request
      */
-    void handleRequest(ClientRequestInfo info);
+    void handleRequest(RequestInfo info);
 }

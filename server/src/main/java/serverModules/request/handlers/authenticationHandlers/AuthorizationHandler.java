@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import requests.AuthorizationRequest;
 import response.responses.AuthorizationResponse;
 import serverModules.connection.ConnectionModule;
-import serverModules.request.data.ClientRequestInfo;
+import serverModules.request.data.RequestInfo;
 import serverModules.request.handlers.RequestHandler;
 import serverModules.response.sender.ChunkedResponseSender;
 import serverModules.response.sender.ResponseSender;
@@ -35,7 +35,7 @@ public class AuthorizationHandler implements RequestHandler {
     }
 
     @Override
-    public void handleRequest(ClientRequestInfo info) {
+    public void handleRequest(RequestInfo info) {
         boolean isSuccess = false;
         Token<?> token = null;
         TokenManager<?> tokenManager = new StringTokenManager();

@@ -112,7 +112,7 @@ public class MD2PasswordEncryptor implements PasswordEncryptor {
                     pepper = Arrays.toString(stringBuilder.toString().split(System.lineSeparator()));
                 }
             } else {
-                logger.error("Pepper file not found");
+                logger.debug("Pepper file not found");
             }
         } catch (IOException e) {
             logger.error("Failed to read pepper file: {}", e.getMessage());
