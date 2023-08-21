@@ -13,7 +13,6 @@ import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import org.apache.commons.io.IOUtils;
 import requests.CommandExecutionRequest;
-import requests.Request;
 import response.responses.CommandExecutionResponse;
 import response.responses.Response;
 import response.visitor.ResponseVisitor;
@@ -27,7 +26,7 @@ import java.util.LinkedList;
  */
 public class ScriptCommandReceiver implements CommandReceiver {
     private static final LinkedList<String> historyOfDangerScript = new LinkedList<>();
-    private final RequestAble<Response, Request> requestSender;
+    private final RequestAble requestSender;
     private final ResponseVisitor responseVisitor;
     private final DataTransferConnectionModule dataTransferConnectionModule;
 

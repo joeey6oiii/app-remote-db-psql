@@ -1,4 +1,4 @@
-package utils;
+package objectBuilder.utils;
 
 /**
  * A class with help parse method.

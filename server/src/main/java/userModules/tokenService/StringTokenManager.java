@@ -1,7 +1,7 @@
 package userModules.tokenService;
 
 import token.StringToken;
-import utils.UserUtils;
+import userModules.users.utils.UserUtils;
 
 import java.security.SecureRandom;
 

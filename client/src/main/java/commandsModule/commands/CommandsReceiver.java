@@ -8,7 +8,6 @@ import clientModules.response.visitor.ResponseHandlerVisitor;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.ClientCommandsRequest;
-import requests.Request;
 import response.responses.ClientCommandsResponse;
 import response.responses.Response;
 import response.visitor.ResponseVisitor;
@@ -19,7 +18,7 @@ import java.io.IOException;
  * A class that represents the commands' receiver.
  */
 public class CommandsReceiver {
-    private final RequestAble<Response, Request> requestSender;
+    private final RequestAble requestSender;
     private final ResponseVisitor responseVisitor;
 
     public CommandsReceiver(DataTransferConnectionModule dataTransferConnectionModule) {

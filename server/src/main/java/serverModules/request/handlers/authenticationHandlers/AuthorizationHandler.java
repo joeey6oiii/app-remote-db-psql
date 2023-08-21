@@ -8,6 +8,7 @@ import response.responses.AuthorizationResponse;
 import serverModules.connection.ConnectionModule;
 import serverModules.request.data.ClientRequestInfo;
 import serverModules.request.handlers.RequestHandler;
+import serverModules.response.sender.ChunkedResponseSender;
 import serverModules.response.sender.ResponseSender;
 import token.Token;
 import userModules.sessionService.AuthenticatedUserRegistry;
@@ -17,7 +18,7 @@ import userModules.tokenService.StringTokenManager;
 import userModules.tokenService.TokenManager;
 import userModules.users.AuthenticatedUser;
 import userModules.users.RegisteredUser;
-import utils.UserUtils;
+import userModules.users.utils.UserUtils;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -30,7 +31,7 @@ public class AuthorizationHandler implements RequestHandler {
     private final ResponseSender responseSender;
 
     public AuthorizationHandler(ConnectionModule connectionModule) {
-        this.responseSender = new ResponseSender(connectionModule);
+        this.responseSender = new ChunkedResponseSender(connectionModule);
     }
 
     @Override

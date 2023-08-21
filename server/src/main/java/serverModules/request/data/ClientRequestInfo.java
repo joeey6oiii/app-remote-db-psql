@@ -1,15 +1,14 @@
 package serverModules.request.data;
 
 import requests.Request;
-import userModules.users.User;
-import serverModules.connection.ConnectionModule;
+import userModules.users.AbstractUser;
 
 /**
  * A class that represents the information associated with a client request on the server.
  * Contains information about the user, the client request, and the server core.
  */
 public class ClientRequestInfo {
-    private final User user;
+    private final AbstractUser user;
     private final Request request;
 
     /**
@@ -18,7 +17,7 @@ public class ClientRequestInfo {
      * @param user The client
      * @param request The client request
      */
-    public ClientRequestInfo(User user, Request request) {
+    public ClientRequestInfo(AbstractUser user, Request request) {
         this.user = user;
         this.request = request;
     }
@@ -26,7 +25,7 @@ public class ClientRequestInfo {
     /**
      * @return the current client.
      */
-    public User getRequesterUser() {
+    public AbstractUser getRequesterUser() {
         return this.user;
     }
 

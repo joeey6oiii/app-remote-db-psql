@@ -11,7 +11,6 @@ import commandsModule.commandsManagement.CommandHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.CommandExecutionRequest;
-import requests.Request;
 import response.responses.CommandExecutionResponse;
 import response.responses.Response;
 import response.visitor.ResponseVisitor;
@@ -23,7 +22,7 @@ import java.io.StreamCorruptedException;
  * A class that represents the command execution result receiver.
  */
 public class ExecutionResultReceiver implements CommandReceiver {
-    private final RequestAble<Response, Request> requestSender;
+    private final RequestAble requestSender;
     private final ResponseVisitor responseVisitor;
 
     public ExecutionResultReceiver(DataTransferConnectionModule dataTransferConnectionModule) {

@@ -1,13 +1,13 @@
 package serverModules.request.data;
 
-import userModules.users.User;
+import userModules.users.AbstractUser;
 
 /**
  * A class that contains the information about the received request.
  */
 public class RequestData {
     private byte[] data;
-    private User user;
+    private AbstractUser user;
     private final boolean nullStatus;
 
     /**
@@ -23,7 +23,7 @@ public class RequestData {
      * @param data received data
      * @param user the client
      */
-    public RequestData(byte[] data, User user) {
+    public RequestData(byte[] data, AbstractUser user) {
         this.data = data;
         this.user = user;
         nullStatus = false;
@@ -37,28 +37,10 @@ public class RequestData {
     }
 
     /**
-     * A method that sets the specified data byte array.
-     *
-     * @param data data to set
-     */
-    public void setByteArray(byte[] data) {
-        this.data = data;
-    }
-
-    /**
      * A method that returns the client.
      */
-    public User getUser() {
+    public AbstractUser getUser() {
         return user;
-    }
-
-    /**
-     * A method that sets the specified client.
-     *
-     * @param user client to set
-     */
-    public void setUser(User user) {
-        this.user = user;
     }
 
     /**

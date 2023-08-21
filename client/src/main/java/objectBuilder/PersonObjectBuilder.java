@@ -4,7 +4,7 @@ import model.Color;
 import model.Coordinates;
 import model.Location;
 import model.Person;
-import utils.StringToDateParser;
+import objectBuilder.utils.StringToDateParser;
 import validators.*;
 
 import java.util.Date;

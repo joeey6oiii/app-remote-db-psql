@@ -13,7 +13,6 @@ import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import objectBuilder.PersonObjectBuilder;
 import requests.ObjectArgumentCommandExecutionRequest;
-import requests.Request;
 import response.responses.CommandExecutionResponse;
 import response.responses.Response;
 import response.visitor.ResponseVisitor;
@@ -25,7 +24,7 @@ import java.io.StreamCorruptedException;
  * A class that represents the person single argument command execution result receiver.
  */
 public class PersonCommandResultReceiver implements CommandReceiver {
-    private final RequestAble<Response, Request> requestSender;
+    private final RequestAble requestSender;
     private final ResponseVisitor responseVisitor;
 
     public PersonCommandResultReceiver(DataTransferConnectionModule dataTransferConnectionModule) {

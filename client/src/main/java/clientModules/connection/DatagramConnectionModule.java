@@ -37,13 +37,6 @@ public class DatagramConnectionModule implements DataTransferConnectionModule {
     }
 
     /**
-     * A method that returns the datagram channel.
-     */
-    protected DatagramChannel getDatagramChannel() {
-        return this.datagramChannel;
-    }
-
-    /**
      * A method that connects the {@link DatagramConnectionModule} to the server.
      *
      * @throws IOException if failed during I/O operations
@@ -69,6 +62,17 @@ public class DatagramConnectionModule implements DataTransferConnectionModule {
             } catch (IOException e) {
                 datagramChannel.close();
             }
+        }
+    }
+
+    /**
+     * A method that configures blocking state of the datagram channel with the <code>boolean</code> isBlocking parameter.
+     *
+     * @param isBlocking blocking state of the datagram channel
+     */
+    public void configureBlocking(boolean isBlocking) throws IOException {
+        if (datagramChannel != null && datagramChannel.isOpen()) {
+            datagramChannel.configureBlocking(isBlocking);
         }
     }
 
@@ -105,76 +109,9 @@ public class DatagramConnectionModule implements DataTransferConnectionModule {
         byte[] data;
 
         if (datagramChannel.isBlocking()) {
-            AtomicBoolean serverUnavailable = new AtomicBoolean(false);
-            Semaphore semaphore = new Semaphore(0);
-
-            try {
-                Thread thread = new Thread(() -> {
-                    try {
-                        datagramChannel.receive(buffer);
-
-                        semaphore.release();
-                    } catch (IOException e) {
-                        serverUnavailable.set(true);
-                        Thread.currentThread().interrupt();
-                    }
-                });
-                thread.start();
-
-                boolean acquired = semaphore.tryAcquire(5, TimeUnit.SECONDS);
-                if (!acquired) {
-                    thread.interrupt();
-                }
-            } catch (InterruptedException e) {
-                if (serverUnavailable.get()) {
-                    throw new ServerUnavailableException("Server is currently unavailable");
-                } else {
-                    throw new ResponseTimeoutException("Could not get response from the server during the given time");
-                }
-            } finally {
-                semaphore.release();
-            }
+            this.blockingReceiveData(buffer);
         } else {
-            boolean read = false;
-            Selector selector = Selector.open();
-            datagramChannel.register(selector, SelectionKey.OP_READ);
-
-            int timeout = 4999;
-            long startTime = System.currentTimeMillis();
-
-            while (!read) {
-                long elapsedTime = System.currentTimeMillis() - startTime;
-                long remainingTime = timeout - elapsedTime;
-
-                if (remainingTime <= 0) {
-                    throw new ResponseTimeoutException("Could not get response from the server during the given time");
-                }
-
-                int readyChannels;
-                readyChannels = selector.select(remainingTime);
-                if (readyChannels == 0) {
-                    continue;
-                }
-
-                Set<SelectionKey> selectedKeys = selector.selectedKeys();
-                Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
-
-                while (keyIterator.hasNext()) {
-                    SelectionKey key = keyIterator.next();
-
-                    if (key.isReadable()) {
-                        datagramChannel = (DatagramChannel) key.channel();
-                        try {
-                            datagramChannel.read(buffer);
-                            read = true;
-                        } catch (PortUnreachableException e) {
-                            throw new ServerUnavailableException("Server is currently unavailable");
-                        }
-                    }
-
-                    keyIterator.remove();
-                }
-            }
+            this.nonBlockingReceiveData(buffer);
         }
 
         buffer.flip();
@@ -182,5 +119,79 @@ public class DatagramConnectionModule implements DataTransferConnectionModule {
         buffer.get(data);
 
         return data;
+    }
+
+    private void blockingReceiveData(ByteBuffer buffer) throws ServerUnavailableException, ResponseTimeoutException {
+        AtomicBoolean serverUnavailable = new AtomicBoolean(false);
+        Semaphore semaphore = new Semaphore(0);
+
+        try {
+            Thread thread = new Thread(() -> {
+                try {
+                    datagramChannel.receive(buffer);
+                    semaphore.release();
+                } catch (IOException e) {
+                    serverUnavailable.set(true);
+                    Thread.currentThread().interrupt();
+                }
+            });
+            thread.start();
+
+            boolean acquired = semaphore.tryAcquire(5, TimeUnit.SECONDS);
+            if (!acquired) {
+                thread.interrupt();
+            }
+        } catch (InterruptedException e) {
+            if (serverUnavailable.get()) {
+                throw new ServerUnavailableException("Server is currently unavailable");
+            } else {
+                throw new ResponseTimeoutException("Could not get response from the server during the given time");
+            }
+        } finally {
+            semaphore.release();
+        }
+    }
+
+    private void nonBlockingReceiveData(ByteBuffer buffer) throws IOException, ServerUnavailableException, ResponseTimeoutException {
+        boolean read = false;
+        Selector selector = Selector.open();
+        datagramChannel.register(selector, SelectionKey.OP_READ);
+
+        int timeout = 4999;
+        long startTime = System.currentTimeMillis();
+
+        while (!read) {
+            long elapsedTime = System.currentTimeMillis() - startTime;
+            long remainingTime = timeout - elapsedTime;
+
+            if (remainingTime <= 0) {
+                throw new ResponseTimeoutException("Could not get response from the server during the given time");
+            }
+
+            int readyChannels;
+            readyChannels = selector.select(remainingTime);
+            if (readyChannels == 0) {
+                continue;
+            }
+
+            Set<SelectionKey> selectedKeys = selector.selectedKeys();
+            Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
+
+            while (keyIterator.hasNext()) {
+                SelectionKey key = keyIterator.next();
+
+                if (key.isReadable()) {
+                    datagramChannel = (DatagramChannel) key.channel();
+                    try {
+                        datagramChannel.read(buffer);
+                        read = true;
+                    } catch (PortUnreachableException e) {
+                        throw new ServerUnavailableException("Server is currently unavailable");
+                    }
+                }
+
+                keyIterator.remove();
+            }
+        }
     }
 }

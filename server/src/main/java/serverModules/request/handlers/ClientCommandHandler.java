@@ -3,7 +3,7 @@ package serverModules.request.handlers;
 import commandsModule.commandsManagement.UserCommandHandler;
 import requests.CommandExecutionRequest;
 import serverModules.connection.ConnectionModule;
-import userModules.users.User;
+import userModules.users.AbstractUser;
 import serverModules.request.data.ClientRequestInfo;
 
 /**
@@ -24,7 +24,7 @@ public class ClientCommandHandler implements RequestHandler {
      */
     @Override
     public void handleRequest(ClientRequestInfo info) {
-        User client = info.getRequesterUser();
+        AbstractUser client = info.getRequesterUser();
         CommandExecutionRequest request = (CommandExecutionRequest) info.getRequest();
 
         new UserCommandHandler(connectionModule, client).executeCommand(request);

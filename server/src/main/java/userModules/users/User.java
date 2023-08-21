@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * A class that contains the address and port of the machine from which the request was sent.
  */
-public class User {
+public class User implements AbstractUser {
     private final InetAddress address;
     private final int port;
 

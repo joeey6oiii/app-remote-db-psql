@@ -8,7 +8,7 @@ public class RegisteredUser extends User {
     private Integer id;
     private final RegisteredUserData registeredUserData;
 
-    public RegisteredUser(RegisteredUserData registeredUserData, User user) {
+    public RegisteredUser(RegisteredUserData registeredUserData, AbstractUser user) {
         super(user.getAddress(), user.getPort());
         this.registeredUserData = registeredUserData;
     }

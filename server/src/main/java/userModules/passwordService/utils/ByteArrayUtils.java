@@ -1,4 +1,4 @@
-package utils;
+package userModules.passwordService.utils;
 
 /**
  * A class that offers some useful byte array utilities.

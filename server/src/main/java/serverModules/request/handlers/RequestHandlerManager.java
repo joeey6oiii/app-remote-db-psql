@@ -9,6 +9,7 @@ import serverModules.connection.ConnectionModule;
 import serverModules.request.data.ClientRequestInfo;
 import serverModules.request.handlers.authenticationHandlers.AuthorizationHandler;
 import serverModules.request.handlers.authenticationHandlers.RegistrationHandler;
+import serverModules.response.sender.ChunkedResponseSender;
 import serverModules.response.sender.ResponseSender;
 
 import java.util.LinkedHashMap;
@@ -27,7 +28,7 @@ public class RequestHandlerManager {
 
     public RequestHandlerManager(ConnectionModule connectionModule) {
         handlers = new LinkedHashMap<>();
-        responseSender = new ResponseSender(connectionModule);
+        responseSender = new ChunkedResponseSender(connectionModule);
 
         handlers.put(AuthorizationRequest.class, new AuthorizationHandler(connectionModule));
         handlers.put(RegistrationRequest.class, new RegistrationHandler(connectionModule));

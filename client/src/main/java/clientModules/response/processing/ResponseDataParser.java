@@ -1,6 +1,4 @@
-package utils;
-
-import utility.UdpDataTransferUtilities;
+package clientModules.response.processing;
 
 /**
  * A class that represents response data parser.
