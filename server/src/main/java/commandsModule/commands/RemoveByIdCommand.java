@@ -85,20 +85,20 @@ public class RemoveByIdCommand implements ParameterizedCommand, CallerIdCommand 
 
         if (callerId == 0) {
             this.response.append("Execution failed. Server could not identify you");
-            logger.error("Unidentified user called RemoveByIdCommand");
+            logger.debug("Unidentified user called RemoveByIdCommand");
             return;
         }
 
         if (args.length < 2) {
             this.response.append("Execution failed. Wrong number of arguments");
-            logger.error("Wrong number of arguments for RemoveByIdCommand");
+            logger.info("Wrong number of arguments for RemoveByIdCommand");
             return;
         }
 
         int elementId = Integer.parseInt(args[1]);
         if (elementId <= 0) {
             this.response.append("Execution failed. Wrong element id");
-            logger.error("Wrong element id for RemoveByIdCommand");
+            logger.info("Wrong element id for RemoveByIdCommand");
             return;
         }
 

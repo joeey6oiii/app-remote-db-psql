@@ -74,14 +74,14 @@ public class HistoryCommand implements CallerIdCommand {
 
         if (callerId == 0) {
             this.response.append("Execution failed. Server could not identify you");
-            logger.error("Unidentified user called HistoryCommand");
+            logger.debug("Unidentified user called HistoryCommand");
             return;
         }
 
         AuthenticatedUser authenticatedUser = AuthenticatedUserRegistry.getInstance().getAuthenticatedUser(callerId);
         if (authenticatedUser == null) {
             this.response.append("You don't have permission to execute commands on the server");
-            logger.error("Unauthorized user tried to execute HistoryCommand");
+            logger.debug("Unauthorized user tried to execute HistoryCommand");
             return;
         }
 

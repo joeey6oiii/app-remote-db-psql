@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import token.Token;
 import userModules.users.AuthenticatedUser;
+import userModules.users.utils.UserUtils;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -35,7 +36,7 @@ public class AuthenticatedUserRegistrySessionManager implements SessionManager {
                 }
             }
             logger.info("Ended session expiration check");
-        }, 0, intervalMinutes, TimeUnit.MINUTES);
+        }, UserUtils.INSTANCE.getSessionCheckInitialDelayInMinutes(), intervalMinutes, TimeUnit.MINUTES);
     }
 
     public void stopSessionExpirationCheck() {

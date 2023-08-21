@@ -91,13 +91,13 @@ public class RemoveLowerCommand implements BaseCommand, ObjectArgumentCommand<Pe
 
         if (callerId == 0) {
             this.response.append("Execution failed. Server could not identify you");
-            logger.error("Unidentified user called RemoveLowerCommand");
+            logger.debug("Unidentified user called RemoveLowerCommand");
             return;
         }
 
         if (argument == null) {
             this.response.append("Execution failed. Server found null argument");
-            logger.error("Received null argument");
+            logger.debug("Received null argument");
             return;
         }
 

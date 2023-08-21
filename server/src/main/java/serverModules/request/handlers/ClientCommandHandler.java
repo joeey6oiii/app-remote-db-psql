@@ -4,7 +4,7 @@ import commandsModule.commandsManagement.UserCommandHandler;
 import requests.CommandExecutionRequest;
 import serverModules.connection.ConnectionModule;
 import userModules.users.AbstractUser;
-import serverModules.request.data.ClientRequestInfo;
+import serverModules.request.data.RequestInfo;
 
 /**
  * A class that works with the client command execution request.
@@ -23,7 +23,7 @@ public class ClientCommandHandler implements RequestHandler {
      * @param info information about the request
      */
     @Override
-    public void handleRequest(ClientRequestInfo info) {
+    public void handleRequest(RequestInfo info) {
         AbstractUser client = info.getRequesterUser();
         CommandExecutionRequest request = (CommandExecutionRequest) info.getRequest();
 

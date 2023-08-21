@@ -94,7 +94,7 @@ public class UserCommandHandler implements CommandHandler<CommandExecutionReques
             if (authenticatedUser == null || authenticatedUser.getId() == null ||
                     authenticatedUser.getId() == 0 || token == null || token.getTokenValue() == null) {
                 response = "You don't have permission to execute commands on the server";
-                logger.error("Unauthorized user got access to command execution process");
+                logger.info("Unauthorized user tried to access command execution process");
                 authorized = false;
             } else if (authenticatedUser.getSession().isSessionExpired(LocalDateTime.now())) {
                 response = "Your session has expired. Please, log in again";

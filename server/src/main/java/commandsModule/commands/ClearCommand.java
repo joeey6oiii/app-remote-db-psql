@@ -66,7 +66,7 @@ public class ClearCommand implements BaseCommand, CallerIdCommand {
 
         if (callerId == 0) {
             this.response.append("Execution failed. Server could not identify you");
-            logger.error("Unidentified user called ClearCommand");
+            logger.debug("Unidentified user called ClearCommand");
             return;
         }
 

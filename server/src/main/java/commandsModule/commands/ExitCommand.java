@@ -60,14 +60,14 @@ public class ExitCommand implements BaseCommand, CallerIdCommand {
     @Override
     public void execute() throws IOException {
         if (callerId == 0) {
-            logger.error("Unidentified user called ExitCommand");
+            logger.debug("Unidentified user called ExitCommand");
             return;
         }
 
         AuthenticatedUserRegistry userRegistry = AuthenticatedUserRegistry.getInstance();
 
         if (userRegistry.getAuthenticatedUser(callerId) == null) {
-            logger.error("Unauthorized user tried to execute ExitCommand");
+            logger.debug("Unauthorized user tried to execute ExitCommand");
             return;
         }
 

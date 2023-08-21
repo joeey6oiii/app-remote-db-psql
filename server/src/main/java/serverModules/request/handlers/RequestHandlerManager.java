@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import requests.*;
 import response.responses.ErrorResponse;
 import serverModules.connection.ConnectionModule;
-import serverModules.request.data.ClientRequestInfo;
+import serverModules.request.data.RequestInfo;
 import serverModules.request.handlers.authenticationHandlers.AuthorizationHandler;
 import serverModules.request.handlers.authenticationHandlers.RegistrationHandler;
 import serverModules.response.sender.ChunkedResponseSender;
@@ -38,12 +38,12 @@ public class RequestHandlerManager {
     }
 
     /**
-     * Finds a matching request with a request from {@link ClientRequestInfo} and manages it using the
-     * {@link RequestHandler#handleRequest(ClientRequestInfo)} method.
+     * Finds a matching request with a request from {@link RequestInfo} and manages it using the
+     * {@link RequestHandler#handleRequest(RequestInfo)} method.
      *
      * @param info information about the request
      */
-    public void manageRequest(ClientRequestInfo info) {
+    public void manageRequest(RequestInfo info) {
         requestManagingThreadPool.submit(() -> {
             try {
                 Optional.ofNullable(handlers.get(info.getRequest().getClass())).orElseThrow(() ->

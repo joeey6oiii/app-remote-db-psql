@@ -52,7 +52,6 @@ public class AuthenticatedUserRegistry {
     public boolean addAuthenticatedUser(Token<?> token, AuthenticatedUser authenticatedUser) {
         if (token == null || token.getTokenValue() == null ||
                 authenticatedUser == null || authenticatedUser.getId() == null) {
-            logger.error("Could not add authenticated user. Received invalid token");
             return false;
         }
 
@@ -62,7 +61,7 @@ public class AuthenticatedUserRegistry {
                         ". Timeout: " + UserUtils.INSTANCE.getSessionDurationInMinutes() + " minutes");
                 return true;
             } else {
-                logger.error("Successfully added user to authenticatedUsers collection but failed to add user to the idToken collection");
+                logger.debug("Successfully added user to authenticatedUsers collection but failed to add user to the idToken collection");
                 this.removeAuthenticatedUser(token);
                 logger.info("Removed user from authenticatedUsers collection");
             }
@@ -79,7 +78,6 @@ public class AuthenticatedUserRegistry {
      */
     public AuthenticatedUser getAuthenticatedUser(Token<?> token) {
         if (token == null) {
-            logger.error("Could not retrieve authenticated user. Received invalid token");
             return null;
         }
 
@@ -103,13 +101,11 @@ public class AuthenticatedUserRegistry {
      */
     public void removeAuthenticatedUser(Token<?> token) {
         if (token == null || token.getTokenValue() == null) {
-            logger.error("Could not end session for user. Received invalid token");
             return;
         }
 
         AuthenticatedUser userToDel = this.getAuthenticatedUser(token);
         if (userToDel == null || userToDel.getId() == null) {
-            logger.error("Could not end session for user. User does not exist");
             return;
         }
 

@@ -7,7 +7,7 @@ import userModules.users.AbstractUser;
  * A class that represents the information associated with a client request on the server.
  * Contains information about the user, the client request, and the server core.
  */
-public class ClientRequestInfo {
+public class RequestInfo {
     private final AbstractUser user;
     private final Request request;
 
@@ -17,7 +17,7 @@ public class ClientRequestInfo {
      * @param user The client
      * @param request The client request
      */
-    public ClientRequestInfo(AbstractUser user, Request request) {
+    public RequestInfo(AbstractUser user, Request request) {
         this.user = user;
         this.request = request;
     }

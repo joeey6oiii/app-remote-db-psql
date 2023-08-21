@@ -43,9 +43,9 @@ public class DatagramConnectionModule implements ConnectionModule {
         try {
             DatagramPacket packet = new DatagramPacket(bytes, PACKET_SIZE);
             socket.receive(packet);
-            logger.debug("Received data");
+            logger.info("Received data");
 
-            return new RequestData(packet.getData(), new User(packet.getAddress(), packet.getPort()));
+            return new RequestData(packet.getData(), packet.getAddress(), packet.getPort());
         } catch (IOException e) {
             logger.error("Something went wrong during receiving data", e);
         }
@@ -73,6 +73,6 @@ public class DatagramConnectionModule implements ConnectionModule {
         } catch (IOException e) {
             logger.error("Something went wrong during data sending", e);
         }
-        logger.debug("Data sent");
+        logger.info("Data sent");
     }
 }

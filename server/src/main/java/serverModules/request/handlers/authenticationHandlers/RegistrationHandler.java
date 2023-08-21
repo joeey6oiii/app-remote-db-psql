@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 import requests.RegistrationRequest;
 import response.responses.RegistrationResponse;
 import serverModules.connection.ConnectionModule;
-import serverModules.request.data.ClientRequestInfo;
+import serverModules.request.data.RequestInfo;
 import serverModules.request.handlers.RequestHandler;
 import serverModules.response.sender.ChunkedResponseSender;
 import serverModules.response.sender.ResponseSender;
@@ -36,7 +36,7 @@ public class RegistrationHandler implements RequestHandler {
     }
 
     @Override
-    public void handleRequest(ClientRequestInfo info) {
+    public void handleRequest(RequestInfo info) {
         boolean isSuccess = false;
         Token<?> token = null;
         TokenManager<?> tokenManager = new StringTokenManager();

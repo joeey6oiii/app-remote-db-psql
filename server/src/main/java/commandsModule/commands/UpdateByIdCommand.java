@@ -105,19 +105,19 @@ public class UpdateByIdCommand implements ParameterizedCommand, ObjectArgumentCo
 
         if (callerId == 0) {
             this.response.append("Execution failed. Server could not identify you");
-            logger.error("Unidentified user called UpdateByIdCommand");
+            logger.debug("Unidentified user called UpdateByIdCommand");
             return;
         }
 
         if (argument == null) {
             this.response.append("Execution failed. Server found null argument");
-            logger.error("Received null argument");
+            logger.debug("Received null argument");
             return;
         }
 
         if (args.length < 2) {
             this.response.append("Invalid number of arguments");
-            logger.error("Invalid number of arguments for UpdateByIdCommand");
+            logger.info("Invalid number of arguments for UpdateByIdCommand");
             return;
         }
 
