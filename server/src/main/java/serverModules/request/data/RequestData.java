@@ -6,14 +6,16 @@ import userModules.users.AbstractUser;
  * A class that contains the information about the received request.
  */
 public class RequestData {
-    private byte[] data;
-    private AbstractUser user;
+    private final byte[] data;
+    private final AbstractUser user;
     private final boolean nullStatus;
 
     /**
      * A default constructor when the empty request received.
      */
     public RequestData() {
+        data = new byte[0];
+        user = null;
         nullStatus = true;
     }
 
@@ -30,14 +32,14 @@ public class RequestData {
     }
 
     /**
-     * A method that returns the data byte array.
+     * Retrieves the data byte array.
      */
     public byte[] getByteArray() {
         return data;
     }
 
     /**
-     * A method that returns the client.
+     * Retrieves the client.
      */
     public AbstractUser getUser() {
         return user;
