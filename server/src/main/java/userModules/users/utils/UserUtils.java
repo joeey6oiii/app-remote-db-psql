@@ -5,7 +5,7 @@ public enum UserUtils {
 
     private final int sessionDurationInMinutes = 5;
     private final long sessionCheckIntervalInMinutes = 4L;
-    private final long sessionCheckInitialDelayInMinutes = 2L;
+    private final long sessionCheckInitialDelayInMinutes = (long) 5.1D;
     private final int minLoginLength = 4;
     private final int minPasswordLength = 8;
     private final int commandHistoryMaxSize = 9;
