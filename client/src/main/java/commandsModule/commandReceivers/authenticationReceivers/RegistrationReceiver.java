@@ -7,7 +7,6 @@ import clientModules.response.visitor.ResponseHandlerVisitor;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.RegistrationRequest;
-import requests.Request;
 import response.data.AuthenticationData;
 import response.responses.RegistrationResponse;
 import response.responses.Response;
@@ -16,7 +15,7 @@ import response.visitor.ResponseVisitor;
 import java.io.IOException;
 
 public class RegistrationReceiver {
-    private final RequestAble<Response, Request> requestSender;
+    private final RequestAble requestSender;
     private final ResponseVisitor responseVisitor;
 
     public RegistrationReceiver(DataTransferConnectionModule dataTransferConnectionModule) {

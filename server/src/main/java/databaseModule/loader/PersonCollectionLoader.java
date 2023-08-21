@@ -1,7 +1,7 @@
 package databaseModule.loader;
 
 import model.Person;
-import utils.MappingUtils;
+import databaseModule.repository.utils.MappingUtils;
 
 import java.io.Closeable;
 import java.io.IOException;

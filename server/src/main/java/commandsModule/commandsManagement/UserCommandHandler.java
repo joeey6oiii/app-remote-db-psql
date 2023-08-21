@@ -7,13 +7,12 @@ import org.apache.logging.log4j.Logger;
 import requests.CommandExecutionRequest;
 import response.responses.AuthorizationResponse;
 import response.responses.CommandExecutionResponse;
-import response.responses.Response;
-import serverModules.response.sender.ResponseAble;
 import serverModules.response.sender.ResponseSender;
+import serverModules.response.sender.ChunkedResponseSender;
 import token.Token;
 import userModules.sessionService.AuthenticatedUserRegistry;
+import userModules.users.AbstractUser;
 import userModules.users.AuthenticatedUser;
-import userModules.users.User;
 import serverModules.connection.ConnectionModule;
 
 import java.io.IOException;
@@ -27,13 +26,13 @@ public class UserCommandHandler implements CommandHandler<CommandExecutionReques
     private static final Logger logger = LogManager.getLogger("logger.UserCommandHandler");
     private final Map<String, BaseCommand> commands;
     private final ConnectionModule connectionModule;
-    private final User user;
+    private final AbstractUser user;
 
     /**
      * A constructor for a UserCommandHandler.
      * Creates a command collection and fills it with the available commands.
      */
-    public UserCommandHandler(ConnectionModule connectionModule, User user) {
+    public UserCommandHandler(ConnectionModule connectionModule, AbstractUser user) {
         commands = new LinkedHashMap<>();
         this.connectionModule = connectionModule;
         this.user = user;
@@ -83,7 +82,7 @@ public class UserCommandHandler implements CommandHandler<CommandExecutionReques
     @Override
     public void executeCommand(CommandExecutionRequest request) {
         String response;
-        ResponseAble<Response> responseSender = new ResponseSender(connectionModule);
+        ResponseSender responseSender = new ChunkedResponseSender(connectionModule);
         boolean authorized = true;
 
         try {

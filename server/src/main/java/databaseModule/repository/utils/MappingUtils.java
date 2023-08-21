@@ -1,4 +1,4 @@
-package utils;
+package databaseModule.repository.utils;
 
 import model.Color;
 import model.Coordinates;
@@ -7,6 +7,7 @@ import model.Person;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 public class MappingUtils {
 
@@ -17,9 +18,9 @@ public class MappingUtils {
 
         person.setCoordinates(mapResultSetToCoordinates(resultSet));
 
-        person.setCreationDate(resultSet.getTimestamp("creation_date"));
+        person.setCreationDate(new Date(resultSet.getTimestamp("creation_date").getTime()));
         person.setHeight(resultSet.getInt("height"));
-        person.setBirthday(resultSet.getTimestamp("birthday"));
+        person.setBirthday(new Date(resultSet.getTimestamp("birthday").getTime()));
         person.setPassportId(resultSet.getString("passport_id"));
 
         String hairColorLabel = resultSet.getString("hair_color");

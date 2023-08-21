@@ -15,8 +15,8 @@ import serverModules.request.handlers.RequestHandlerManager;
 import serverModules.request.reader.RequestReader;
 import userModules.sessionService.AuthenticatedUserRegistrySessionManager;
 import userModules.sessionService.SessionManager;
-import userModules.users.User;
-import utils.UserUtils;
+import userModules.users.AbstractUser;
+import userModules.users.utils.UserUtils;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -57,7 +57,7 @@ public class Server {
         try {
             connectionModule = connectionModuleFactory.createConnectionModule(PORT);
         } catch (SocketException e) {
-            logger.error("An error occurred while creating server core. Can not run a new server");
+            logger.error("Error occurred while initializing server", e);
             throw e;
         }
         logger.info("Server started");
@@ -85,7 +85,7 @@ public class Server {
                     try {
                         byte[] dataByteArray = requestData.getByteArray();
                         Request request = requestReader.readRequest(dataByteArray);
-                        User user = requestData.getUser();
+                        AbstractUser user = requestData.getUser();
 
                         ClientRequestInfo info = new ClientRequestInfo(user, request);
                         requestHandlerManager.manageRequest(info);

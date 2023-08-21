@@ -7,7 +7,6 @@ import clientModules.response.visitor.ResponseHandlerVisitor;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.AuthorizationRequest;
-import requests.Request;
 import response.data.AuthenticationData;
 import response.responses.AuthorizationResponse;
 import response.responses.Response;
@@ -16,7 +15,7 @@ import response.visitor.ResponseVisitor;
 import java.io.IOException;
 
 public class AuthorizationReceiver {
-    private final RequestAble<Response, Request> requestSender;
+    private final RequestAble requestSender;
     private final ResponseVisitor responseVisitor;
 
     public AuthorizationReceiver(DataTransferConnectionModule dataTransferConnectionModule) {

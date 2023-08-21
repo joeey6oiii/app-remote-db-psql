@@ -1,7 +1,7 @@
 package databaseModule.repository;
 
 import model.Location;
-import utils.MappingUtils;
+import databaseModule.repository.utils.MappingUtils;
 
 import java.io.Closeable;
 import java.io.IOException;

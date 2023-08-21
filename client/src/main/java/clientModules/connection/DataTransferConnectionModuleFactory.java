@@ -1,5 +1,6 @@
 package clientModules.connection;
 
+import java.io.IOException;
 import java.net.SocketAddress;
 
 /**
@@ -13,5 +14,5 @@ public interface DataTransferConnectionModuleFactory extends ConnectionModuleFac
      * @param address specified address of the server
      * @return client connection core
      */
-    DataTransferConnectionModule create(SocketAddress address);
+    DataTransferConnectionModule createConnectionModule(SocketAddress address) throws IOException;
 }

@@ -10,14 +10,12 @@ import commandsModule.commandsManagement.CommandHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.CommandExecutionRequest;
-import requests.Request;
-import response.responses.Response;
 import token.Token;
 
 import java.io.IOException;
 
 public class AuthCommand implements ClientCommand {
-    private final RequestAble<Response, Request> requestSender;
+    private final RequestAble requestSender;
     private final AuthenticationManager authenticationManager;
 
     public AuthCommand(DataTransferConnectionModule dataTransferConnectionModule) {

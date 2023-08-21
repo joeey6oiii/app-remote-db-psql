@@ -1,4 +1,4 @@
-package utils;
+package userModules.users.utils;
 
 public enum UserUtils {
     INSTANCE;

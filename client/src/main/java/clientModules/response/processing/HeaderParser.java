@@ -1,4 +1,4 @@
-package utils;
+package clientModules.response.processing;
 
 import response.data.FragmentHeader;
 import serializer.ByteArrayObjectSerializer;

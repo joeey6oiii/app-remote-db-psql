@@ -11,7 +11,6 @@ import commandsModule.commandsManagement.CommandHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import requests.CommandExecutionRequest;
-import requests.Request;
 import response.responses.CommandExecutionResponse;
 import response.responses.Response;
 import response.visitor.ResponseVisitor;
@@ -24,7 +23,7 @@ import java.util.Scanner;
  * A class that represents the exit command receiver.
  */
 public class ExitCommandReceiver implements CommandReceiver {
-    private final RequestAble<Response, Request> requestSender;
+    private final RequestAble requestSender;
     private final ResponseVisitor responseVisitor;
 
     public ExitCommandReceiver(DataTransferConnectionModule dataTransferConnectionModule) {

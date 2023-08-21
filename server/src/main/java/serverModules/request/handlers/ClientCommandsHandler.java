@@ -3,8 +3,9 @@ package serverModules.request.handlers;
 import commands.CommandDescription;
 import commandsModule.commandsManagement.CommandRegistry;
 import response.responses.ClientCommandsResponse;
+import serverModules.response.sender.ChunkedResponseSender;
 import serverModules.response.sender.ResponseSender;
-import userModules.users.User;
+import userModules.users.AbstractUser;
 import serverModules.connection.ConnectionModule;
 import serverModules.request.data.ClientRequestInfo;
 
@@ -17,7 +18,7 @@ public class ClientCommandsHandler implements RequestHandler {
     private final ResponseSender responseSender;
 
     public ClientCommandsHandler(ConnectionModule connectionModule) {
-        this.responseSender = new ResponseSender(connectionModule);
+        this.responseSender = new ChunkedResponseSender(connectionModule);
     }
 
     /**
@@ -27,7 +28,7 @@ public class ClientCommandsHandler implements RequestHandler {
      */
     @Override
     public void handleRequest(ClientRequestInfo info) {
-        User client = info.getRequesterUser();
+        AbstractUser client = info.getRequesterUser();
 
         CommandRegistry commandRegistry = new CommandRegistry();
         List<CommandDescription> commands = commandRegistry.getCommands();

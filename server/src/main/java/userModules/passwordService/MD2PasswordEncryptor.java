@@ -5,8 +5,8 @@ import org.apache.logging.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import response.data.AuthenticationData;
 import userModules.users.data.RegisteredUserData;
-import utils.ByteArrayUtils;
-import utils.UserUtils;
+import userModules.passwordService.utils.ByteArrayUtils;
+import userModules.users.utils.UserUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;

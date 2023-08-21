@@ -8,6 +8,7 @@ import response.responses.RegistrationResponse;
 import serverModules.connection.ConnectionModule;
 import serverModules.request.data.ClientRequestInfo;
 import serverModules.request.handlers.RequestHandler;
+import serverModules.response.sender.ChunkedResponseSender;
 import serverModules.response.sender.ResponseSender;
 import token.Token;
 import userModules.sessionService.AuthenticatedUserRegistry;
@@ -18,7 +19,7 @@ import userModules.tokenService.TokenManager;
 import userModules.users.AuthenticatedUser;
 import userModules.users.RegisteredUser;
 import userModules.users.data.RegisteredUserData;
-import utils.UserUtils;
+import userModules.users.utils.UserUtils;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -31,7 +32,7 @@ public class RegistrationHandler implements RequestHandler {
     private final ResponseSender responseSender;
 
     public RegistrationHandler(ConnectionModule connectionModule) {
-        this.responseSender = new ResponseSender(connectionModule);
+        this.responseSender = new ChunkedResponseSender(connectionModule);
     }
 
     @Override

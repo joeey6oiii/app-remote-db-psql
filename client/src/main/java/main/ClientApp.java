@@ -31,10 +31,10 @@ public class ClientApp {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        DatagramConnectionModuleFactory factory = new DatagramConnectionModuleFactory();
+        DatagramConnectionModuleFactory connectionModuleFactory = new DatagramConnectionModuleFactory();
         try {
-            DataTransferConnectionModule connectionModule = factory.createConfigureBlocking
-                    (new InetSocketAddress(InetAddress.getLocalHost(), PORT), false);
+            DataTransferConnectionModule connectionModule = connectionModuleFactory
+                    .createConnectionModule(new InetSocketAddress(InetAddress.getLocalHost(), PORT), false);
 
             connectionModule.connect();
             System.out.println("Server connection established");

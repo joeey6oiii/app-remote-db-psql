@@ -5,9 +5,9 @@ import clientModules.response.reader.ResponseReader;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import serializer.ByteArrayObjectSerializer;
-import utils.HeaderParser;
-import utils.ResponseAssembler;
-import utils.ResponseDataParser;
+import clientModules.response.processing.HeaderParser;
+import clientModules.response.processing.ResponseAssembler;
+import clientModules.response.processing.ResponseDataParser;
 import requests.Request;
 import response.data.FragmentHeader;
 import response.responses.Response;
@@ -18,7 +18,7 @@ import java.util.HashMap;
 /**
  * A class that represents the base request sender.
  */
-public class RequestSender implements RequestAble<Response, Request> {
+public class RequestSender implements RequestAble {
     private final DataTransferConnectionModule dataTransferConnectionModule;
 
     public RequestSender(DataTransferConnectionModule dataTransferConnectionModule) {

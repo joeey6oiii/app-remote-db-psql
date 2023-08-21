@@ -3,7 +3,7 @@ package databaseModule.repository;
 import model.Coordinates;
 import model.Location;
 import model.Person;
-import utils.MappingUtils;
+import databaseModule.repository.utils.MappingUtils;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -73,7 +73,7 @@ public class PersonRepositoryImpl implements PersonRepository, AccessControlRepo
                 preparedStatement.setInt(2, coordinatesId);
                 preparedStatement.setTimestamp(3, new Timestamp(person.getCreationDate().getTime()));
                 preparedStatement.setInt(4, person.getHeight());
-                preparedStatement.setDate(5, new java.sql.Date(person.getBirthday().getTime()));
+                preparedStatement.setTimestamp(5, new Timestamp(person.getBirthday().getTime()));
                 preparedStatement.setString(6, person.getPassportId());
                 preparedStatement.setString(7, (person.getHairColor() != null) ? person.getHairColor().getLabel() : null);
                 if (!nullLocation) {
@@ -133,8 +133,8 @@ public class PersonRepositoryImpl implements PersonRepository, AccessControlRepo
             String selectQuery = "SELECT * FROM person WHERE id = ?";
             String deleteQuery = "DELETE FROM person WHERE id = ?";
 
-            int coordinatesId = 0;
-            int locationId = 0;
+            int coordinatesId;
+            int locationId;
 
             try (PreparedStatement selectStatement = connection.prepareStatement(selectQuery);
                  PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery)) {
@@ -225,7 +225,7 @@ public class PersonRepositoryImpl implements PersonRepository, AccessControlRepo
                             preparedStatement.setInt(2, coordinatesId);
                             preparedStatement.setTimestamp(3, new Timestamp(person.getCreationDate().getTime()));
                             preparedStatement.setInt(4, person.getHeight());
-                            preparedStatement.setDate(5, new java.sql.Date(person.getBirthday().getTime()));
+                            preparedStatement.setTimestamp(5, new Timestamp(person.getBirthday().getTime()));
                             preparedStatement.setString(6, person.getPassportId());
                             preparedStatement.setString(7, (person.getHairColor() != null) ? person.getHairColor().getLabel() : null);
                             if (!nullLocation) {

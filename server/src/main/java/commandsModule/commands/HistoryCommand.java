@@ -5,7 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import userModules.sessionService.AuthenticatedUserRegistry;
 import userModules.users.AuthenticatedUser;
-import utils.UserUtils;
+import userModules.users.utils.UserUtils;
 
 import java.io.IOException;
 import java.util.List;
@@ -97,7 +97,7 @@ public class HistoryCommand implements CallerIdCommand {
             if (history.size() > maxSizeValue) {
                 history = history.subList(history.size() - maxSizeValue, history.size());
             }
-            this.response.append(history.toString());
+            this.response.append(history);
             logger.info("Compiled history up to 9 commands");
         }
     }

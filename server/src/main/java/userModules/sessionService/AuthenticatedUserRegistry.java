@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import token.Token;
 import userModules.users.AuthenticatedUser;
-import utils.UserUtils;
+import userModules.users.utils.UserUtils;
 
 import java.util.Map;
 import java.util.Set;
