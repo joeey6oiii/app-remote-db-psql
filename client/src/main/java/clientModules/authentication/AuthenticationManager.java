@@ -5,8 +5,11 @@ import commandsModule.commandReceivers.authenticationReceivers.AuthorizationRece
 import commandsModule.commandReceivers.authenticationReceivers.RegistrationReceiver;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
+import exceptions.UnsupportedConsoleException;
 
+import java.io.Console;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class AuthenticationManager {
@@ -41,12 +44,12 @@ public class AuthenticationManager {
     }
 
     private int handleRegistration() throws ResponseTimeoutException, ServerUnavailableException, IOException {
-        String login = handleInput("login");
+        String login = handleInput("login", false);
         if (login.equalsIgnoreCase("exit")) {
             return 2;
         }
 
-        String password = handleInput("password");
+        String password = handleInput("password", true);
         if (password.equalsIgnoreCase("exit")) {
             return 2;
         }
@@ -57,12 +60,12 @@ public class AuthenticationManager {
     }
 
     private int handleLogin() throws ResponseTimeoutException, ServerUnavailableException, IOException {
-        String login = handleInput("login");
+        String login = handleInput("login", false);
         if (login.equalsIgnoreCase("exit")) {
             return 2;
         }
 
-        String password = handleInput("password");
+        String password = handleInput("password", true);
         if (password.equalsIgnoreCase("exit")) {
             return 2;
         }
@@ -72,15 +75,37 @@ public class AuthenticationManager {
         return isLogged ? 1 : 0;
     }
 
-    private String handleInput(String param) {
+    private String handleInput(String param, boolean secureInput) {
         System.out.println("You can enter \"exit\" to shut down the program");
 
         String input;
         do {
             System.out.print("Enter " + param + ":\n$ ");
-            input = scanner.nextLine();
+            if (secureInput) {
+                try {
+                    input = readSecureInput();
+                } catch (UnsupportedConsoleException e) {
+                    input = scanner.nextLine();
+                }
+            } else {
+                input = scanner.nextLine();
+            }
         } while (input.isEmpty());
 
         return input;
+    }
+
+    // doesn't work in IDE
+    private String readSecureInput() throws UnsupportedConsoleException {
+        Console console = System.console();
+        if (console == null) {
+            throw new UnsupportedConsoleException("Console input is not supported in this environment");
+        }
+
+        char[] passwordChars = console.readPassword();
+        String password = new String(passwordChars);
+        Arrays.fill(passwordChars, ' '); // Clear password from memory (well, returning String after...)
+
+        return password;
     }
 }
