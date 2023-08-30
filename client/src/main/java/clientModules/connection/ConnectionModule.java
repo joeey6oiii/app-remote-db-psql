@@ -20,4 +20,11 @@ public interface ConnectionModule {
      * @throws IOException if failed during I/O operations
      */
     void disconnect() throws IOException;
+
+    /**
+     * Checks if the {@link ConnectionModule} is currently connected to the server.
+     *
+     * @return true if the module is connected, false otherwise
+     */
+    boolean isConnected();
 }

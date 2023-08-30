@@ -43,7 +43,7 @@ public class DatagramConnectionModule implements DataTransferConnectionModule {
      */
     @Override
     public void connect() throws IOException {
-        if (!datagramChannel.isConnected() && datagramChannel.isOpen()) {
+        if (datagramChannel != null && !datagramChannel.isConnected() && datagramChannel.isOpen()) {
             datagramChannel.connect(socketAddress);
         }
     }
@@ -55,7 +55,7 @@ public class DatagramConnectionModule implements DataTransferConnectionModule {
      */
     @Override
     public void disconnect() throws IOException {
-        if (datagramChannel.isConnected() && datagramChannel.isOpen()) {
+        if (datagramChannel != null && datagramChannel.isConnected() && datagramChannel.isOpen()) {
             try {
                 datagramChannel.disconnect();
                 datagramChannel.close();
@@ -63,6 +63,19 @@ public class DatagramConnectionModule implements DataTransferConnectionModule {
                 datagramChannel.close();
             }
         }
+    }
+
+    /**
+     * Checks if the {@link ConnectionModule} is currently connected to the server.
+     *
+     * @return true if the module is connected, false otherwise
+     */
+    @Override
+    public boolean isConnected() {
+        if (datagramChannel != null && datagramChannel.isOpen()) {
+            return this.datagramChannel.isConnected();
+        }
+        return false;
     }
 
     /**

@@ -15,6 +15,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.BufferOverflowException;
+import java.nio.channels.AlreadyConnectedException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -41,8 +42,10 @@ public class ClientApp {
 
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
-                    connectionModule.disconnect();
-                    System.out.println("Disconnected from the server");
+                    if (connectionModule.isConnected()) {
+                        connectionModule.disconnect();
+                        System.out.println("Disconnected from the server");
+                    }
                 } catch (IOException e) {
                     System.out.println("An error occurred while disconnecting from the server\nForce shutdown...");
                 }
@@ -86,6 +89,10 @@ public class ClientApp {
             handler.startHandlingInput();
         } catch (UnknownHostException e) {
             System.out.println("Could not find host");
+        } catch (AlreadyConnectedException e) {
+            System.out.println("Already connected to the server");
+        } catch (SecurityException e) {
+            System.out.println("Security manager does not permit access to the remote address");
         } catch (IOException e) {
             System.out.println("Something went wrong during I/O operations");
         } catch (BufferOverflowException e) {
