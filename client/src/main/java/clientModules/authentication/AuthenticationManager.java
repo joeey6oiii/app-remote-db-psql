@@ -6,50 +6,61 @@ import commandsModule.commandReceivers.authenticationReceivers.RegistrationRecei
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import exceptions.UnsupportedConsoleException;
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.reader.impl.DefaultParser;
+import org.jline.reader.impl.completer.StringsCompleter;
+import org.jline.terminal.Terminal;
 
 import java.io.Console;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Scanner;
 
 public class AuthenticationManager {
     private final DataTransferConnectionModule dataTransferConnectionModule;
-    private final Scanner scanner = new Scanner(System.in);
+    private final LineReader lineReader;
 
-    public AuthenticationManager(DataTransferConnectionModule dataTransferConnectionModule) {
+    public AuthenticationManager(DataTransferConnectionModule dataTransferConnectionModule, Terminal terminal) {
         this.dataTransferConnectionModule = dataTransferConnectionModule;
+        lineReader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .completer(new StringsCompleter("reg", "log", "exit"))
+                .parser(new DefaultParser())
+                .build();
     }
 
     public int authenticateFromInput() throws ResponseTimeoutException, ServerUnavailableException, IOException {
-        System.out.print("Would you like to register or log in? [reg/log/exit]\n$ ");
+        try {
+            String prompt = "Would you like to register or log in? [reg/log/exit]\n$ ";
+            String input = lineReader.readLine(prompt);
 
-        String input = scanner.nextLine();
+            while (true) {
+                switch (input) {
+                    case "exit" -> {
+                        return 2;
+                    }
+                    case "reg" -> {
+                        return handleRegistration(lineReader);
+                    }
+                    case "log" -> {
+                        return handleLogin(lineReader);
+                    }
+                }
 
-        while (true) {
-            switch (input) {
-                case "exit" -> {
-                    return 2;
-                }
-                case "reg" -> {
-                    return handleRegistration();
-                }
-                case "log" -> {
-                    return handleLogin();
-                }
+                input = lineReader.readLine("Invalid input. " + prompt);
             }
-
-            System.out.print("Invalid input. Would you like to register or log in? [reg/log/exit]\n$ ");
-            input = scanner.nextLine();
+        } catch (EndOfFileException e) {
+            return 2;
         }
     }
 
-    private int handleRegistration() throws ResponseTimeoutException, ServerUnavailableException, IOException {
-        String login = handleInput("login", false);
+    private int handleRegistration(LineReader lineReader) throws ResponseTimeoutException, ServerUnavailableException, IOException {
+        String login = handleInput(lineReader, "login", false);
         if (login.equalsIgnoreCase("exit")) {
             return 2;
         }
 
-        String password = handleInput("password", true);
+        String password = handleInput(lineReader, "password", true);
         if (password.equalsIgnoreCase("exit")) {
             return 2;
         }
@@ -59,13 +70,13 @@ public class AuthenticationManager {
         return isRegistered ? 1 : 0;
     }
 
-    private int handleLogin() throws ResponseTimeoutException, ServerUnavailableException, IOException {
-        String login = handleInput("login", false);
+    private int handleLogin(LineReader lineReader) throws ResponseTimeoutException, ServerUnavailableException, IOException {
+        String login = handleInput(lineReader, "login", false);
         if (login.equalsIgnoreCase("exit")) {
             return 2;
         }
 
-        String password = handleInput("password", true);
+        String password = handleInput(lineReader, "password", true);
         if (password.equalsIgnoreCase("exit")) {
             return 2;
         }
@@ -75,20 +86,21 @@ public class AuthenticationManager {
         return isLogged ? 1 : 0;
     }
 
-    private String handleInput(String param, boolean secureInput) {
-        System.out.println("You can enter \"exit\" to shut down the program");
+    private String handleInput(LineReader lineReader, String param, boolean secureInput) {
+        lineReader.printAbove("You can enter \"exit\" to shut down the program");
+
+        String prompt = "Enter " + param + ":\n$ ";
 
         String input;
         do {
-            System.out.print("Enter " + param + ":\n$ ");
             if (secureInput) {
                 try {
-                    input = readSecureInput();
+                    input = this.readSecureInput(prompt);
                 } catch (UnsupportedConsoleException e) {
-                    input = scanner.nextLine();
+                    input = lineReader.readLine(prompt);
                 }
             } else {
-                input = scanner.nextLine();
+                input = lineReader.readLine(prompt);
             }
         } while (input.isEmpty());
 
@@ -96,16 +108,12 @@ public class AuthenticationManager {
     }
 
     // doesn't work in IDE
-    private String readSecureInput() throws UnsupportedConsoleException {
+    private String readSecureInput(String prompt) throws UnsupportedConsoleException {
         Console console = System.console();
         if (console == null) {
             throw new UnsupportedConsoleException("Console input is not supported in this environment");
         }
 
-        char[] passwordChars = console.readPassword();
-        String password = new String(passwordChars);
-        Arrays.fill(passwordChars, ' '); // Clear password from memory (well, returning String after...)
-
-        return password;
+        return new String(console.readPassword(prompt));
     }
 }

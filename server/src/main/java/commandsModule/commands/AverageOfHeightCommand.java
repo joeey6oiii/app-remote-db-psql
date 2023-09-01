@@ -68,6 +68,6 @@ public class AverageOfHeightCommand implements BaseCommand {
                     .stream().mapToInt(Person::getHeight).average().orElse(0);
             this.response.append("The average \"height\" value is ").append(averageHeight);
         }
-        logger.info(this.response.toString());
+        logger.info("Counted average \"height\" value");
     }
 }
