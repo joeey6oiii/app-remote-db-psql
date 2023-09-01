@@ -6,7 +6,12 @@ import commandsModule.commands.AuthCommand;
 import commandsModule.commands.CLSCommand;
 import commandsModule.commands.ClientHelpCommand;
 import commandsModule.commands.ClientCommand;
+import org.jline.reader.EndOfFileException;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.terminal.Terminal;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -19,23 +24,23 @@ public class CommandHandler {
     private static Map<CommandDescription, String[]> missedCommandsMap;
     private final Map<String, ClientCommand> clientCommandsMap;
     private final CommandManager commandManager;
-    private final Scanner scanner;
+    private final LineReader lineReader;
 
     /**
      * A constructor for command handler with map commands.
      *
      * @param commandsMap simplified commands map
-     * @param scanner tool to scan input from the console
+     * @param terminal terminal
      * @param dataTransferConnectionModule client core
      */
-    public CommandHandler(Map<String, CommandDescription> commandsMap, Scanner scanner, DataTransferConnectionModule dataTransferConnectionModule) {
+    public CommandHandler(Map<String, CommandDescription> commandsMap, Terminal terminal, DataTransferConnectionModule dataTransferConnectionModule) {
         CommandHandler.commandsMap = commandsMap;
         missedCommandsMap = new LinkedHashMap<>();
-        this.scanner = scanner;
+        this.lineReader = LineReaderBuilder.builder().terminal(terminal).build();
         commandManager = new CommandManager(dataTransferConnectionModule);
 
         clientCommandsMap = new LinkedHashMap<>();
-        clientCommandsMap.put("auth", new AuthCommand(dataTransferConnectionModule));
+        clientCommandsMap.put("auth", new AuthCommand(dataTransferConnectionModule, terminal));
         clientCommandsMap.put("cls", new CLSCommand());
         clientCommandsMap.put("c_help", new ClientHelpCommand(clientCommandsMap));
     }
@@ -44,17 +49,17 @@ public class CommandHandler {
      * A constructor for command handler with list commands. List automatically converts to a map.
      *
      * @param commandsMap simplified commands list
-     * @param scanner tool to scan input from the console
+     * @param terminal terminal
      * @param dataTransferConnectionModule client core
      */
-    public CommandHandler(List<CommandDescription> commandsMap, Scanner scanner, DataTransferConnectionModule dataTransferConnectionModule) {
+    public CommandHandler(List<CommandDescription> commandsMap, Terminal terminal, DataTransferConnectionModule dataTransferConnectionModule) throws IOException {
         CommandHandler.commandsMap = commandsMap.stream().collect(Collectors.toMap(CommandDescription::getCommandName, Function.identity()));
         missedCommandsMap = new LinkedHashMap<>();
-        this.scanner = scanner;
+        this.lineReader = LineReaderBuilder.builder().terminal(terminal).build();
         commandManager = new CommandManager(dataTransferConnectionModule);
 
         clientCommandsMap = new LinkedHashMap<>();
-        clientCommandsMap.put("auth", new AuthCommand(dataTransferConnectionModule));
+        clientCommandsMap.put("auth", new AuthCommand(dataTransferConnectionModule, terminal));
         clientCommandsMap.put("cls", new CLSCommand());
         clientCommandsMap.put("c_help", new ClientHelpCommand(clientCommandsMap));
     }
@@ -95,14 +100,13 @@ public class CommandHandler {
                         " server is or was unavailable). Returning to the console input");
             }
 
-            System.out.print("$ ");
-
-            if (!scanner.hasNextLine()) {
-                System.out.println("Scanner was closed. Unable to continue handling input");
+            try {
+                consoleInput = lineReader.readLine("$ ").trim();
+            } catch (EndOfFileException e) {
+                System.out.println("End of input");
                 break;
             }
 
-            consoleInput = scanner.nextLine().trim();
             if (consoleInput.isEmpty()) { continue; }
 
             String[] tokens = consoleInput.toLowerCase().split(" ");

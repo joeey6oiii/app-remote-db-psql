@@ -9,6 +9,8 @@ import commandsModule.commands.CommandRegistry;
 import commandsModule.commandsManagement.CommandHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
+import org.jline.reader.UserInterruptException;
+import org.jline.terminal.Terminal;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -17,8 +19,9 @@ import java.net.UnknownHostException;
 import java.nio.BufferOverflowException;
 import java.nio.channels.AlreadyConnectedException;
 import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Program entry point class. Contains <code>main()</code> method.
@@ -32,6 +35,9 @@ public class ClientApp {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        Logger jlineLogger = Logger.getLogger("org.jline");
+        jlineLogger.setLevel(Level.OFF);
+
         DatagramConnectionModuleFactory connectionModuleFactory = new DatagramConnectionModuleFactory();
         try {
             DataTransferConnectionModule connectionModule = connectionModuleFactory
@@ -40,18 +46,24 @@ public class ClientApp {
             connectionModule.connect();
             System.out.println("Server connection established");
 
+            Terminal terminal = org.jline.terminal.TerminalBuilder.builder().system(true).build();
+
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     if (connectionModule.isConnected()) {
                         connectionModule.disconnect();
                         System.out.println("Disconnected from the server");
                     }
+
+                    if (terminal != null) {
+                        terminal.close();
+                    }
                 } catch (IOException e) {
                     System.out.println("An error occurred while disconnecting from the server\nForce shutdown...");
                 }
             }));
 
-            AuthenticationManager authenticationManager = new AuthenticationManager(connectionModule);
+            AuthenticationManager authenticationManager = new AuthenticationManager(connectionModule, terminal);
             int authenticated = 0;
 
             while (authenticated != 1) {
@@ -82,8 +94,7 @@ public class ClientApp {
             System.out.println("Commands initialized");
 
             List<CommandDescription> commands = CommandRegistry.getInstance().getCommands();
-            Scanner consoleInputReader = new Scanner(System.in);
-            CommandHandler handler = new CommandHandler(commands, consoleInputReader, connectionModule);
+            CommandHandler handler = new CommandHandler(commands, terminal, connectionModule);
 
             System.out.println("Console input allowed");
             handler.startHandlingInput();
@@ -97,8 +108,12 @@ public class ClientApp {
             System.out.println("Something went wrong during I/O operations");
         } catch (BufferOverflowException e) {
             System.out.println("byte[] size is larger than allocated size in buffer");
+        } catch (InterruptedException e) {
+            System.out.println("Thread interrupted while initializing commands");
+        } catch (UserInterruptException e) {
+            System.out.println("Force shutdown...");
         } catch (Exception e) {
-            System.out.println("Unexpected error happened during client operations");
+            System.out.println("Unexpected error happened during app operations");
         }
     }
 }

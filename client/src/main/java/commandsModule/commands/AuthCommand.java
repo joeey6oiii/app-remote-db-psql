@@ -9,6 +9,7 @@ import commands.CommandDescription;
 import commandsModule.commandsManagement.CommandHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
+import org.jline.terminal.Terminal;
 import requests.CommandExecutionRequest;
 import token.Token;
 
@@ -18,9 +19,9 @@ public class AuthCommand implements ClientCommand {
     private final RequestAble requestSender;
     private final AuthenticationManager authenticationManager;
 
-    public AuthCommand(DataTransferConnectionModule dataTransferConnectionModule) {
+    public AuthCommand(DataTransferConnectionModule dataTransferConnectionModule, Terminal terminal) {
         this.requestSender = new RequestSender(dataTransferConnectionModule);
-        this.authenticationManager = new AuthenticationManager(dataTransferConnectionModule);
+        this.authenticationManager = new AuthenticationManager(dataTransferConnectionModule, terminal);
     }
 
     @Override
