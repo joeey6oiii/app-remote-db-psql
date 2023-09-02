@@ -40,27 +40,9 @@ public class Server {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException, SQLException {
-        PersonCollectionHandler collectionHandler = PersonCollectionHandler.getInstance();
+        Server.loadAndSortCollection();
 
-        try (PersonCollectionLoader<HashSet<Person>> collectionLoader = new PersonCollectionLoader<>(collectionHandler.getCollection())) {
-            collectionLoader.loadElementsFromDB();
-        } catch (SQLException e) {
-            logger.error("Could not load elements from the database", e);
-            throw e;
-        }
-        collectionHandler.sortCollection();
-        logger.info("Loaded elements from the database to a collection");
-
-        ConnectionModuleFactory connectionModuleFactory = new DatagramConnectionModuleFactory();
-        ConnectionModule connectionModule;
-
-        logger.info("Initializing server...");
-        try {
-            connectionModule = connectionModuleFactory.createConnectionModule(PORT);
-        } catch (SocketException e) {
-            logger.error("Error occurred while initializing server", e);
-            throw e;
-        }
+        ConnectionModule connectionModule = Server.initServer(new DatagramConnectionModuleFactory());
         logger.info("Server started");
 
         RequestReader requestReader = new RequestReader();
@@ -82,23 +64,51 @@ public class Server {
                     continue;
                 }
 
-                requestReadingThreadPool.submit(() -> {
-                    try {
-                        byte[] dataByteArray = requestData.getData();
-                        Request request = requestReader.readRequest(dataByteArray);
-                        AbstractUser user = new User(requestData.getAddress(), requestData.getPort());
-
-                        RequestInfo info = new RequestInfo(user, request);
-                        requestHandlerManager.manageRequest(info);
-                    } catch (IOException e) {
-                        logger.error("Something went wrong during I/O operations", e);
-                    } catch (ClassNotFoundException e) {
-                        logger.error("Could not find request class", e);
-                    }
-                });
+                requestReadingThreadPool.submit(() -> Server.proceedRequest(requestData, requestReader, requestHandlerManager));
             } catch (Exception e) {
                 logger.error("Unexpected error happened during server operations", e);
             }
+        }
+    }
+
+    private static void loadAndSortCollection() throws SQLException, IOException {
+        PersonCollectionHandler collectionHandler = PersonCollectionHandler.getInstance();
+        try (PersonCollectionLoader<HashSet<Person>> collectionLoader = new PersonCollectionLoader<>(collectionHandler.getCollection())) {
+            collectionLoader.loadElementsFromDB();
+        } catch (SQLException | IOException e) {
+            logger.error("Could not load elements from the database", e);
+            throw e;
+        }
+        collectionHandler.sortCollection();
+        logger.info("Loaded elements from the database to a collection");
+    }
+
+    private static ConnectionModule initServer(ConnectionModuleFactory connectionModuleFactory) throws IOException {
+        ConnectionModule connectionModule;
+
+        logger.info("Initializing server...");
+        try {
+            connectionModule = connectionModuleFactory.createConnectionModule(PORT);
+        } catch (SocketException e) {
+            logger.error("Error occurred while initializing server", e);
+            throw e;
+        }
+
+        return connectionModule;
+    }
+
+    private static void proceedRequest(RequestData requestData, RequestReader requestReader, RequestHandlerManager requestHandlerManager) {
+        try {
+            byte[] dataByteArray = requestData.getData();
+            Request request = requestReader.readRequest(dataByteArray);
+            AbstractUser user = new User(requestData.getAddress(), requestData.getPort());
+
+            RequestInfo info = new RequestInfo(user, request);
+            requestHandlerManager.manageRequest(info);
+        } catch (IOException e) {
+            logger.error("Something went wrong during I/O operations", e);
+        } catch (ClassNotFoundException e) {
+            logger.error("Could not find request class", e);
         }
     }
 }
