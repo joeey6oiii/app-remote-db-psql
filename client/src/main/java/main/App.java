@@ -10,6 +10,8 @@ import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
+import outputService.MessageType;
+import outputService.ColoredPrintStream;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -26,12 +28,14 @@ import java.util.logging.Logger;
  * Program entry point class. Contains <code>main()</code> method.
  */
 public class App {
-    private final static int PORT;
+    private final static int PORT = 64999;
     private static final InetAddress ADDRESS;
+
+    private static final OutputStream stream = System.out;
+    private static final ColoredPrintStream printer = new ColoredPrintStream(stream);
 
     static {
         try {
-            PORT = 64999;
             ADDRESS = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
@@ -47,9 +51,10 @@ public class App {
         Logger jlineLogger = Logger.getLogger("org.jline");
         jlineLogger.setLevel(Level.OFF);
 
+        DatagramConnectionModuleFactory connectionModuleFactory = new DatagramConnectionModuleFactory();
         try {
             DataTransferConnectionModule connectionModule = (DataTransferConnectionModule) App
-                    .initConnection(new DatagramConnectionModuleFactory(), false);
+                    .initConnection(connectionModuleFactory, false);
 
             Terminal terminal = org.jline.terminal.TerminalBuilder.builder().system(true).build();
 
@@ -61,21 +66,21 @@ public class App {
 
             App.allowInputAndHandleInput(App.initCommandHandler(connectionModule, terminal));
         } catch (UnknownHostException e) {
-            System.out.println("Could not find host");
+            printer.println(MessageType.ERROR, "Could not find host");
         } catch (AlreadyConnectedException e) {
-            System.out.println("Already connected to the server");
+            printer.println(MessageType.ERROR,"Already connected to the server");
         } catch (SecurityException e) {
-            System.out.println("Security manager does not permit access to the remote address");
+            printer.println(MessageType.ERROR,"Security manager does not permit access to the remote address");
         } catch (IOException e) {
-            System.out.println("Something went wrong during I/O operations");
+            printer.println(MessageType.ERROR,"Something went wrong during I/O operations");
         } catch (BufferOverflowException e) {
-            System.out.println("byte[] size is larger than allocated size in buffer");
+            printer.println(MessageType.ERROR,"byte[] size is larger than allocated size in buffer");
         } catch (InterruptedException e) {
-            System.out.println("Thread interrupted while initializing commands");
+            printer.println(MessageType.ERROR,"Thread interrupted while initializing commands");
         } catch (UserInterruptException e) {
-            System.out.println("Force shutdown...");
+            printer.println(MessageType.INFO,"Force shutdown...");
         } catch (Exception e) {
-            System.out.println("Unexpected error happened during app operations");
+            printer.println(MessageType.ERROR,"Unexpected error happened during app operations");
         }
     }
 
@@ -84,7 +89,7 @@ public class App {
                 .createConnectionModule(new InetSocketAddress(ADDRESS, PORT), isBlocking);
 
         connectionModule.connect();
-        System.out.println("Server connection established");
+        printer.println(MessageType.SUCCESS, "Server connection established");
 
         return connectionModule;
     }
@@ -94,14 +99,15 @@ public class App {
             try {
                 if (connectionModule.isConnected()) {
                     connectionModule.disconnect();
-                    System.out.println("Disconnected from the server");
+                    printer.println(MessageType.INFO, "Disconnected from the server");
                 }
 
                 if (terminal != null) {
                     terminal.close();
                 }
             } catch (IOException e) {
-                System.out.println("An error occurred while disconnecting from the server\nForce shutdown...");
+                printer.println(MessageType.ERROR, "An error occurred while disconnecting from the server");
+                printer.println(MessageType.INFO, "Force shutdown...");
             }
         }));
     }
@@ -115,11 +121,11 @@ public class App {
                 authenticated = authenticationManager.authenticateFromInput();
 
                 if (authenticated == 2) {
-                    System.out.println("Shutdown...");
+                    printer.println(MessageType.INFO, "Shutdown...");
                     System.exit(0);
                 }
             } catch (ServerUnavailableException | ResponseTimeoutException | IOException | NullPointerException e) {
-                System.out.println("Server is currently unavailable. Please try again later");
+                printer.println(MessageType.WARNING, "Server is currently unavailable. Please try again later");
             }
         }
     }
@@ -129,14 +135,14 @@ public class App {
         CommandsReceiver commandsReceiver = new CommandsReceiver(connectionModule);
 
         while (!initializedCommands) {
-            System.out.println("Trying to initialize commands...");
+            printer.println(MessageType.INFO, "Trying to initialize commands...");
             try {
                 initializedCommands = commandsReceiver.initCommands();
             } catch (ServerUnavailableException | ResponseTimeoutException | IOException | NullPointerException e) {
                 TimeUnit.MILLISECONDS.sleep(timeMills);
             }
         }
-        System.out.println("Commands initialized");
+        printer.println(MessageType.SUCCESS, "Commands initialized");
     }
 
     private static CommandHandler initCommandHandler(DataTransferConnectionModule connectionModule, Terminal terminal) throws IOException {
@@ -145,7 +151,7 @@ public class App {
     }
 
     private static void allowInputAndHandleInput(CommandHandler handler) {
-        System.out.println("Console input allowed");
+        printer.println(MessageType.INFO, "Console input allowed");
         handler.startHandlingInput();
     }
 }
