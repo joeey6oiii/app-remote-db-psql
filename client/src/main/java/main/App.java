@@ -26,11 +26,12 @@ import java.util.logging.Logger;
  * Program entry point class. Contains <code>main()</code> method.
  */
 public class App {
-    private final static int PORT = 64999;
+    private final static int PORT;
     private static final InetAddress ADDRESS;
 
     static {
         try {
+            PORT = 64999;
             ADDRESS = InetAddress.getLocalHost();
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
@@ -46,9 +47,9 @@ public class App {
         Logger jlineLogger = Logger.getLogger("org.jline");
         jlineLogger.setLevel(Level.OFF);
 
-        DatagramConnectionModuleFactory connectionModuleFactory = new DatagramConnectionModuleFactory();
         try {
-            DataTransferConnectionModule connectionModule = (DataTransferConnectionModule) App.initConnection(connectionModuleFactory);
+            DataTransferConnectionModule connectionModule = (DataTransferConnectionModule) App
+                    .initConnection(new DatagramConnectionModuleFactory(), false);
 
             Terminal terminal = org.jline.terminal.TerminalBuilder.builder().system(true).build();
 
@@ -58,7 +59,7 @@ public class App {
 
             App.initCommandRegistry(connectionModule, 5000);
 
-            App.allowInputAndHandleIt(App.initCommandHandler(connectionModule, terminal));
+            App.allowInputAndHandleInput(App.initCommandHandler(connectionModule, terminal));
         } catch (UnknownHostException e) {
             System.out.println("Could not find host");
         } catch (AlreadyConnectedException e) {
@@ -78,9 +79,9 @@ public class App {
         }
     }
 
-    private static ConnectionModule initConnection(DatagramConnectionModuleFactory connectionModuleFactory) throws IOException {
+    private static ConnectionModule initConnection(DatagramConnectionModuleFactory connectionModuleFactory, boolean isBlocking) throws IOException {
         DataTransferConnectionModule connectionModule = connectionModuleFactory
-                .createConnectionModule(new InetSocketAddress(ADDRESS, PORT), false);
+                .createConnectionModule(new InetSocketAddress(ADDRESS, PORT), isBlocking);
 
         connectionModule.connect();
         System.out.println("Server connection established");
@@ -143,7 +144,7 @@ public class App {
         return new CommandHandler(commands, terminal, connectionModule);
     }
 
-    private static void allowInputAndHandleIt(CommandHandler handler) {
+    private static void allowInputAndHandleInput(CommandHandler handler) {
         System.out.println("Console input allowed");
         handler.startHandlingInput();
     }
