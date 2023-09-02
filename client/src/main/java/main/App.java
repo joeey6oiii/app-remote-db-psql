@@ -11,8 +11,7 @@ import exceptions.ServerUnavailableException;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import outputService.MessageType;
-import outputService.StreamPrinter;
-import outputService.Printer;
+import outputService.ColoredPrintStream;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -29,18 +28,15 @@ import java.util.logging.Logger;
  * Program entry point class. Contains <code>main()</code> method.
  */
 public class App {
-    private final static int PORT;
+    private final static int PORT = 64999;
     private static final InetAddress ADDRESS;
-    private static final Printer printer;
-    private static final PrintStream stream;
+
+    private static final OutputStream stream = System.out;
+    private static final ColoredPrintStream printer = new ColoredPrintStream(stream);
 
     static {
         try {
-            PORT = 64999;
             ADDRESS = InetAddress.getLocalHost();
-
-            stream = System.out;
-            printer = new StreamPrinter(stream);
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         }
@@ -55,9 +51,10 @@ public class App {
         Logger jlineLogger = Logger.getLogger("org.jline");
         jlineLogger.setLevel(Level.OFF);
 
+        DatagramConnectionModuleFactory connectionModuleFactory = new DatagramConnectionModuleFactory();
         try {
             DataTransferConnectionModule connectionModule = (DataTransferConnectionModule) App
-                    .initConnection(new DatagramConnectionModuleFactory(), false);
+                    .initConnection(connectionModuleFactory, false);
 
             Terminal terminal = org.jline.terminal.TerminalBuilder.builder().system(true).build();
 

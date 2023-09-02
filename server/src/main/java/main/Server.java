@@ -42,7 +42,8 @@ public class Server {
     public static void main(String[] args) throws IOException, SQLException {
         Server.loadAndSortCollection();
 
-        ConnectionModule connectionModule = Server.initServer(new DatagramConnectionModuleFactory());
+        ConnectionModuleFactory connectionModuleFactory = new DatagramConnectionModuleFactory();
+        ConnectionModule connectionModule = Server.initServer(connectionModuleFactory);
         logger.info("Server started");
 
         RequestReader requestReader = new RequestReader();
