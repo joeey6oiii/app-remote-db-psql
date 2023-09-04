@@ -10,6 +10,7 @@ import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 import outputService.MessageType;
 import outputService.ColoredPrintStream;
 import outputService.OutputSource;
@@ -55,16 +56,22 @@ public class App {
         try {
             DataTransferConnectionModule connectionModule = (DataTransferConnectionModule) App
                     .initConnection(connectionModuleFactory, false);
+            printer.println(printer.formatMessage(MessageType.SUCCESS, "Server connection established"));
 
-            Terminal terminal = org.jline.terminal.TerminalBuilder.builder().system(true).build();
+            Terminal terminal = TerminalBuilder.builder().system(true).build();
 
             App.addShutdownHook(connectionModule, terminal);
 
             App.authenticateUser(connectionModule, terminal);
 
+            printer.println(printer.formatMessage(MessageType.INFO, "Trying to initialize commands..."));
             App.initCommandRegistry(connectionModule, 5000);
+            printer.println(printer.formatMessage(MessageType.SUCCESS, "Commands initialized"));
 
-            App.allowInputAndHandleInput(App.initCommandHandler(connectionModule, terminal));
+            CommandHandler commandHandler = App.initCommandHandler(connectionModule, terminal);
+
+            printer.println(printer.formatMessage(MessageType.INFO, "Console input allowed"));
+            commandHandler.startHandlingInput();
         } catch (UnknownHostException e) {
             printer.println(printer.formatMessage(MessageType.ERROR,  "Could not find host"));
         } catch (AlreadyConnectedException e) {
@@ -88,9 +95,6 @@ public class App {
         DataTransferConnectionModule connectionModule = connectionModuleFactory
                 .createConnectionModule(new InetSocketAddress(ADDRESS, PORT), isBlocking);
         connectionModule.connect();
-
-        ColoredPrintStream printer = new ColoredPrintStream(OutputSource.getOutputStream());
-        printer.println(printer.formatMessage(MessageType.SUCCESS, "Server connection established"));
 
         return connectionModule;
     }
@@ -139,27 +143,17 @@ public class App {
         boolean initializedCommands = false;
         CommandsReceiver commandsReceiver = new CommandsReceiver(connectionModule);
 
-        ColoredPrintStream printer = new ColoredPrintStream(OutputSource.getOutputStream());
-
         while (!initializedCommands) {
-            printer.println(printer.formatMessage(MessageType.INFO, "Trying to initialize commands..."));
             try {
                 initializedCommands = commandsReceiver.initCommands();
             } catch (ServerUnavailableException | ResponseTimeoutException | IOException | NullPointerException e) {
                 TimeUnit.MILLISECONDS.sleep(timeMills);
             }
         }
-        printer.println(printer.formatMessage(MessageType.SUCCESS, "Commands initialized"));
     }
 
     private static CommandHandler initCommandHandler(DataTransferConnectionModule connectionModule, Terminal terminal) throws IOException {
         List<CommandDescription> commands = CommandRegistry.getInstance().getCommands();
         return new CommandHandler(commands, terminal, connectionModule);
-    }
-
-    private static void allowInputAndHandleInput(CommandHandler handler) {
-        ColoredPrintStream printer = new ColoredPrintStream(OutputSource.getOutputStream());
-        printer.println(printer.formatMessage(MessageType.INFO, "Console input allowed"));
-        handler.startHandlingInput();
     }
 }
