@@ -12,6 +12,7 @@ import org.jline.reader.UserInterruptException;
 import org.jline.terminal.Terminal;
 import outputService.MessageType;
 import outputService.ColoredPrintStream;
+import outputService.OutputSource;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -31,9 +32,6 @@ public class App {
     private final static int PORT = 64999;
     private static final InetAddress ADDRESS;
 
-    private static final OutputStream stream = System.out;
-    private static final ColoredPrintStream printer = new ColoredPrintStream(stream);
-
     static {
         try {
             ADDRESS = InetAddress.getLocalHost();
@@ -50,6 +48,8 @@ public class App {
     public static void main(String[] args) {
         Logger jlineLogger = Logger.getLogger("org.jline");
         jlineLogger.setLevel(Level.OFF);
+
+        ColoredPrintStream printer = new ColoredPrintStream(OutputSource.getOutputStream());
 
         DatagramConnectionModuleFactory connectionModuleFactory = new DatagramConnectionModuleFactory();
         try {
@@ -87,8 +87,9 @@ public class App {
     private static ConnectionModule initConnection(DatagramConnectionModuleFactory connectionModuleFactory, boolean isBlocking) throws IOException {
         DataTransferConnectionModule connectionModule = connectionModuleFactory
                 .createConnectionModule(new InetSocketAddress(ADDRESS, PORT), isBlocking);
-
         connectionModule.connect();
+
+        ColoredPrintStream printer = new ColoredPrintStream(OutputSource.getOutputStream());
         printer.println(printer.formatMessage(MessageType.SUCCESS, "Server connection established"));
 
         return connectionModule;
@@ -96,6 +97,8 @@ public class App {
 
     private static void addShutdownHook(ConnectionModule connectionModule, Terminal terminal) {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            ColoredPrintStream printer = new ColoredPrintStream(OutputSource.getOutputStream());
+
             try {
                 if (connectionModule.isConnected()) {
                     connectionModule.disconnect();
@@ -116,6 +119,8 @@ public class App {
         AuthenticationManager authenticationManager = new AuthenticationManager(dataTransferConnectionModule, terminal);
         int authenticated = 0;
 
+        ColoredPrintStream printer = new ColoredPrintStream(OutputSource.getOutputStream());
+
         while (authenticated != 1) {
             try {
                 authenticated = authenticationManager.authenticateFromInput();
@@ -134,6 +139,8 @@ public class App {
         boolean initializedCommands = false;
         CommandsReceiver commandsReceiver = new CommandsReceiver(connectionModule);
 
+        ColoredPrintStream printer = new ColoredPrintStream(OutputSource.getOutputStream());
+
         while (!initializedCommands) {
             printer.println(printer.formatMessage(MessageType.INFO, "Trying to initialize commands..."));
             try {
@@ -151,6 +158,7 @@ public class App {
     }
 
     private static void allowInputAndHandleInput(CommandHandler handler) {
+        ColoredPrintStream printer = new ColoredPrintStream(OutputSource.getOutputStream());
         printer.println(printer.formatMessage(MessageType.INFO, "Console input allowed"));
         handler.startHandlingInput();
     }
