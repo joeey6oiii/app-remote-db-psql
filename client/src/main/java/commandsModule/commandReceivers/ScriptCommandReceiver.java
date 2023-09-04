@@ -12,6 +12,9 @@ import commandsModule.commandsManagement.CommandManager;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import org.apache.commons.io.IOUtils;
+import outputService.ColoredPrintStream;
+import outputService.MessageType;
+import outputService.OutputSource;
 import requests.CommandExecutionRequest;
 import response.responses.CommandExecutionResponse;
 import response.responses.Response;
@@ -57,6 +60,8 @@ public class ScriptCommandReceiver implements CommandReceiver {
             return;
         }
 
+        ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+
         try (InputStream inputStream = new FileInputStream(script)) {
             try {
                 CommandExecutionRequest commandRequest = new CommandExecutionRequest(User.getInstance().getToken(), scriptCommand, args);
@@ -92,12 +97,12 @@ public class ScriptCommandReceiver implements CommandReceiver {
                 if (command != null) {
                     commandManager.manageCommand(command, tokens);
                 } else {
-                    System.out.println("Command \"" + tokens[0] + "\" Was Not Recognized as an" +
+                    cps.println("Command \"" + tokens[0] + "\" Was Not Recognized as an" +
                             " Internal or External Command\nContinuing executing script...");
                 }
             }
         } catch (IOException e) {
-            System.out.println("Unable to continue executing script. Returning to the console input");
+            cps.println(cps.formatMessage(MessageType.ERROR, "Unable to continue executing script. Returning to the console input"));
         }
 
         historyOfDangerScript.clear();
@@ -105,8 +110,9 @@ public class ScriptCommandReceiver implements CommandReceiver {
 
     private boolean checkDanger(String[] args) {
         if (historyOfDangerScript.contains(args[0])) {
-            System.out.println("Detected dangerous command: the script will loop if the command is executed\n" +
-                    "Continuing executing script from the next command...");
+            ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+            cps.println(cps.formatMessage(MessageType.WARNING, "Detected dangerous command: the script will loop if the command is executed"));
+            cps.println("Continuing executing script from the next command...");
             historyOfDangerScript.clear();
             return false;
         }
@@ -116,7 +122,8 @@ public class ScriptCommandReceiver implements CommandReceiver {
 
     private boolean checkArgs(String[] args) {
         if (args.length < 2) {
-            System.out.println("Not enough arguments. Returning to the console input");
+            ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+            cps.println("Not enough arguments. Returning to the console input");
             return false;
         }
 
@@ -125,7 +132,8 @@ public class ScriptCommandReceiver implements CommandReceiver {
 
     private boolean checkFile(File script) {
         if (!script.exists()) {
-            System.out.println("File not found. Returning to the console input");
+            ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+            cps.println("File not found. Returning to the console input");
             return false;
         }
 

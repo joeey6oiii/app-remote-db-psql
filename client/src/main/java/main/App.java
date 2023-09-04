@@ -66,21 +66,21 @@ public class App {
 
             App.allowInputAndHandleInput(App.initCommandHandler(connectionModule, terminal));
         } catch (UnknownHostException e) {
-            printer.println(MessageType.ERROR, "Could not find host");
+            printer.println(printer.formatMessage(MessageType.ERROR,  "Could not find host"));
         } catch (AlreadyConnectedException e) {
-            printer.println(MessageType.ERROR,"Already connected to the server");
+            printer.println(printer.formatMessage(MessageType.ERROR, "Already connected to the server"));
         } catch (SecurityException e) {
-            printer.println(MessageType.ERROR,"Security manager does not permit access to the remote address");
+            printer.println(printer.formatMessage(MessageType.ERROR, "Security manager does not permit access to the remote address"));
         } catch (IOException e) {
-            printer.println(MessageType.ERROR,"Something went wrong during I/O operations");
+            printer.println(printer.formatMessage(MessageType.ERROR, "Something went wrong during I/O operations"));
         } catch (BufferOverflowException e) {
-            printer.println(MessageType.ERROR,"byte[] size is larger than allocated size in buffer");
+            printer.println(printer.formatMessage(MessageType.ERROR, "byte[] size is larger than allocated size in buffer"));
         } catch (InterruptedException e) {
-            printer.println(MessageType.ERROR,"Thread interrupted while initializing commands");
+            printer.println(printer.formatMessage(MessageType.ERROR, "Thread interrupted while initializing commands"));
         } catch (UserInterruptException e) {
-            printer.println(MessageType.INFO,"Force shutdown...");
+            printer.println(printer.formatMessage(MessageType.INFO, "Force shutdown..."));
         } catch (Exception e) {
-            printer.println(MessageType.ERROR,"Unexpected error happened during app operations");
+            printer.println(printer.formatMessage(MessageType.ERROR, "Unexpected error happened during app operations"));
         }
     }
 
@@ -89,7 +89,7 @@ public class App {
                 .createConnectionModule(new InetSocketAddress(ADDRESS, PORT), isBlocking);
 
         connectionModule.connect();
-        printer.println(MessageType.SUCCESS, "Server connection established");
+        printer.println(printer.formatMessage(MessageType.SUCCESS, "Server connection established"));
 
         return connectionModule;
     }
@@ -99,15 +99,15 @@ public class App {
             try {
                 if (connectionModule.isConnected()) {
                     connectionModule.disconnect();
-                    printer.println(MessageType.INFO, "Disconnected from the server");
+                    printer.println(printer.formatMessage(MessageType.INFO, "Disconnected from the server"));
                 }
 
                 if (terminal != null) {
                     terminal.close();
                 }
             } catch (IOException e) {
-                printer.println(MessageType.ERROR, "An error occurred while disconnecting from the server");
-                printer.println(MessageType.INFO, "Force shutdown...");
+                printer.println(printer.formatMessage(MessageType.ERROR, "An error occurred while disconnecting from the server"));
+                printer.println(printer.formatMessage(MessageType.INFO, "Force shutdown..."));
             }
         }));
     }
@@ -121,11 +121,11 @@ public class App {
                 authenticated = authenticationManager.authenticateFromInput();
 
                 if (authenticated == 2) {
-                    printer.println(MessageType.INFO, "Shutdown...");
+                    printer.println(printer.formatMessage(MessageType.INFO, "Shutdown..."));
                     System.exit(0);
                 }
             } catch (ServerUnavailableException | ResponseTimeoutException | IOException | NullPointerException e) {
-                printer.println(MessageType.WARNING, "Server is currently unavailable. Please try again later");
+                printer.println(printer.formatMessage(MessageType.WARNING, "Server is currently unavailable. Please try again later"));
             }
         }
     }
@@ -135,14 +135,14 @@ public class App {
         CommandsReceiver commandsReceiver = new CommandsReceiver(connectionModule);
 
         while (!initializedCommands) {
-            printer.println(MessageType.INFO, "Trying to initialize commands...");
+            printer.println(printer.formatMessage(MessageType.INFO, "Trying to initialize commands..."));
             try {
                 initializedCommands = commandsReceiver.initCommands();
             } catch (ServerUnavailableException | ResponseTimeoutException | IOException | NullPointerException e) {
                 TimeUnit.MILLISECONDS.sleep(timeMills);
             }
         }
-        printer.println(MessageType.SUCCESS, "Commands initialized");
+        printer.println(printer.formatMessage(MessageType.SUCCESS, "Commands initialized"));
     }
 
     private static CommandHandler initCommandHandler(DataTransferConnectionModule connectionModule, Terminal terminal) throws IOException {
@@ -151,7 +151,7 @@ public class App {
     }
 
     private static void allowInputAndHandleInput(CommandHandler handler) {
-        printer.println(MessageType.INFO, "Console input allowed");
+        printer.println(printer.formatMessage(MessageType.INFO, "Console input allowed"));
         handler.startHandlingInput();
     }
 }

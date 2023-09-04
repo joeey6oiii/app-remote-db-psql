@@ -1,6 +1,8 @@
 package commandsModule.commands;
 
 import commandsModule.commandsManagement.CommandHandler;
+import outputService.ColoredPrintStream;
+import outputService.OutputSource;
 
 public class CLSCommand implements ClientCommand {
 
@@ -16,11 +18,13 @@ public class CLSCommand implements ClientCommand {
 
     @Override
     public void execute() {
+        ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+
         if (CommandHandler.getMissedCommandsMap().isEmpty()) {
-            System.out.println("Cache of missed commands is empty");
+            cps.println("Cache of missed commands is empty");
         } else {
             CommandHandler.getMissedCommandsMap().clear();
-            System.out.println("Cleared cache of missed commands");
+            cps.println("Cleared cache of missed commands");
         }
     }
 }

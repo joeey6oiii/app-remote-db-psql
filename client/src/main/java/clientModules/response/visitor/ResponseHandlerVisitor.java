@@ -1,6 +1,5 @@
 package clientModules.response.visitor;
 
-import clientModules.connection.DataTransferConnectionModule;
 import clientModules.response.handlers.ClientCommandsHandler;
 import clientModules.response.handlers.ExecutionResultHandler;
 import clientModules.response.handlers.ServerErrorResultHandler;

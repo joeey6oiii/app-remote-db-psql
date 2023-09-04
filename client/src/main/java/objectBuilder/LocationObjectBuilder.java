@@ -1,6 +1,8 @@
 package objectBuilder;
 
 import model.Location;
+import outputService.ColoredPrintStream;
+import outputService.OutputSource;
 
 import java.util.Scanner;
 
@@ -15,11 +17,12 @@ public class LocationObjectBuilder implements ObjectBuilder {
      * @return Location
      */
     public Location buildObject() {
+        ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
         Scanner consoleInputReader = new Scanner(System.in);
         Location location = new Location();
         String consoleInput;
 
-        System.out.print("Enter X coordinate\n$ ");
+        cps.print("Enter X coordinate\n$ ");
         while (true) {
             try {
                 consoleInput = consoleInputReader.nextLine();
@@ -31,11 +34,11 @@ public class LocationObjectBuilder implements ObjectBuilder {
                     break;
                 }
             } catch (Exception e){
-                System.out.print("Invalid coordinate X. Please enter a valid X coordinate\n$ ");
+                cps.print("Invalid coordinate X. Please enter a valid X coordinate\n$ ");
             }
         }
 
-        System.out.print("Enter Y coordinate\n$ ");
+        cps.print("Enter Y coordinate\n$ ");
         while (true) {
             try {
                 consoleInput = consoleInputReader.nextLine();
@@ -47,11 +50,11 @@ public class LocationObjectBuilder implements ObjectBuilder {
                     break;
                 }
             } catch (Exception e){
-                System.out.print("Invalid coordinate Y. Please enter a valid Y coordinate\n$ ");
+                cps.print("Invalid coordinate Y. Please enter a valid Y coordinate\n$ ");
             }
         }
 
-        System.out.print("Enter name. Press \"ENTER\" to skip this operation\n$ ");
+        cps.print("Enter name. Press \"ENTER\" to skip this operation\n$ ");
         String name = consoleInputReader.nextLine();
         if (name.isEmpty()) {
             location.setName(null);

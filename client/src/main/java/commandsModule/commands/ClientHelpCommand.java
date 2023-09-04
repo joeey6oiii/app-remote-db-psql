@@ -1,5 +1,8 @@
 package commandsModule.commands;
 
+import outputService.ColoredPrintStream;
+import outputService.OutputSource;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,8 @@ public class ClientHelpCommand implements ClientCommand {
         builder = new StringBuilder(commands.entrySet().stream()
                 .map(entry -> String.format(formatString, entry.getKey() + " ", entry.getValue().getDescription()))
                 .collect(Collectors.joining()));
-        System.out.println(builder.substring(0, builder.length() - 1));
+
+        ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+        cps.println(builder.substring(0, builder.length() - 1));
     }
 }

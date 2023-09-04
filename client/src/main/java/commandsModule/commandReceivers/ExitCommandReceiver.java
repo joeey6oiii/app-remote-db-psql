@@ -10,6 +10,9 @@ import commands.CommandDescription;
 import commandsModule.commandsManagement.CommandHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
+import outputService.ColoredPrintStream;
+import outputService.MessageType;
+import outputService.OutputSource;
 import requests.CommandExecutionRequest;
 import response.responses.CommandExecutionResponse;
 import response.responses.Response;
@@ -61,21 +64,24 @@ public class ExitCommandReceiver implements CommandReceiver {
                  | ResponseTimeoutException | NullPointerException e) {
             CommandHandler.getMissedCommandsMap().put(command, args);
         } catch (IOException e) {
-            System.out.println("Something went wrong during I/O operations");
+            ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+            cps.println(cps.formatMessage(MessageType.ERROR, "Something went wrong during I/O operations"));
         }
     }
 
     private boolean confirmExit() {
-        System.out.print("Are you sure you want to exit? [Y/N]\n$ ");
-        Scanner consoleInputReader = new Scanner(System.in);
-        String consoleInput;
+        ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+        cps.print("Are you sure you want to exit? [Y/N]\n$ ");
 
+        Scanner consoleInputReader = new Scanner(System.in);
+
+        String consoleInput;
         while (!(consoleInput = consoleInputReader.nextLine()).equalsIgnoreCase("Y")) {
             if (consoleInput.equalsIgnoreCase("N")) {
-                System.out.println("Returning to the console input");
+                cps.println("Returning to the console input");
                 return false;
             }
-            System.out.print("$ ");
+            cps.print("$ ");
         }
 
         return true;

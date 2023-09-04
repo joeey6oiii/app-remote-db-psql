@@ -12,6 +12,9 @@ import model.Person;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import objectBuilder.PersonObjectBuilder;
+import outputService.ColoredPrintStream;
+import outputService.MessageType;
+import outputService.OutputSource;
 import requests.ObjectArgumentCommandExecutionRequest;
 import response.responses.CommandExecutionResponse;
 import response.responses.Response;
@@ -60,7 +63,8 @@ public class PersonCommandResultReceiver implements CommandReceiver {
                  | ResponseTimeoutException | NullPointerException e) {
             CommandHandler.getMissedCommandsMap().put(command, args);
         } catch (IOException e) {
-            System.out.println("Something went wrong during I/O operations");
+            ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+            cps.println(cps.formatMessage(MessageType.ERROR, "Something went wrong during I/O operations"));
         }
     }
 }
