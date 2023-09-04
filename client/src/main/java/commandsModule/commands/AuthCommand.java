@@ -10,6 +10,8 @@ import commandsModule.commandsManagement.CommandHandler;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
 import org.jline.terminal.Terminal;
+import outputService.ColoredPrintStream;
+import outputService.OutputSource;
 import requests.CommandExecutionRequest;
 import token.Token;
 
@@ -37,6 +39,8 @@ public class AuthCommand implements ClientCommand {
 
     @Override
     public void execute() {
+        ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+
         try {
             String[] args = new String[1];
             args[0] = "exit";
@@ -50,9 +54,9 @@ public class AuthCommand implements ClientCommand {
 
             authenticationManager.authenticateFromInput();
         } catch (ResponseTimeoutException | ServerUnavailableException e) {
-            System.out.println("Server is currently unavailable, please try again later");
+            cps.println("Server is currently unavailable, please try again later");
         } catch (IOException e) {
-            System.out.println("Something went wrong during I/O operations");
+            cps.println("Something went wrong during I/O operations");
         }
     }
 }

@@ -1,5 +1,8 @@
 package clientModules.response.handlers;
 
+import outputService.ColoredPrintStream;
+import outputService.MessageType;
+import outputService.OutputSource;
 import response.responses.CommandExecutionResponse;
 
 /**
@@ -14,7 +17,9 @@ public class ExitCommandHandler implements ResponseHandler<CommandExecutionRespo
      */
     @Override
     public boolean handleResponse(CommandExecutionResponse response) {
-        System.out.println("Shutdown...");
+        ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+
+        cps.println(cps.formatMessage(MessageType.INFO, "Shutdown..."));
         System.exit(0);
 
         return true;

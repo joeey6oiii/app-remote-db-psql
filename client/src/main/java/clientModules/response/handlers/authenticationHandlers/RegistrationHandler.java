@@ -2,6 +2,9 @@ package clientModules.response.handlers.authenticationHandlers;
 
 import clientModules.authentication.User;
 import clientModules.response.handlers.ResponseHandler;
+import outputService.ColoredPrintStream;
+import outputService.MessageType;
+import outputService.OutputSource;
 import response.responses.RegistrationResponse;
 import token.Token;
 
@@ -9,12 +12,14 @@ public class RegistrationHandler implements ResponseHandler<RegistrationResponse
 
     @Override
     public boolean handleResponse(RegistrationResponse registrationResponse) {
+        ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+
         if (registrationResponse == null) {
-            System.out.println("Received invalid response from server");
+            cps.println(cps.formatMessage(MessageType.WARNING, "Received invalid response from server"));
             return false;
         }
 
-        System.out.println(registrationResponse.getResult());
+        cps.println(cps.formatMessage(MessageType.INFO, registrationResponse.getResult()));
 
         boolean isSuccess = registrationResponse.isSuccess();
         if (isSuccess) {

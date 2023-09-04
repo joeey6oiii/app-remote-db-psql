@@ -4,6 +4,7 @@ package objectBuilder.utils;
  * A class with help parse method.
  */
 public class StringToDateParser {
+    private static final String pattern = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * A method that pareses {@link String} to a {@link java.util.Date}
@@ -13,8 +14,12 @@ public class StringToDateParser {
      * @throws java.text.ParseException if the format of the specified <code>String</code> date is incorrect
      */
     public static java.util.Date parse(String str) throws java.text.ParseException {
-        java.text.DateFormat formatter = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        java.text.DateFormat formatter = new java.text.SimpleDateFormat(pattern);
 
         return formatter.parse(str);
+    }
+
+    public static String getPattern() {
+        return pattern;
     }
 }

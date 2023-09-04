@@ -4,6 +4,9 @@ import clientModules.connection.DataTransferConnectionModule;
 import clientModules.response.reader.ResponseReader;
 import exceptions.ResponseTimeoutException;
 import exceptions.ServerUnavailableException;
+import outputService.ColoredPrintStream;
+import outputService.MessageType;
+import outputService.OutputSource;
 import serializer.ByteArrayObjectSerializer;
 import clientModules.response.processing.HeaderParser;
 import clientModules.response.processing.ResponseAssembler;
@@ -34,6 +37,8 @@ public class RequestSender implements RequestAble {
      */
     @Override
     public Response sendRequest(Request request) throws IOException, ServerUnavailableException, ResponseTimeoutException {
+        ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+
         Response response = null;
         HashMap<Integer, byte[]> chunks = new HashMap<>();
         ByteArrayObjectSerializer serializer = new ByteArrayObjectSerializer();
@@ -57,9 +62,9 @@ public class RequestSender implements RequestAble {
             byte[] responseData = new ResponseAssembler().combineResponseParts(chunks);
             response = new ResponseReader().readResponse(responseData);
         } catch (IllegalArgumentException e) {
-            System.out.println("Response part is missing");
+            cps.println(cps.formatMessage(MessageType.ERROR, "Response part is missing"));
         } catch (ClassNotFoundException e) {
-            System.out.println("Could not find response class");
+            cps.println(cps.formatMessage(MessageType.ERROR,"Could not find response class"));
         }
 
         return response;

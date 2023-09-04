@@ -17,10 +17,9 @@ public class ColoredPrintStream extends PrintStream {
         AnsiConsole.systemInstall();
     }
 
-    public void println(MessageType messageType, String message) {
+    public String formatMessage(MessageType messageType, String message) {
         Ansi color = Ansi.ansi().fg(messageType.getColor());
-        String formattedMessage = color.a(message).reset().toString();
-        println(formattedMessage);
+        return color.a(message).reset().toString();
     }
 
     @Override

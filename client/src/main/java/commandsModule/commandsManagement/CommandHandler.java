@@ -10,8 +10,9 @@ import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
+import outputService.ColoredPrintStream;
+import outputService.OutputSource;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -52,7 +53,7 @@ public class CommandHandler {
      * @param terminal terminal
      * @param dataTransferConnectionModule client core
      */
-    public CommandHandler(List<CommandDescription> commandsMap, Terminal terminal, DataTransferConnectionModule dataTransferConnectionModule) throws IOException {
+    public CommandHandler(List<CommandDescription> commandsMap, Terminal terminal, DataTransferConnectionModule dataTransferConnectionModule) {
         CommandHandler.commandsMap = commandsMap.stream().collect(Collectors.toMap(CommandDescription::getCommandName, Function.identity()));
         missedCommandsMap = new LinkedHashMap<>();
         this.lineReader = LineReaderBuilder.builder().terminal(terminal).build();
@@ -93,17 +94,19 @@ public class CommandHandler {
      * continue operations connected to sending and receiving.
      */
     public void startHandlingInput() {
+        ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+
         String consoleInput;
         while (true) {
             if (!missedCommandsMap.isEmpty()) {
-                System.out.println("Server failed to execute some commands (perhaps the" +
+                cps.println("Server failed to execute some commands (perhaps the" +
                         " server is or was unavailable). Returning to the console input");
             }
 
             try {
                 consoleInput = lineReader.readLine("$ ").trim();
             } catch (EndOfFileException e) {
-                System.out.println("End of input");
+                cps.println("End of input");
                 break;
             }
 
@@ -115,7 +118,7 @@ public class CommandHandler {
             if (command == null) {
                 ClientCommand clientCommand = clientCommandsMap.get(tokens[0]);
                 if (clientCommand == null) {
-                    System.out.println("Not Recognized as an Internal or External Command. Type \"help\" or \"c_help\" to see available commands");
+                    cps.println("Not Recognized as an Internal or External Command. Type \"help\" or \"c_help\" to see available commands");
                 } else {
                     clientCommand.execute();
                 }
@@ -124,14 +127,14 @@ public class CommandHandler {
 
             if (!missedCommandsMap.isEmpty()) {
                 missedCommandsMap.put(command, tokens);
-                System.out.println("Added command to the end of the missed commands collection due to its not emptiness");
+                cps.println("Added command to the end of the missed commands collection due to its not emptiness");
             } else {
                 commandManager.manageCommand(command, tokens);
                 continue;
             }
 
             if (!missedCommandsMap.isEmpty()) {
-                System.out.println("Trying to send commands from missed commands collection...");
+                cps.println("Trying to send commands from missed commands collection...");
                 Map<CommandDescription, String[]> copyOfMissedCommands = new LinkedHashMap<>(missedCommandsMap);
                 copyOfMissedCommands.forEach(commandManager::manageCommand);
             }

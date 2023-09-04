@@ -5,6 +5,9 @@ import commands.CommandDescription;
 import commands.CommandType;
 import commandsModule.commandReceivers.*;
 import exceptions.IllegalManagerArgumentException;
+import outputService.ColoredPrintStream;
+import outputService.MessageType;
+import outputService.OutputSource;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -36,7 +39,8 @@ public class CommandManager {
             Optional.ofNullable(map.get(command.getType())).orElseThrow(() ->
                     new IllegalManagerArgumentException("CommandManager contains illegal argument")).receiveCommand(command, args);
         } catch (IllegalManagerArgumentException e) {
-            System.out.println("Failed to manage response");
+            ColoredPrintStream cps = new ColoredPrintStream(OutputSource.getOutputStream());
+            cps.println(cps.formatMessage(MessageType.ERROR, "Failed to manage response"));
         }
     }
 }
