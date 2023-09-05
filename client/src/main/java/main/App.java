@@ -64,9 +64,9 @@ public class App {
 
             App.authenticateUser(connectionModule, terminal);
 
-            printer.println(printer.formatMessage(MessageType.INFO, "Trying to initialize commands..."));
+            printer.println(printer.formatMessage(MessageType.INFO, "Initializing command registry"));
             App.initCommandRegistry(connectionModule, 5000);
-            printer.println(printer.formatMessage(MessageType.SUCCESS, "Commands initialized"));
+            printer.println(printer.formatMessage(MessageType.SUCCESS, "Command registry initialized"));
 
             CommandHandler commandHandler = App.initCommandHandler(connectionModule, terminal);
 
@@ -85,7 +85,7 @@ public class App {
         } catch (InterruptedException e) {
             printer.println(printer.formatMessage(MessageType.ERROR, "Thread interrupted while initializing commands"));
         } catch (UserInterruptException e) {
-            printer.println(printer.formatMessage(MessageType.INFO, "Force shutdown..."));
+            printer.println(printer.formatMessage(MessageType.INFO, "Force shutdown"));
         } catch (Exception e) {
             printer.println(printer.formatMessage(MessageType.ERROR, "Unexpected error happened during app operations"));
         }
@@ -114,7 +114,7 @@ public class App {
                 }
             } catch (IOException e) {
                 printer.println(printer.formatMessage(MessageType.ERROR, "An error occurred while disconnecting from the server"));
-                printer.println(printer.formatMessage(MessageType.INFO, "Force shutdown..."));
+                printer.println(printer.formatMessage(MessageType.INFO, "Force shutdown"));
             }
         }));
     }
@@ -130,7 +130,7 @@ public class App {
                 authenticated = authenticationManager.authenticateFromInput();
 
                 if (authenticated == 2) {
-                    printer.println(printer.formatMessage(MessageType.INFO, "Shutdown..."));
+                    printer.println(printer.formatMessage(MessageType.INFO, "Shutdown"));
                     System.exit(0);
                 }
             } catch (ServerUnavailableException | ResponseTimeoutException | IOException | NullPointerException e) {
@@ -143,6 +143,9 @@ public class App {
         boolean initializedCommands = false;
         CommandsReceiver commandsReceiver = new CommandsReceiver(connectionModule);
 
+        Thread loadingAnimationThread = App.getLoadingAnimationThread(250);
+        loadingAnimationThread.start();
+
         while (!initializedCommands) {
             try {
                 initializedCommands = commandsReceiver.initCommands();
@@ -150,6 +153,30 @@ public class App {
                 TimeUnit.MILLISECONDS.sleep(timeMills);
             }
         }
+
+        loadingAnimationThread.interrupt();
+
+        new ColoredPrintStream(OutputSource.getOutputStream()).println();
+    }
+
+    private static Thread getLoadingAnimationThread(long timeMills) {
+        return new Thread(() -> {
+            String[] rotatingStick = { "|", "/", "-", "\\" };
+
+            ColoredPrintStream printer = new ColoredPrintStream(OutputSource.getOutputStream());
+
+            while (true) {
+                for (String stick : rotatingStick) {
+                    printer.print("\rLoading... " + stick);
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(timeMills);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                        return;
+                    }
+                }
+            }
+        });
     }
 
     private static CommandHandler initCommandHandler(DataTransferConnectionModule connectionModule, Terminal terminal) throws IOException {
